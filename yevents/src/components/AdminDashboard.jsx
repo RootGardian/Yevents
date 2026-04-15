@@ -55,7 +55,7 @@ const AdminDashboard = ({ user, token }) => {
       const res = await api.get('/admin/audit-logs', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setAuditLogs(res.data.data);
+      setAuditLogs(res.data);
       setView('audit');
     } catch (err) {
       console.error(err);
@@ -255,9 +255,9 @@ const AdminDashboard = ({ user, token }) => {
                 {auditLogs.map(log => (
                   <tr key={log.id} className="hover:bg-slate-800/20 transition-colors">
                     <td className="px-6 py-4"><span className="px-2 py-0.5 rounded text-[10px] font-black border border-slate-700">{log.action}</span></td>
-                    <td className="px-6 py-4 text-white">{log.description}</td>
-                    <td className="px-6 py-4 text-xs text-slate-400">{log.user?.email || 'System'}</td>
-                    <td className="px-6 py-4 text-right text-slate-500 text-xs">{new Date(log.created_at).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-white">{log.details}</td>
+                    <td className="px-6 py-4 text-xs text-slate-400">{log.causerType} (ID: {log.causerId || 'N/A'})</td>
+                    <td className="px-6 py-4 text-right text-slate-500 text-xs">{new Date(log.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
