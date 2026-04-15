@@ -9,7 +9,7 @@ const WelcomePage = () => {
         <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">
           Ynov Talk Events <span className="text-ynov">2026</span>
         </h1>
-        <p className="text-xl text-slate-500 font-medium uppercase tracking-widest">L'innovation au cœur de Casablanca</p>
+        <p className="text-xl text-slate-500 font-medium uppercase tracking-widest">AGIR POUR REUSSIR</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-8">

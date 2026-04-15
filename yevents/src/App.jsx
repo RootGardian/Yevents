@@ -4,7 +4,6 @@ import { Calendar, ShieldCheck, Github, Instagram, Linkedin, Scan, BarChart3, Lo
 import RegistrationForm from './components/RegistrationForm';
 import AdminDashboard from './components/AdminDashboard';
 import CheckinDashboard from './components/CheckinDashboard';
-import HeaderBanner from './components/HeaderBanner';
 import WelcomePage from './components/WelcomePage';
 import api from './api';
 
@@ -15,7 +14,6 @@ const Layout = ({ children, user, onLogout }) => {
 
   return (
     <div className="min-h-screen font-sans selection:bg-ynov selection:text-white transition-colors duration-300">
-      <HeaderBanner />
 
       {/* Dark Minimalist Navbar - Hidden on special registration page */}
       {!isRegistrationPage && (
