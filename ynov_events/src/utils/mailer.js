@@ -12,7 +12,7 @@ const sendConfirmationEmail = async (participant) => {
     }
 
     try {
-        const urn = `124${String(participant.id).padStart(5, '0')}`;
+        const urn = participant.qrCodeToken.substring(0, 8).toUpperCase();
 
         // Generate QR for CID embedding (Base64)
         const qrDataUrl = await QRCode.toDataURL(participant.qrCodeToken, {
