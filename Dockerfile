@@ -2,7 +2,7 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 COPY yevents/package*.json ./yevents/
-RUN cd yevents && npm ci
+RUN cd yevents && npm install
 COPY yevents/ ./yevents/
 RUN cd yevents && npm run build
 
@@ -20,7 +20,7 @@ COPY ynov_events/prisma ./prisma/
 COPY ynov_events/src ./src/
 
 # Install dependencies and generate Prisma client IN THE FINAL IMAGE
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 RUN npx prisma generate
 
 # Copy frontend dist
