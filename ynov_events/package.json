@@ -1,6 +1,9 @@
 {
   "name": "ynov_events",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "description": "Yevents Backend API",
   "main": "src/app.js",
   "scripts": {

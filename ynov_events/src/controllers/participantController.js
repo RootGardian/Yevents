@@ -22,7 +22,15 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Creation & attempt email sending
+        // 1. Check if email already exists
+        const existing = await prisma.participant.findUnique({ where: { email } });
+        if (existing) {
+            return res.status(400).json({ 
+                message: 'Cet email est déjà utilisé pour une inscription.' 
+            });
+        }
+
+        // 2. Create the participant record
         let participant;
         try {
             participant = await prisma.participant.create({
@@ -40,8 +48,13 @@ exports.register = async (req, res) => {
                     consentTimestamp: new Date()
                 }
             });
+        } catch (dbError) {
+            console.error('[REGISTRATION] Database error:', dbError);
+            return res.status(500).json({ message: 'Erreur lors de la création du profil participant.' });
+        }
 
-            // Try sending the confirmation email
+        // 3. Attempt email sending
+        try {
             await sendConfirmationEmail(participant);
             
             // Email success: Confirm registration
@@ -61,16 +74,14 @@ exports.register = async (req, res) => {
         } catch (emailError) {
             console.error('[REGISTRATION] Email sending failed:', emailError);
             
-            // If participant was created, update it with the error status for tracing
-            if (participant) {
-                await prisma.participant.update({
-                    where: { id: participant.id },
-                    data: { 
-                        registrationStatus: 'email_failed',
-                        emailError: emailError.message 
-                    }
-                });
-            }
+            // Update the record with the error status for tracing
+            await prisma.participant.update({
+                where: { id: participant.id },
+                data: { 
+                    registrationStatus: 'email_failed',
+                    emailError: emailError.message 
+                }
+            });
 
             // Return 500 as requested: success only if mail is confirmed
             return res.status(500).json({ 
