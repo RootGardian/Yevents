@@ -1,43 +1,37 @@
-const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
 
-const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST,
-    port: parseInt(process.env.MAIL_PORT || '587'),
-    secure: process.env.MAIL_PORT == '465', // true for 465, false for other ports
-    auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD
-    },
-    tls: {
-        rejectUnauthorized: false // Helps with connection reliability on cloud servers
-    },
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 30000
-});
-
 const sendConfirmationEmail = async (participant) => {
-    console.log(`[MAILER] Attempting to send email via ${process.env.MAIL_HOST}:${process.env.MAIL_PORT}`);
-    if (!process.env.MAIL_HOST || !process.env.MAIL_USERNAME) {
-        console.error('[MAILER] Missing SMTP configuration (MAIL_HOST or MAIL_USERNAME)');
-        throw new Error('Missing SMTP configuration');
-    }
+    console.log(`[MAILER] Sending email via Brevo API to ${participant.email}...`);
     
+    const apiKey = process.env.BREVO_API_KEY; 
+    const url = 'https://api.brevo.com/v3/smtp/email';
+
+    if (!apiKey) {
+        console.error('[MAILER] Missing API Key (BREVO_API_KEY)');
+        throw new Error('Missing Brevo API Key');
+    }
+
     try {
         const urn = `124${String(participant.id).padStart(5, '0')}`;
-        
-        // Generate QR for CID embedding
+
+        // Generate QR for CID embedding (Base64)
         const qrDataUrl = await QRCode.toDataURL(participant.qrCodeToken, {
             margin: 1,
             width: 200
         });
+        const qrBase64 = qrDataUrl.split('base64,')[1];
 
-        const mailOptions = {
-            from: `"${process.env.MAIL_FROM_NAME || 'Ynov Talk Events'}" <${process.env.MAIL_FROM_ADDRESS}>`,
-            to: participant.email,
+        const emailData = {
+            sender: { 
+                name: process.env.MAIL_FROM_NAME || 'Ynov Events', 
+                email: process.env.MAIL_FROM_ADDRESS 
+            },
+            to: [{ 
+                email: participant.email, 
+                name: `${participant.prenom} ${participant.nom}` 
+            }],
             subject: 'Confirmation d\'inscription - Ynov Talk Events 2026',
-            html: `
+            htmlContent: `
             <div style="background-color: #1a1a1a; color: #ffffff; font-family: 'Helvetica', Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto;">
                 <div style="text-align: left; padding-bottom: 20px;">
                     <p style="font-size: 16px; margin: 0;">Hi ${participant.prenom} ${participant.nom},</p>
@@ -53,7 +47,7 @@ const sendConfirmationEmail = async (participant) => {
                             <td width="40%" valign="top" style="text-align: center;">
                                 <p style="font-size: 12px; color: #aaa; margin: 0;">Your Unique Registration Number</p>
                                 <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">${urn}</p>
-                                <img src="cid:qrcode" width="150" height="150" style="display: block; margin: auto; background: white; padding: 5px;" alt="QR Code" />
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${participant.qrCodeToken}" width="150" height="150" style="display: block; margin: auto; background: white; padding: 5px;" alt="QR Code" />
                             </td>
                             <td width="60%" valign="top" style="padding-left: 20px;">
                                 <div style="margin-bottom: 15px;">
@@ -100,19 +94,35 @@ const sendConfirmationEmail = async (participant) => {
                 </div>
             </div>
             `,
-            attachments: [
+            attachment: [
                 {
-                    filename: 'qrcode.png',
-                    content: qrDataUrl.split('base64,')[1],
-                    encoding: 'base64',
-                    cid: 'qrcode'
+                    content: qrBase64,
+                    name: 'qrcode.png'
                 }
             ]
         };
 
-        return transporter.sendMail(mailOptions);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': apiKey
+            },
+            body: JSON.stringify(emailData)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            console.error('[MAILER] Brevo API Error:', result);
+            throw new Error(result.message || 'Failed to send email via Brevo API');
+        }
+
+        console.log('[MAILER] Email sent successfully via API:', result.messageId);
+        return result;
+
     } catch (error) {
-        console.error('Mail error details:', error);
+        console.error(`[MAILER] Error sending email to ${participant.email}:`, error);
         throw error;
     }
 };
