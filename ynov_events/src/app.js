@@ -30,8 +30,8 @@ app.use('/api/admin', adminRoutes);
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-// Static Files (Frontend)
-const frontendPath = path.join(__dirname, '../../yevents/dist');
+// Static Files (Frontend) - Use absolute path matching Docker layout
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../yevents/dist');
 const indexPath = path.join(frontendPath, 'index.html');
 
 console.log(`Frontend path: ${frontendPath}`);
