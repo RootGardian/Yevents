@@ -1,0 +1,85 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const bcrypt = require('bcryptjs');
+const { sendConfirmationEmail } = require('../utils/mailer');
+const audit = require('../utils/audit');
+
+exports.exportParticipants = async (req, res) => {
+    try {
+        const participants = await prisma.participant.findMany();
+        
+        let csv = 'Nom;Prénom;Email;Téléphone;Entreprise;Catégorie;Présence;Date Inscription\n';
+        
+        participants.forEach(p => {
+            csv += `${p.nom};${p.prenom};${p.email};${p.telephone};${p.entreprise || ''};${p.categorieBadge};${p.isCheckedIn ? 'PRÉSENT' : 'ABSENT'};${p.createdAt.toISOString()}\n`;
+        });
+
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=participants.csv');
+        res.send(csv);
+
+        await audit.log('EXPORT', 'Export CSV des participants effectué.');
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de l\'export' });
+    }
+};
+
+exports.resendEmail = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const participant = await prisma.participant.findUnique({ where: { email } });
+        if (!participant) return res.status(404).json({ message: 'Participant non trouvé' });
+
+        await sendConfirmationEmail(participant);
+        await prisma.participant.update({
+            where: { id: participant.id },
+            data: { emailSent: true, registrationStatus: 'confirmed', emailError: null }
+        });
+
+        await audit.log('RESEND_EMAIL', `Renvoi mail à: ${email}`, participant);
+        res.json({ message: 'Email renvoyé' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de l\'envoi' });
+    }
+};
+
+exports.getAuditLogs = async (req, res) => {
+    try {
+        const logs = await prisma.auditLog.findMany({ orderBy: { createdAt: 'desc' } });
+        res.json(logs);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+exports.getStaff = async (req, res) => {
+    try {
+        const staff = await prisma.staff.findMany({ orderBy: { nom: 'asc' } });
+        res.json(staff);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+exports.createStaff = async (req, res) => {
+    const { nom, email, password } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const staff = await prisma.staff.create({
+            data: { nom, email, password: hashedPassword }
+        });
+        res.status(201).json(staff);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la création du staff' });
+    }
+};
+
+exports.deleteStaff = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.staff.delete({ where: { id: parseInt(id) } });
+        res.json({ message: 'Staff supprimé' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la suppression' });
+    }
+};

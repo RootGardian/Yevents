@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      @map("nom") String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admins")
+}
+
+model Staff {
+  id        Int      @id @default(autoincrement())
+  nom       String
+  email     String   @unique
+  password  String
+  role      String   @default("staff")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("staffs")
+}
+
+model Participant {
+  id                 Int      @id @default(autoincrement())
+  nom                String
+  prenom             String
+  email              String   @unique
+  telephone          String
+  entreprise         String?
+  categorieBadge     String   @map("categorie_badge")
+  nbAccompagnateurs  Int      @default(0) @map("nb_accompagnateurs")
+  qrCodeToken        String   @unique @default(uuid()) @map("qr_code_token")
+  isCheckedIn        Boolean  @default(false) @map("is_checked_in")
+  emailSent          Boolean  @default(false) @map("email_sent")
+  registrationStatus String   @default("pending") @map("registration_status")
+  emailError         String?  @map("email_error")
+  consentTimestamp   DateTime? @map("consent_timestamp")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("participants")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  details   String
+  causerType String?  @map("causer_type")
+  causerId   Int?     @map("causer_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
