@@ -7,7 +7,7 @@ const WelcomePage = () => {
     <div className="max-w-4xl mx-auto text-center space-y-12 py-12 animate-in fade-in duration-1000">
       <div className="space-y-4">
         <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">
-          Ynov Days <span className="text-ynov">2026</span>
+          Ynov Talk Events <span className="text-ynov">2026</span>
         </h1>
         <p className="text-xl text-slate-500 font-medium uppercase tracking-widest">L'innovation au cœur de Casablanca</p>
       </div>
@@ -16,7 +16,7 @@ const WelcomePage = () => {
         <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group">
           <Calendar className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase text-sm mb-2">Date</h3>
-          <p className="text-slate-400 text-xs">Mai 2026</p>
+          <p className="text-slate-400 text-xs">2 Mai 2026</p>
         </div>
         <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group">
           <MapPin className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
