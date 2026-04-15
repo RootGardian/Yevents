@@ -48,14 +48,13 @@ app.get('/health', (req, res) => {
 });
 
 // --- Static Files & SPA Routing ---
-// Use path.resolve to get absolute paths from the process directory
-const projectRoot = path.resolve(__dirname, '..');
+// Use absolute paths for production reliability on Render
+const projectRoot = process.cwd(); // Root of the deployed project
 const publicDir = path.join(projectRoot, 'public');
 const indexPath = path.join(publicDir, 'index.html');
 
-console.log(`[BOOT] Environment Diagnostic:`);
-console.log(`[BOOT] -- CWD: ${process.cwd()}`);
-console.log(`[BOOT] -- Dirname: ${__dirname}`);
+console.log(`[BOOT] Absolute Path Diagnostic:`);
+console.log(`[BOOT] -- CWD (Project Root): ${projectRoot}`);
 console.log(`[BOOT] -- PublicDir: ${publicDir}`);
 console.log(`[BOOT] -- IndexExists: ${fs.existsSync(indexPath)}`);
 
@@ -70,7 +69,16 @@ app.use(history({
 // 2. Serve static files from 'public' (CSS, JS, images, etc.)
 app.use(express.static(publicDir));
 
-console.log(`[BOOT] SPA Routing & Static Files configured.`);
+// 3. Final SPA Catch-all (for security on refresh/direct access)
+app.get('*', (req, res) => {
+    // Only catch GET requests for potential UI pages
+    if (req.method === 'GET' && !req.url.startsWith('/api')) {
+        return res.sendFile(indexPath);
+    }
+    res.status(404).json({ error: 'Endpoint not found' });
+});
+
+console.log(`[BOOT] SPA Routing (Fallback & Catch-all) configured.`);
 
 // --- Start Server ---
 const PORT = process.env.PORT || 8080;
