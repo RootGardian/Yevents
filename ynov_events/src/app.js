@@ -43,30 +43,27 @@ app.get('/health', (req, res) => {
 });
 
 // --- Static Files (Frontend) ---
-const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../public');
-const indexPath = path.join(frontendPath, 'index.html');
+const publicDir = path.resolve(__dirname, '../public');
+const indexPath = path.join(publicDir, 'index.html');
 
-console.log(`[BOOT] Frontend path: ${frontendPath}`);
-console.log(`[BOOT] Frontend path exists: ${fs.existsSync(frontendPath)}`);
-console.log(`[BOOT] index.html exists: ${fs.existsSync(indexPath)}`);
+console.log(`[BOOT] Public dir: ${publicDir}`);
+console.log(`[BOOT] Index exists: ${fs.existsSync(indexPath)}`);
 
-if (fs.existsSync(frontendPath)) {
-    try {
-        const contents = fs.readdirSync(frontendPath);
-        console.log(`[BOOT] Frontend dir contents: ${contents.join(', ')}`);
-    } catch (e) {
-        console.error('[BOOT] Cannot read frontend dir:', e.message);
+// 1. Serve static files first
+app.use(express.static(publicDir));
+
+// 2. SPA Fallback: for any other route, serve index.html
+app.use((req, res, next) => {
+    // Skip if it's an API route (those should have been caught above)
+    if (req.url.startsWith('/api')) {
+        return res.status(404).json({ error: 'API endpoint not found' });
     }
-}
-
-app.use(express.static(frontendPath));
-
-// --- SPA Fallback (Express 4 compatible) ---
-app.get('*', (req, res) => {
+    
+    // Serve index.html for everything else
     if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
     } else {
-        res.status(404).send('Frontend not found');
+        res.status(404).send('Site en cours de maintenance (Frontend introuvable)');
     }
 });
 
