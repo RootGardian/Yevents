@@ -20,6 +20,7 @@ exports.exportParticipants = async (req, res) => {
 
         await audit.log('EXPORT', 'Export CSV des participants effectué.');
     } catch (error) {
+        console.error('Export error:', error);
         res.status(500).json({ message: 'Erreur lors de l\'export' });
     }
 };
@@ -39,6 +40,7 @@ exports.resendEmail = async (req, res) => {
         await audit.log('RESEND_EMAIL', `Renvoi mail à: ${email}`, participant);
         res.json({ message: 'Email renvoyé' });
     } catch (error) {
+        console.error('Resend email error:', error);
         res.status(500).json({ message: 'Erreur lors de l\'envoi' });
     }
 };
@@ -70,6 +72,7 @@ exports.createStaff = async (req, res) => {
         });
         res.status(201).json(staff);
     } catch (error) {
+        console.error('Create staff error:', error);
         res.status(500).json({ message: 'Erreur lors de la création du staff' });
     }
 };
@@ -80,6 +83,7 @@ exports.deleteStaff = async (req, res) => {
         await prisma.staff.delete({ where: { id: parseInt(id) } });
         res.json({ message: 'Staff supprimé' });
     } catch (error) {
+        console.error('Delete staff error:', error);
         res.status(500).json({ message: 'Erreur lors de la suppression' });
     }
 };
