@@ -35,9 +35,12 @@ const WelcomePage = () => {
         <p className="text-slate-400 max-w-lg mx-auto text-sm leading-relaxed">
           Cet événement est privé. Pour vous inscrire, veuillez utiliser le lien d'invitation qui vous a été communiqué par e-mail ou par SMS.
         </p>
-        <div className="pt-4 flex justify-center gap-4">
-          <Link to="/admin" className="flex items-center gap-2 px-8 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold transition-all uppercase text-xs tracking-widest">
-            Accès Staff <ArrowRight className="w-4 h-4" />
+        <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
+          <Link to="/inscription" className="flex items-center justify-center gap-2 px-8 py-3 bg-ynov hover:bg-ynov/90 rounded-xl font-bold transition-all uppercase text-xs tracking-widest text-white shadow-lg shadow-ynov/20">
+            S'inscrire à l'événement <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link to="/admin" className="flex items-center justify-center gap-2 px-8 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold transition-all uppercase text-xs tracking-widest">
+            Accès Staff
           </Link>
         </div>
       </div>
