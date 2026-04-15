@@ -13,9 +13,10 @@
 /storage/logs/*.log
 Dockerfile
 .dockerignore
-docker-entrypoint.sh
+# docker-entrypoint.sh removed from ignore
+
 phpunit.xml
 tests
 README.md
-composer.lock
-package-lock.json
+# composer.lock removed from ignore
+# package-lock.json removed from ignore
