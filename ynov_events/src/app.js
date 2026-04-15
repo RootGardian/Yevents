@@ -34,7 +34,12 @@ const frontendPath = path.join(__dirname, '../../yevents/dist');
 app.use(express.static(frontendPath));
 
 // Handle client-side routing (SPA)
-app.get('(.*)', (req, res) => {
+app.use((req, res) => {
+    // Return 404 for API routes that weren't caught
+    if (req.url.startsWith('/api')) {
+        return res.status(404).json({ message: 'API route not found' });
+    }
+    // For everything else, serve the React app
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
