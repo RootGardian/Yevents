@@ -10,6 +10,12 @@ dotenv.config();
 
 const app = express();
 
+// --- LOG TOUT LE TRAFIC (DIAGNOSTIC) ---
+app.use((req, res, next) => {
+    console.log(`[REQUEST] ${req.method} ${req.url}`);
+    next();
+});
+
 // --- Middleware ---
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
@@ -37,7 +43,7 @@ app.get('/health', (req, res) => {
 });
 
 // --- Static Files (Frontend) ---
-const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../yevents/dist');
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../public');
 const indexPath = path.join(frontendPath, 'index.html');
 
 console.log(`[BOOT] Frontend path: ${frontendPath}`);

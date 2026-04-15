@@ -1,20 +1,24 @@
 #!/bin/bash
+# Exit on error
 set -e
 
-echo "=== Installing backend dependencies ==="
+echo "--- BUILDING BACKEND ---"
 cd ynov_events
 npm install
-
-echo "=== Generating Prisma client ==="
 npx prisma generate
+cd ..
 
-echo "=== Building frontend ==="
-cd ../yevents
+echo "--- BUILDING FRONTEND ---"
+cd yevents
 npm install
 npm run build
+cd ..
 
-echo "=== Copying frontend to backend ==="
-cp -r dist ../ynov_events/public
+echo "--- PREPARING PRODUCTION ASSETS ---"
+# Create public dir if not exists
+mkdir -p ynov_events/public
+# Copy frontend dist to backend public
+cp -rv yevents/dist/* ynov_events/public/
 
-echo "=== Build complete ==="
-ls -la ../ynov_events/public/
+echo "--- BUILD COMPLETE ---"
+ls -la ynov_events/public/

@@ -1,0 +1,12 @@
+{
+  "name": "yevents-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "bash build.sh",
+    "start": "cd ynov_events && npm start"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
