@@ -20,7 +20,10 @@ app.use((req, res, next) => {
 
 // --- Middleware ---
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(cors());
+app.use(cors({
+    origin: 'https://yevents-7o90.onrender.com',
+    credentials: true
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 
