@@ -45,8 +45,7 @@ COPY --from=vendor /app/vendor /app/vendor
 # Copy built assets from frontend stage
 COPY --from=frontend /app/public/build /app/public/build
 
-# Optimizing configuration loading
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Optimizing Laravel is handled in docker-entrypoint.sh
 
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
