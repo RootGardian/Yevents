@@ -47,20 +47,21 @@ COPY --from=frontend /app/public/build /app/public/build
 
 # Optimizing Laravel is handled in docker-entrypoint.sh
 
-# Set permissions for Laravel
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+# Set permissions for Laravel during build
+RUN chmod -R 775 storage bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Caddy configuration for FrankenPHP
-ENV SERVER_NAME=":80"
+ENV SERVER_NAME=":8080"
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
 # Expose port (Render will use this)
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

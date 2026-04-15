@@ -12,9 +12,5 @@ php artisan route:cache
 php artisan view:cache
 php artisan event:cache
 
-# Set permissions for storage and bootstrap/cache (just in case)
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
-
 # Execute the main command (usually frankenphp)
 exec "$@"
