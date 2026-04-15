@@ -10,8 +10,11 @@ const transporter = nodemailer.createTransport({
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD
     },
-    connectionTimeout: 10000, // 10 seconds
-    greetingTimeout: 10000,
+    tls: {
+        rejectUnauthorized: false // Helps with connection reliability on cloud servers
+    },
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
     socketTimeout: 30000
 });
 
