@@ -9,7 +9,7 @@ const fs = require('fs');
 dotenv.config();
 
 const app = express();
-const APP_VERSION = '1.0.4-robust-routing';
+const APP_VERSION = '1.0.5-spa-fix';
 
 // --- LOG TOUT LE TRAFIC (DIAGNOSTIC) ---
 app.use((req, res, next) => {
@@ -21,13 +21,13 @@ app.use((req, res, next) => {
 // --- Middleware ---
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({
-    origin: 'https://yevents-7o90.onrender.com',
+    origin: ['https://yevents-7o90.onrender.com', 'http://localhost:5173'],
     credentials: true
 }));
 app.use(express.json());
 app.use(morgan('dev'));
 
-// --- API Routes (loaded with error catching) ---
+// --- API Routes ---
 try {
     const authRoutes = require('./routes/auth');
     const participantRoutes = require('./routes/participants');
@@ -39,35 +39,35 @@ try {
     console.log('[BOOT] API routes loaded successfully.');
 } catch (err) {
     console.error('[BOOT] FATAL: Failed to load API routes:', err.message);
-    console.error(err.stack);
 }
 
-// --- Health check (always available) ---
+// --- Health check ---
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({ status: 'ok', version: APP_VERSION });
 });
 
-// --- Static Files (Frontend) ---
-const publicDir = path.resolve(__dirname, '../public');
+// --- Static Files & SPA Routing ---
+// We prioritize serving static files from the 'public' directory
+const publicDir = path.join(__dirname, '..', 'public');
 const indexPath = path.join(publicDir, 'index.html');
 
-console.log(`[BOOT] Public dir: ${publicDir}`);
-console.log(`[BOOT] Index exists: ${fs.existsSync(indexPath)}`);
+console.log(`[BOOT] Public directory initialized at: ${publicDir}`);
+console.log(`[BOOT] Production index.html located: ${fs.existsSync(indexPath)}`);
 
-// 1. Serve static files first
+// 1. Serve static assets (js, css, images)
 app.use(express.static(publicDir));
 
-// 2. SPA Fallback: for any other route, serve index.html
-app.use((req, res, next) => {
-    // Skip if it's an API route (those should have been caught above)
-    if (req.url.startsWith('/api')) {
+// 2. SPA Wildcard: Serve index.html for any request that doesn't match a static file or API
+app.get('*', (req, res) => {
+    // Skip if it's an API route that reached here (404 for API)
+    if (req.url.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
-    
-    // Serve index.html for everything else
+
     if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
     } else {
+        console.error(`[SPA] Fallback triggered but index.html not found at: ${indexPath}`);
         res.status(404).send('Site en cours de maintenance (Frontend introuvable)');
     }
 });
