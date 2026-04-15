@@ -31,7 +31,8 @@ RUN install-php-extensions \
     bcmath \
     mbstring \
     exif \
-    pcntl
+    pcntl && \
+    apk add --no-cache libc6-compat libcap
 
 # Set working directory
 WORKDIR /app
@@ -53,15 +54,17 @@ RUN chmod -R 775 storage bootstrap/cache && \
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && \
+    chmod +x /usr/local/bin/frankenphp
 
 # Caddy configuration for FrankenPHP
-ENV SERVER_NAME=":8080"
+ENV SERVER_NAME=":10000"
+ENV CADDY_GLOBAL_OPTIONS="admin off"
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
 # Expose port (Render will use this)
-EXPOSE 8080
+EXPOSE 10000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
