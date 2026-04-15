@@ -127,7 +127,17 @@ const Login = ({ onLogin }) => {
 };
 
 function App() {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const getSafeStorage = (key) => {
+    const item = localStorage.getItem(key);
+    if (!item || item === 'undefined') return null;
+    try {
+      return JSON.parse(item);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState(getSafeStorage('user'));
   const [token, setToken] = useState(localStorage.getItem('admin_token'));
 
   const handleLogin = (userData, userToken) => {
