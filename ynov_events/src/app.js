@@ -9,10 +9,12 @@ const fs = require('fs');
 dotenv.config();
 
 const app = express();
+const APP_VERSION = '1.0.4-robust-routing';
 
 // --- LOG TOUT LE TRAFIC (DIAGNOSTIC) ---
 app.use((req, res, next) => {
-    console.log(`[REQUEST] ${req.method} ${req.url}`);
+    res.setHeader('X-App-Version', APP_VERSION);
+    console.log(`[REQUEST] ${req.method} ${req.url} (v${APP_VERSION})`);
     next();
 });
 
