@@ -34,11 +34,8 @@ const frontendPath = path.join(__dirname, '../../yevents/dist');
 app.use(express.static(frontendPath));
 
 // Handle client-side routing (SPA)
-app.get('*', (req, res) => {
-    // If request is not for API, serve index.html
-    if (!req.url.startsWith('/api')) {
-        res.sendFile(path.join(frontendPath, 'index.html'));
-    }
+app.get('(.*)', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 const PORT = process.env.PORT || 8080;
