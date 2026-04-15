@@ -56,7 +56,7 @@ exports.getAuditLogs = async (req, res) => {
 
 exports.getStaff = async (req, res) => {
     try {
-        const staff = await prisma.staff.findMany({ orderBy: { nom: 'asc' } });
+        const staff = await prisma.staff.findMany({ orderBy: { name: 'asc' } });
         res.json(staff);
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur' });
@@ -64,11 +64,11 @@ exports.getStaff = async (req, res) => {
 };
 
 exports.createStaff = async (req, res) => {
-    const { nom, email, password } = req.body;
+    const { name, email, password } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const staff = await prisma.staff.create({
-            data: { nom, email, password: hashedPassword }
+            data: { name, email, password: hashedPassword }
         });
         res.status(201).json(staff);
     } catch (error) {

@@ -21,7 +21,7 @@ model Admin {
 
 model Staff {
   id        Int      @id @default(autoincrement())
-  nom       String
+  name      String   @map("nom")
   email     String   @unique
   password  String
   role      String   @default("staff")
