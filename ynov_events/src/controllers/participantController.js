@@ -182,3 +182,81 @@ exports.stats = async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 };
+
+exports.lookup = async (req, res) => {
+    const { email, telephone } = req.body;
+    try {
+        const participant = await prisma.participant.findFirst({
+            where: {
+                OR: [
+                    { email: email },
+                    { telephone: telephone }
+                ]
+            }
+        });
+
+        if (!participant) {
+            return res.status(404).json({ message: 'Aucune inscription trouvée avec ces informations.' });
+        }
+
+        res.json(participant);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la recherche.' });
+    }
+};
+
+exports.updateParticipant = async (req, res) => {
+    const { id, nom, prenom, email, telephone, entreprise, categorie_badge } = req.body;
+
+    try {
+        // Check if new email is already used by someone else
+        const existing = await prisma.participant.findFirst({
+            where: {
+                email: email,
+                NOT: { id: parseInt(id) }
+            }
+        });
+
+        if (existing) {
+            return res.status(400).json({ message: 'Cet email est déjà utilisé par un autre participant.' });
+        }
+
+        const updated = await prisma.participant.update({
+            where: { id: parseInt(id) },
+            data: {
+                nom,
+                prenom,
+                email,
+                telephone,
+                entreprise,
+                categorieBadge: categorie_badge,
+                registrationStatus: 'pending', // Reset status for re-validation
+                emailSent: false
+            }
+        });
+
+        // Reuse existing email logic
+        try {
+            await sendConfirmationEmail(updated);
+            await prisma.participant.update({
+                where: { id: updated.id },
+                data: { 
+                    emailSent: true,
+                    registrationStatus: 'confirmed'
+                }
+            });
+            res.json({ message: 'Informations mises à jour et nouveau badge envoyé !', participant: updated });
+        } catch (emailError) {
+            console.error('[UPDATE] Email failed:', emailError);
+            res.status(201).json({ 
+                message: 'Informations mises à jour, mais l\'envoi du mail a échoué. Veuillez contacter le support.', 
+                participant: updated 
+            });
+        }
+
+    } catch (error) {
+        console.error('Update error:', error);
+        res.status(500).json({ message: 'Erreur lors de la mise à jour.' });
+    }
+};
+

@@ -5,7 +5,9 @@ import RegistrationForm from './components/RegistrationForm';
 import AdminDashboard from './components/AdminDashboard';
 import CheckinDashboard from './components/CheckinDashboard';
 import WelcomePage from './components/WelcomePage';
+import RegistrationCorrection from './components/RegistrationCorrection';
 import api from './api';
+import { useNavigate } from 'react-router-dom';
 
 const Layout = ({ children, user, onLogout }) => {
   const location = useLocation();
@@ -158,6 +160,7 @@ function App() {
         <Routes>
           <Route path="/" element={<WelcomePage />} />
           <Route path="/inscription" element={<RegistrationForm />} />
+          <Route path="/correction" element={<RegistrationCorrection onBack={() => window.location.hash = '#/'} />} />
           <Route
             path="/admin"
             element={

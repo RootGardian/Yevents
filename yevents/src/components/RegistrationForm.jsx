@@ -15,8 +15,89 @@ const RegistrationForm = () => {
     categorie_badge: 'PARTICIPANT',
     nb_accompagnateurs: 0,
     accepted_terms: false,
-    accepted_data_processing: false
+    accepted_data_processing: false,
+    indicatif: '+212'
   });
+
+  const countryCodes = [
+    // --- Priorités (Event local & Fréquents) ---
+    { code: '+212', country: 'Maroc' },
+    { code: '+241', country: 'Gabon' },
+    { code: '+33', country: 'France' },
+    { code: '+221', country: 'Sénégal' },
+    { code: '+225', country: 'Côte d’Ivoire' },
+    
+    // --- Afrique (Nord & Sahel) ---
+    { code: '+213', country: 'Algérie' },
+    { code: '+216', country: 'Tunisie' },
+    { code: '+218', country: 'Libye' },
+    { code: '+222', country: 'Mauritanie' },
+    { code: '+223', country: 'Mali' },
+    { code: '+224', country: 'Guinée' },
+    { code: '+226', country: 'Burkina Faso' },
+    { code: '+227', country: 'Niger' },
+    { code: '+228', country: 'Togo' },
+    { code: '+229', country: 'Bénin' },
+    
+    // --- Afrique (Centrale & Est) ---
+    { code: '+235', country: 'Tchad' },
+    { code: '+236', country: 'RCA' },
+    { code: '+237', country: 'Cameroun' },
+    { code: '+240', country: 'Guinée Éq.' },
+    { code: '+242', country: 'Congo' },
+    { code: '+243', country: 'RDC' },
+    { code: '+244', country: 'Angola' },
+    { code: '+250', country: 'Rwanda' },
+    { code: '+251', country: 'Éthiopie' },
+    { code: '+253', country: 'Djibouti' },
+    { code: '+254', country: 'Kenya' },
+    { code: '+257', country: 'Burundi' },
+    { code: '+258', country: 'Mozambique' },
+    
+    // --- Afrique (Ouest & Sud) ---
+    { code: '+231', country: 'Liberia' },
+    { code: '+232', country: 'Sierra Leone' },
+    { code: '+233', country: 'Ghana' },
+    { code: '+234', country: 'Nigeria' },
+    { code: '+261', country: 'Madagascar' },
+    { code: '+262', country: 'Réunion/Mayotte' },
+    { code: '+269', country: 'Comores' },
+    { code: '+230', country: 'Maurice' },
+    { code: '+27', country: 'Afrique du Sud' },
+    { code: '+220', country: 'Gambie' },
+    { code: '+238', country: 'Cap-Vert' },
+    { code: '+245', country: 'Guinée-Biss.' },
+    
+    // --- Europe (Ouest & Sud) ---
+    { code: '+32', country: 'Belgique' },
+    { code: '+41', country: 'Suisse' },
+    { code: '+352', country: 'Luxembourg' },
+    { code: '+377', country: 'Monaco' },
+    { code: '+39', country: 'Italie' },
+    { code: '+34', country: 'Espagne' },
+    { code: '+351', country: 'Portugal' },
+    { code: '+30', country: 'Grèce' },
+    { code: '+44', country: 'Royaume-Uni' },
+    { code: '+353', country: 'Irlande' },
+    { code: '+31', country: 'Pays-Bas' },
+    
+    // --- Europe (Centrale & Nord) ---
+    { code: '+49', country: 'Allemagne' },
+    { code: '+43', country: 'Autriche' },
+    { code: '+46', country: 'Suède' },
+    { code: '+47', country: 'Norvège' },
+    { code: '+45', country: 'Danemark' },
+    { code: '+358', country: 'Finlande' },
+    { code: '+48', country: 'Pologne' },
+    { code: '+420', country: 'Rép. Tchèque' },
+    { code: '+36', country: 'Hongrie' },
+    { code: '+40', country: 'Roumanie' },
+    
+    // --- Autres ---
+    { code: '+1', country: 'USA/Canada' },
+    { code: '+971', country: 'UAE' },
+    { code: '+90', country: 'Turquie' },
+  ];
 
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -43,7 +124,11 @@ const RegistrationForm = () => {
     setLoading(true);
     setError(null);
     try {
-      await api.post('/register', formData);
+      const submissionData = {
+        ...formData,
+        telephone: `${formData.indicatif}${formData.telephone}`
+      };
+      await api.post('/register', submissionData);
       setSuccess(true);
       fetchStats();
     } catch (err) {
@@ -70,7 +155,7 @@ const RegistrationForm = () => {
           Votre badge numérique a été envoyé avec succès à <span className="text-ynov font-bold underline break-all">{formData.email}</span>.
         </p>
         <button
-          onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', intitule_poste: '', categorie_badge: 'PARTICIPANT', nb_accompagnateurs: 0, accepted_terms: false, accepted_data_processing: false }); }}
+          onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', intitule_poste: '', categorie_badge: 'PARTICIPANT', nb_accompagnateurs: 0, accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
           className="bg-ynov hover:bg-ynov/90 text-white px-8 py-3 sm:px-10 sm:py-4 rounded-xl sm:rounded-2xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-xs sm:text-base"
         >
           Nouvelle inscription
@@ -114,8 +199,21 @@ const RegistrationForm = () => {
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Numéro de téléphone *</label>
                   <div className="flex gap-2">
-                    <span className="bg-slate-100 dark:bg-slate-800 flex items-center px-4 rounded-xl text-xs font-bold text-slate-500">+212</span>
-                    <input required type="tel" className="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
+                    <div className="relative">
+                      <select 
+                        className="bg-slate-100 dark:bg-slate-800 flex items-center px-3 pr-8 rounded-xl text-xs font-bold text-slate-500 h-full border-none focus:ring-2 focus:ring-ynov appearance-none cursor-pointer"
+                        value={formData.indicatif}
+                        onChange={(e) => setFormData({ ...formData, indicatif: e.target.value })}
+                      >
+                        {countryCodes.map((c) => (
+                          <option key={c.code} value={c.code}>{c.code} ({c.country})</option>
+                        ))}
+                      </select>
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <ChevronDown className="w-3 h-3" />
+                      </div>
+                    </div>
+                    <input required type="tel" className="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all" placeholder="612345678" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
                   </div>
                 </div>
               </div>

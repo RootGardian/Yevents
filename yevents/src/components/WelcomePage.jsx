@@ -39,8 +39,13 @@ const WelcomePage = () => {
           <Link to="/inscription" className="flex items-center justify-center gap-2 px-8 py-3 bg-ynov hover:bg-ynov/90 rounded-xl font-bold transition-all uppercase text-xs tracking-widest text-white shadow-lg shadow-ynov/20">
             S'inscrire à l'événement <ArrowRight className="w-4 h-4" />
           </Link>
-          <Link to="/admin" className="flex items-center justify-center gap-2 px-8 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold transition-all uppercase text-xs tracking-widest">
+          <Link to="/admin" className="flex items-center justify-center gap-2 px-8 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-bold transition-all uppercase text-xs tracking-widest text-white">
             Accès Staff
+          </Link>
+        </div>
+        <div className="pt-2">
+          <Link to="/correction" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-ynov transition-colors underline underline-offset-4">
+            Je me suis trompé d'informations ? Modifier mon inscription
           </Link>
         </div>
       </div>

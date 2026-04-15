@@ -12,4 +12,9 @@ router.post('/admin/checkin/:token', authMiddleware, participantController.check
 router.get('/admin/checkin/:token', participantController.checkIn); // Support for browser scan
 router.get('/admin/stats', authMiddleware, participantController.stats);
 
+// Self-service correction
+router.post('/register/lookup', participantController.lookup);
+router.post('/register/update', participantController.updateParticipant);
+
+
 module.exports = router;
