@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Transactional creation & email
+        // Creation & attempt email sending
         let participant;
         try {
             participant = await prisma.participant.create({
@@ -35,23 +35,33 @@ exports.register = async (req, res) => {
                     categorieBadge: categorie_badge,
                     nbAccompagnateurs: parseInt(nb_accompagnateurs) || 0,
                     qrCodeToken: uuidv4(),
-                    registrationStatus: 'confirmed',
+                    registrationStatus: 'pending',
                     emailSent: false,
                     consentTimestamp: new Date()
                 }
             });
 
+            // Try sending the confirmation email
             await sendConfirmationEmail(participant);
             
-            await prisma.participant.update({
+            // Email success: Confirm registration
+            const confirmedParticipant = await prisma.participant.update({
                 where: { id: participant.id },
-                data: { emailSent: true }
+                data: { 
+                    emailSent: true,
+                    registrationStatus: 'confirmed'
+                }
             });
 
-            res.status(201).json({ message: 'Inscription réussie', participant });
+            return res.status(201).json({ 
+                message: 'Inscription réussie', 
+                participant: confirmedParticipant 
+            });
 
         } catch (emailError) {
-            console.error('Email failed:', emailError);
+            console.error('[REGISTRATION] Email sending failed:', emailError);
+            
+            // If participant was created, update it with the error status for tracing
             if (participant) {
                 await prisma.participant.update({
                     where: { id: participant.id },
@@ -61,9 +71,11 @@ exports.register = async (req, res) => {
                     }
                 });
             }
-            res.status(201).json({ 
-                message: 'Inscription enregistrée (Email en attente)', 
-                participant 
+
+            // Return 500 as requested: success only if mail is confirmed
+            return res.status(500).json({ 
+                message: 'Erreur lors de l\'envoi du mail de confirmation. Votre inscription est enregistrée mais en attente de validation manuelle.', 
+                error: emailError.message 
             });
         }
 

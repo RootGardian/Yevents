@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
+const history = require('connect-history-api-fallback');
 
 dotenv.config();
 
@@ -58,27 +59,18 @@ console.log(`[BOOT] -- Dirname: ${__dirname}`);
 console.log(`[BOOT] -- PublicDir: ${publicDir}`);
 console.log(`[BOOT] -- IndexExists: ${fs.existsSync(indexPath)}`);
 
-// 1. Serve static files from 'public' (CSS, JS, images, etc.)
+// 1. History API Fallback (redirects non-API requests to index.html for SPA routing)
+app.use(history({
+    verbose: true,
+    rewrites: [
+        { from: /^\/api\/.*$/, to: (context) => context.parsedUrl.pathname }
+    ]
+}));
+
+// 2. Serve static files from 'public' (CSS, JS, images, etc.)
 app.use(express.static(publicDir));
 
-// 2. SPA Catch-all: Redirect all non-API GET requests to index.html
-app.get('*', (req, res) => {
-    // Only handle GET requests for potential pages
-    if (req.method !== 'GET') return res.status(405).send('Method Not Allowed');
-
-    // Skip API routes 
-    if (req.url.startsWith('/api')) {
-        return res.status(404).json({ error: 'API endpoint not found' });
-    }
-
-    // Serve index.html
-    if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
-    } else {
-        console.error(`[SPA] CRITICAL: Fallback triggered but index.html missing at ${indexPath}`);
-        res.status(404).send('Site en cours de maintenance (Frontend introuvable)');
-    }
-});
+console.log(`[BOOT] SPA Routing & Static Files configured.`);
 
 // --- Start Server ---
 const PORT = process.env.PORT || 8080;
