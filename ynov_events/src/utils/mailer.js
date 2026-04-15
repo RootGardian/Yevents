@@ -3,13 +3,16 @@ const QRCode = require('qrcode');
 const { generateBadgeBuffer } = require('./badgeGenerator');
 
 const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST || 'smtp-relay.brevo.com',
-    port: process.env.MAIL_PORT || 587,
-    secure: false,
+    host: process.env.MAIL_HOST,
+    port: parseInt(process.env.MAIL_PORT || '587'),
+    secure: process.env.MAIL_PORT == '465', // true for 465, false for other ports
     auth: {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD
-    }
+    },
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 30000
 });
 
 const sendConfirmationEmail = async (participant) => {
