@@ -9,7 +9,7 @@ const fs = require('fs');
 dotenv.config();
 
 const app = express();
-const APP_VERSION = '1.0.5-spa-fix';
+const APP_VERSION = '1.0.6-final-routing';
 
 // --- LOG TOUT LE TRAFIC (DIAGNOSTIC) ---
 app.use((req, res, next) => {
@@ -43,31 +43,39 @@ try {
 
 // --- Health check ---
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', version: APP_VERSION });
+    res.json({ status: 'ok', version: APP_VERSION, timestamp: new Date().toISOString() });
 });
 
 // --- Static Files & SPA Routing ---
-// We prioritize serving static files from the 'public' directory
-const publicDir = path.join(__dirname, '..', 'public');
+// Use path.resolve to get absolute paths from the process directory
+const projectRoot = path.resolve(__dirname, '..');
+const publicDir = path.join(projectRoot, 'public');
 const indexPath = path.join(publicDir, 'index.html');
 
-console.log(`[BOOT] Public directory initialized at: ${publicDir}`);
-console.log(`[BOOT] Production index.html located: ${fs.existsSync(indexPath)}`);
+console.log(`[BOOT] Environment Diagnostic:`);
+console.log(`[BOOT] -- CWD: ${process.cwd()}`);
+console.log(`[BOOT] -- Dirname: ${__dirname}`);
+console.log(`[BOOT] -- PublicDir: ${publicDir}`);
+console.log(`[BOOT] -- IndexExists: ${fs.existsSync(indexPath)}`);
 
-// 1. Serve static assets (js, css, images)
+// 1. Serve static files from 'public' (CSS, JS, images, etc.)
 app.use(express.static(publicDir));
 
-// 2. SPA Wildcard: Serve index.html for any request that doesn't match a static file or API
+// 2. SPA Catch-all: Redirect all non-API GET requests to index.html
 app.get('*', (req, res) => {
-    // Skip if it's an API route that reached here (404 for API)
-    if (req.url.startsWith('/api/')) {
+    // Only handle GET requests for potential pages
+    if (req.method !== 'GET') return res.status(405).send('Method Not Allowed');
+
+    // Skip API routes 
+    if (req.url.startsWith('/api')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
 
+    // Serve index.html
     if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
     } else {
-        console.error(`[SPA] Fallback triggered but index.html not found at: ${indexPath}`);
+        console.error(`[SPA] CRITICAL: Fallback triggered but index.html missing at ${indexPath}`);
         res.status(404).send('Site en cours de maintenance (Frontend introuvable)');
     }
 });
