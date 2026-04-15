@@ -16,6 +16,12 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendConfirmationEmail = async (participant) => {
+    console.log(`[MAILER] Attempting to send email via ${process.env.MAIL_HOST}:${process.env.MAIL_PORT}`);
+    if (!process.env.MAIL_HOST || !process.env.MAIL_USERNAME) {
+        console.error('[MAILER] Missing SMTP configuration (MAIL_HOST or MAIL_USERNAME)');
+        throw new Error('Missing SMTP configuration');
+    }
+    
     try {
         const urn = `124${String(participant.id).padStart(5, '0')}`;
         
