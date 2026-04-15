@@ -3,23 +3,15 @@
 .idea/
 .vscode/
 *.log
-scratch/
-**/scratch/
+node_modules/
+.env
 
 # Backend (ynov_events)
-ynov_events/.env
-ynov_events/.env.*
-ynov_events/vendor/
+ynov_events/backup_laravel/
 ynov_events/node_modules/
-ynov_events/public/storage
-ynov_events/public/build
-ynov_events/public/hot
-ynov_events/storage/*.key
-ynov_events/storage/framework/cache/data/*
-ynov_events/storage/framework/sessions/*
-ynov_events/storage/framework/testing/*
-ynov_events/storage/framework/views/*.php
-ynov_events/.phpunit.result.cache
+ynov_events/dist/
+ynov_events/prisma/dev.db
+ynov_events/prisma/dev.db-journal
 
 # Frontend (yevents)
 yevents/node_modules/
