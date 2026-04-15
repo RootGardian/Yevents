@@ -1,3 +1,4 @@
+const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
 const { generateBadgeBuffer } = require('./badgeGenerator');
 
