@@ -21,10 +21,10 @@ ynov_events/storage/framework/testing/*
 ynov_events/storage/framework/views/*.php
 ynov_events/.phpunit.result.cache
 
-# Frontend (ynov_events_frontend)
-ynov_events_frontend/node_modules/
-ynov_events_frontend/dist/
-ynov_events_frontend/dist-ssr/
-ynov_events_frontend/.env
-ynov_events_frontend/.env.*
-ynov_events_frontend/*.local
+# Frontend (yevents)
+yevents/node_modules/
+yevents/dist/
+yevents/dist-ssr/
+yevents/.env
+yevents/.env.*
+yevents/*.local
