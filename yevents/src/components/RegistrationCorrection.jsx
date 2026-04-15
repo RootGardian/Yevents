@@ -8,7 +8,7 @@ const RegistrationCorrection = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  
+
   const [lookupData, setLookupData] = useState({
     email: '',
     telephone: ''
@@ -53,11 +53,11 @@ const RegistrationCorrection = ({ onBack }) => {
     try {
       const res = await api.post('/register/lookup', lookupData);
       const participant = res.data;
-      
+
       // Attempt to split phone and country code
       let foundIndicatif = '+212';
       let purePhone = participant.telephone;
-      
+
       for (const c of countryCodes) {
         if (participant.telephone.startsWith(c.code)) {
           foundIndicatif = c.code;
@@ -160,10 +160,10 @@ const RegistrationCorrection = ({ onBack }) => {
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Adresse e-mail</label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input 
-                      type="email" 
-                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-sm" 
-                      placeholder="exemple@mail.com"
+                    <input
+                      type="email"
+                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-sm"
+                      placeholder="monaddresse@yevents.ma"
                       value={lookupData.email}
                       onChange={(e) => setLookupData({ ...lookupData, email: e.target.value })}
                     />
@@ -176,9 +176,9 @@ const RegistrationCorrection = ({ onBack }) => {
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Numéro de téléphone</label>
                   <div className="relative">
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input 
-                      type="tel" 
-                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-sm" 
+                    <input
+                      type="tel"
+                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-sm"
                       placeholder="+212612345678"
                       value={lookupData.telephone}
                       onChange={(e) => setLookupData({ ...lookupData, telephone: e.target.value })}
@@ -193,9 +193,9 @@ const RegistrationCorrection = ({ onBack }) => {
                 </div>
               )}
 
-              <button 
-                disabled={loading || (!lookupData.email && !lookupData.telephone)} 
-                type="submit" 
+              <button
+                disabled={loading || (!lookupData.email && !lookupData.telephone)}
+                type="submit"
                 className="w-full bg-slate-900 dark:bg-ynov hover:opacity-90 text-white font-black py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-30"
               >
                 {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Search className="w-5 h-5" /> TROUVER MON INSCRIPTION</>}
@@ -210,66 +210,66 @@ const RegistrationCorrection = ({ onBack }) => {
             className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-xl space-y-6"
           >
             <div className="space-y-2 border-b border-slate-100 dark:border-slate-800 pb-6">
-                <h3 className="text-xl font-black italic">Modifier vos coordonnées</h3>
-                <p className="text-slate-400 text-xs">Corrigez les erreurs détectées. Un nouveau badge vous sera envoyé.</p>
+              <h3 className="text-xl font-black italic">Modifier vos coordonnées</h3>
+              <p className="text-slate-400 text-xs">Corrigez les erreurs détectées. Un nouveau badge vous sera envoyé.</p>
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom</label>
-                        <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom</label>
-                        <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} />
-                    </div>
-                </div>
-
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-red-400 font-bold">Nouvelle adresse e-mail *</label>
-                    <input required type="email" className="w-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all text-sm font-bold" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom</label>
+                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} />
                 </div>
-
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nouveau numéro de téléphone *</label>
-                    <div className="flex gap-2">
-                        <div className="relative">
-                            <select 
-                                className="bg-slate-100 dark:bg-slate-800 flex items-center px-3 pr-8 rounded-xl text-xs font-bold text-slate-500 h-full border-none focus:ring-2 focus:ring-ynov appearance-none cursor-pointer"
-                                value={formData.indicatif}
-                                onChange={(e) => setFormData({ ...formData, indicatif: e.target.value })}
-                            >
-                                {countryCodes.map((c) => (
-                                    <option key={c.code} value={c.code}>{c.code}</option>
-                                ))}
-                            </select>
-                            <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                <ChevronDown className="w-3 h-3" />
-                            </div>
-                        </div>
-                        <input required type="tel" className="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
-                    </div>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom</label>
+                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} />
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Entreprise / Université</label>
-                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
-                </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-red-400 font-bold">Nouvelle adresse e-mail *</label>
+                <input required type="email" className="w-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all text-sm font-bold" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+              </div>
 
-                {error && (
-                    <div className="bg-red-50 text-red-500 p-4 rounded-xl flex items-center gap-3 text-xs font-bold">
-                        <AlertCircle className="w-4 h-4" /> {error}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nouveau numéro de téléphone *</label>
+                <div className="flex gap-2">
+                  <div className="relative">
+                    <select
+                      className="bg-slate-100 dark:bg-slate-800 flex items-center px-3 pr-8 rounded-xl text-xs font-bold text-slate-500 h-full border-none focus:ring-2 focus:ring-ynov appearance-none cursor-pointer"
+                      value={formData.indicatif}
+                      onChange={(e) => setFormData({ ...formData, indicatif: e.target.value })}
+                    >
+                      {countryCodes.map((c) => (
+                        <option key={c.code} value={c.code}>{c.code}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <ChevronDown className="w-3 h-3" />
                     </div>
-                )}
+                  </div>
+                  <input required type="tel" className="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
+                </div>
+              </div>
 
-                <button disabled={loading} type="submit" className="w-full bg-ynov hover:opacity-90 text-white font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3">
-                    {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-5 h-5" /> ENREGISTRER LES MODIFICATIONS</>}
-                </button>
-                
-                <button type="button" onClick={() => setStep('lookup')} className="w-full text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest py-2 transition-colors">
-                    Annuler la modification
-                </button>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Entreprise / Université</label>
+                <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
+              </div>
+
+              {error && (
+                <div className="bg-red-50 text-red-500 p-4 rounded-xl flex items-center gap-3 text-xs font-bold">
+                  <AlertCircle className="w-4 h-4" /> {error}
+                </div>
+              )}
+
+              <button disabled={loading} type="submit" className="w-full bg-ynov hover:opacity-90 text-white font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3">
+                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-5 h-5" /> ENREGISTRER LES MODIFICATIONS</>}
+              </button>
+
+              <button type="button" onClick={() => setStep('lookup')} className="w-full text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest py-2 transition-colors">
+                Annuler la modification
+              </button>
             </form>
           </motion.div>
         )}
