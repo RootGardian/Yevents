@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
-const { generateBadgeBuffer } = require('./badgeGenerator');
 
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -33,9 +32,6 @@ const sendConfirmationEmail = async (participant) => {
             margin: 1,
             width: 200
         });
-
-        // Generate PDF Badge
-        const badgeBuffer = await generateBadgeBuffer(participant);
 
         const mailOptions = {
             from: `"${process.env.MAIL_FROM_NAME || 'Ynov Talk Events'}" <${process.env.MAIL_FROM_ADDRESS}>`,
@@ -101,15 +97,10 @@ const sendConfirmationEmail = async (participant) => {
 
                 <div style="padding-top: 30px; text-align: center; border-top: 1px solid #333; margin-top: 30px;">
                     <p style="font-size: 12px; color: #888;">&copy; 2026 YNOV MOROCCO. All rights reserved.</p>
-                    <p style="font-size: 12px; color: #888;">Please find your printable badge attached as a PDF.</p>
                 </div>
             </div>
             `,
             attachments: [
-                {
-                    filename: 'badge_ynov_talk_events.pdf',
-                    content: badgeBuffer
-                },
                 {
                     filename: 'qrcode.png',
                     content: qrDataUrl.split('base64,')[1],
