@@ -105,9 +105,11 @@ const MyRegistrations = () => {
                                     email: participant.email,
                                     entreprise: participant.entreprise,
                                     categorie_badge: participant.categorieBadge,
-                                    telephone: participant.telephone
+                                    telephone: participant.telephone,
+                                    qrCodeToken: participant.qrCodeToken
                                 }} 
                             />
+
                         </div>
                     </div>
 

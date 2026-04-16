@@ -108,6 +108,8 @@ const RegistrationForm = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
 
+  const [participant, setParticipant] = useState(null);
+
   useEffect(() => {
     fetchStats();
   }, []);
@@ -123,6 +125,7 @@ const RegistrationForm = () => {
     }
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -132,7 +135,8 @@ const RegistrationForm = () => {
         ...formData,
         telephone: `${formData.indicatif}${formData.telephone}`
       };
-      await api.post('/register', submissionData);
+      const res = await api.post('/register', submissionData);
+      setParticipant(res.data.participant);
       setSuccess(true);
       fetchStats();
     } catch (err) {
@@ -141,6 +145,7 @@ const RegistrationForm = () => {
       setLoading(false);
     }
   };
+
 
   if (success) {
     return (
