@@ -11,7 +11,6 @@ const RegistrationForm = () => {
     email: '',
     telephone: '',
     entreprise: '',
-    intitule_poste: '',
     categorie_badge: 'PARTICIPANT',
     nb_accompagnateurs: 0,
     accepted_terms: false,
@@ -155,7 +154,7 @@ const RegistrationForm = () => {
           Votre badge numérique a été envoyé avec succès à <span className="text-ynov font-bold underline break-all">{formData.email}</span>.
         </p>
         <button
-          onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', intitule_poste: '', categorie_badge: 'PARTICIPANT', nb_accompagnateurs: 0, accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
+          onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', categorie_badge: 'PARTICIPANT', nb_accompagnateurs: 0, accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
           className="bg-ynov hover:bg-ynov/90 text-white px-8 py-3 sm:px-10 sm:py-4 rounded-xl sm:rounded-2xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-xs sm:text-base"
         >
           Nouvelle inscription
@@ -182,26 +181,26 @@ const RegistrationForm = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Prénom *</label>
-                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-sm" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} />
+                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-base sm:text-sm" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Nom *</label>
-                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-sm" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} />
+                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-base sm:text-sm" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Adresse e-mail *</label>
-                <input required type="email" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-sm" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                <input required type="email" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-base sm:text-sm" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Numéro de téléphone *</label>
-                  <div className="flex gap-2">
-                    <div className="relative">
+                  <div className="flex gap-2 min-w-0">
+                    <div className="relative shrink-0 w-24 sm:w-28">
                       <select 
-                        className="bg-slate-100 dark:bg-slate-800 flex items-center px-3 pr-8 rounded-xl text-xs font-bold text-slate-500 h-full border-none focus:ring-2 focus:ring-ynov appearance-none cursor-pointer"
+                        className="w-full bg-slate-100 dark:bg-slate-800 flex items-center px-3 pr-8 rounded-xl text-base sm:text-xs font-bold text-slate-500 h-full border-none focus:ring-2 focus:ring-ynov appearance-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap"
                         value={formData.indicatif}
                         onChange={(e) => setFormData({ ...formData, indicatif: e.target.value })}
                       >
@@ -213,7 +212,7 @@ const RegistrationForm = () => {
                         <ChevronDown className="w-3 h-3" />
                       </div>
                     </div>
-                    <input required type="tel" className="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all" placeholder="612345678" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
+                    <input required type="tel" className="flex-1 min-w-0 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all text-base sm:text-sm" placeholder="612345678" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
                   </div>
                 </div>
               </div>
@@ -221,12 +220,12 @@ const RegistrationForm = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Nom de l'entreprise / Université *</label>
-                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-sm" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
+                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all text-base sm:text-sm" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Catégorie de badge *</label>
                   <div className="relative">
-                    <select className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all appearance-none cursor-pointer text-sm pr-10" value={formData.categorie_badge} onChange={(e) => setFormData({ ...formData, categorie_badge: e.target.value })}>
+                    <select className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 sm:py-4 sm:px-5 focus:ring-2 focus:ring-ynov transition-all appearance-none cursor-pointer text-base sm:text-sm pr-10" value={formData.categorie_badge} onChange={(e) => setFormData({ ...formData, categorie_badge: e.target.value })}>
                       <option value="PARTICIPANT">Participant</option>
                       <option value="PRESTATAIRE">Prestataire</option>
                       <option value="EXPERT & PANÉLISTE">Expert & Panéliste</option>

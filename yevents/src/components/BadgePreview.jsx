@@ -4,12 +4,11 @@ import { motion } from 'framer-motion';
 
 const BadgePreview = ({ formData }) => {
   const fullName = `${formData.prenom} ${formData.nom}`.trim() || "NOM COMPLET";
-  const jobTitle = formData.intitule_poste || "INTITULÉ DU POSTE";
   const company = formData.entreprise || "NOM DE L'ENTREPRISE";
   const category = formData.categorie_badge || "VISITOR PASS";
 
   return (
-    <div className="sticky top-32 space-y-6">
+    <div className="lg:sticky lg:top-32 space-y-6">
       <div className="flex items-center justify-between px-2">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-50">Aperçu du Badge</h3>
         <div className="h-px flex-1 bg-current opacity-10 ml-4"></div>
@@ -44,10 +43,6 @@ const BadgePreview = ({ formData }) => {
             <div className="space-y-4 w-full">
                 <div className="space-y-1">
                     <h2 className="text-2xl font-black tracking-tight text-slate-900 truncate uppercase">{fullName}</h2>
-                    <div className="flex items-center justify-center gap-1.5 text-slate-400 text-xs font-bold uppercase tracking-wide">
-                        <Briefcase className="w-3 h-3" />
-                        <span>{jobTitle}</span>
-                    </div>
                 </div>
 
                 <div className="h-px bg-slate-100 mx-8"></div>

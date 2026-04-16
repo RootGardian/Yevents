@@ -30,8 +30,18 @@
   }
 }
 
+html,
 body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+}
+
+body {
   min-width: 320px;
   min-height: 100vh;
   background-color: var(--color-bg);
@@ -41,6 +51,7 @@ body {
 
 #root {
   width: 100%;
+  overflow-x: hidden;
 }
 
 @theme {
