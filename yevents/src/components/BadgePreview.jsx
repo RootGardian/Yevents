@@ -108,8 +108,3 @@ const BadgePreview = ({ formData }) => {
 };
 
 export default BadgePreview;
-
-
-
-
-export default BadgePreview;
