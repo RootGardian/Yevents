@@ -198,8 +198,8 @@ const MyRegistrations = () => {
                                     autoFocus
                                     maxLength={6}
                                     type="text"
-                                    className="w-48 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl py-4 px-4 text-center text-3xl font-black tracking-[0.5em] focus:ring-2 focus:ring-ynov transition-all"
-                                    placeholder="000000"
+                                    className="w-full max-w-[280px] bg-slate-50 dark:bg-slate-800 border-none rounded-2xl py-5 px-4 text-center text-3xl font-black tracking-[0.25em] focus:ring-2 focus:ring-ynov transition-all placeholder:tracking-normal placeholder:text-lg"
+                                    placeholder="••••••"
                                     value={code}
                                     onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                                 />
