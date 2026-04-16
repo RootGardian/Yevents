@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, Building, Briefcase, Users, CheckCircle, AlertCircle, Loader2, Linkedin, Twitter, Facebook, Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import api from '../api';
 import BadgePreview from './BadgePreview';
 
@@ -249,7 +250,7 @@ const RegistrationForm = () => {
                     <CheckCircle className="absolute h-3 w-3 text-white left-1 opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity" />
                   </div>
                   <span className="text-[10px] sm:text-xs text-slate-500 font-medium leading-tight select-none">
-                    J'accepte les <a href="#" className="underline text-ynov font-bold">conditions générales d'utilisation</a> et la <a href="#" className="underline text-ynov font-bold">politique de confidentialité</a>. *
+                    J'accepte les <Link to="/cgu" className="underline text-ynov font-bold">conditions générales d'utilisation</Link> et la <Link to="/confidentialite" className="underline text-ynov font-bold">politique de confidentialité</Link>. *
                   </span>
                 </label>
 

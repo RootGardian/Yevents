@@ -6,6 +6,8 @@ import AdminDashboard from './components/AdminDashboard';
 import CheckinDashboard from './components/CheckinDashboard';
 import WelcomePage from './components/WelcomePage';
 import RegistrationCorrection from './components/RegistrationCorrection';
+import TermsOfUse from './components/TermsOfUse';
+import PrivacyPolicy from './components/PrivacyPolicy';
 import api from './api';
 import { useNavigate } from 'react-router-dom';
 
@@ -160,6 +162,8 @@ function App() {
         <Routes>
           <Route path="/" element={<WelcomePage />} />
           <Route path="/inscription" element={<RegistrationForm />} />
+          <Route path="/cgu" element={<TermsOfUse />} />
+          <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/correction" element={<RegistrationCorrection onBack={() => window.location.hash = '#/'} />} />
           <Route
             path="/admin"

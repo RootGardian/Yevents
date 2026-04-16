@@ -122,7 +122,7 @@ const CheckinDashboard = ({ user, token }) => {
             <input
               type="text"
               placeholder="Entrez le code unique..."
-              className="w-full bg-slate-800 py-2 pl-10 pr-4 rounded-xl focus:ring-2 focus:ring-ynov border-none text-sm"
+              className="w-full bg-slate-800 py-2 pl-10 pr-4 rounded-xl focus:ring-2 focus:ring-ynov border-none text-base"
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCheckinAction(manualCode)}
