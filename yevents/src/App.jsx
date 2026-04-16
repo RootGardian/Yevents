@@ -8,8 +8,10 @@ import WelcomePage from './components/WelcomePage';
 import RegistrationCorrection from './components/RegistrationCorrection';
 import TermsOfUse from './components/TermsOfUse';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import MyRegistrations from './components/MyRegistrations';
 import api from './api';
 import { useNavigate } from 'react-router-dom';
+
 
 const Layout = ({ children, user, onLogout }) => {
   const location = useLocation();
@@ -164,7 +166,9 @@ function App() {
           <Route path="/inscription" element={<RegistrationForm />} />
           <Route path="/cgu" element={<TermsOfUse />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
+          <Route path="/mes-inscriptions" element={<MyRegistrations />} />
           <Route path="/correction" element={<RegistrationCorrection onBack={() => window.location.hash = '#/'} />} />
+
           <Route
             path="/admin"
             element={

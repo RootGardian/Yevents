@@ -44,10 +44,11 @@ const WelcomePage = () => {
           </Link>
         </div>
         <div className="pt-2">
-          <Link to="/correction" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-ynov transition-colors underline underline-offset-4">
-            Je me suis trompé d'informations ? Modifier mon inscription
+          <Link to="/mes-inscriptions" className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-slate-500 hover:text-ynov transition-colors underline underline-offset-8 decoration-slate-300 dark:decoration-slate-800 hover:decoration-ynov">
+            Gérer mon inscription ou récupérer mon badge
           </Link>
         </div>
+
       </div>
     </div>
   );

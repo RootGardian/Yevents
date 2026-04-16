@@ -16,7 +16,7 @@ const BadgePreview = ({ formData }) => {
 
       <motion.div 
         layout
-        className="relative w-full max-w-[320px] mx-auto overflow-hidden bg-white rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] text-slate-900 border border-slate-100 flex flex-col"
+        className="relative w-full max-w-[320px] mx-auto overflow-hidden bg-white rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] text-slate-900 border border-slate-100 flex flex-col badge-container"
       >
         {/* Top Header - Event Info */}
         <div className="bg-ynov p-6 sm:p-8 text-white relative overflow-hidden h-28 sm:h-32 flex flex-col justify-center">

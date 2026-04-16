@@ -16,5 +16,10 @@ router.get('/admin/stats', authMiddleware, participantController.stats);
 router.post('/register/lookup', participantController.lookup);
 router.post('/register/update', participantController.updateParticipant);
 
+// OTP System
+router.post('/otp/request', participantController.requestOTP);
+router.post('/otp/verify', participantController.verifyOTP);
+
 
 module.exports = router;
+

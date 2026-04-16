@@ -127,4 +127,53 @@ const sendConfirmationEmail = async (participant) => {
     }
 };
 
-module.exports = { sendConfirmationEmail };
+const sendOTPEmail = async (email, otp) => {
+    console.log(`[MAILER] Sending OTP email to ${email}...`);
+    const apiKey = process.env.BREVO_API_KEY;
+    const url = 'https://api.brevo.com/v3/smtp/email';
+
+    if (!apiKey) {
+        throw new Error('Missing Brevo API Key');
+    }
+
+    const emailData = {
+        sender: { 
+            name: process.env.MAIL_FROM_NAME || 'Ynov Events', 
+            email: process.env.MAIL_FROM_ADDRESS 
+        },
+        to: [{ email }],
+        subject: `Votre code de vérification - Ynov Events`,
+        htmlContent: `
+        <div style="background-color: #1a1a1a; color: #ffffff; font-family: 'Helvetica', Arial, sans-serif; padding: 40px; text-align: center; border-radius: 8px;">
+            <h1 style="color: #ff3e3e; font-size: 24px; margin-bottom: 20px;">Vérification d'identité</h1>
+            <p style="font-size: 16px; color: #aaaaaa;">Voici votre code de vérification pour accéder à vos inscriptions :</p>
+            <div style="background-color: #262626; padding: 20px; border-radius: 12px; border: 1px solid #333; margin: 30px auto; width: fit-content;">
+                <span style="font-size: 32px; font-weight: 900; letter-spacing: 5px; color: #ffffff;">${otp}</span>
+            </div>
+            <p style="font-size: 12px; color: #666666;">Ce code expirera dans 2 minutes.</p>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
+            <p style="font-size: 12px; color: #444444;">Si vous n'avez pas demandé ce code, veuillez ignorer cet e-mail.</p>
+        </div>
+        `
+    };
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'api-key': apiKey
+        },
+        body: JSON.stringify(emailData)
+    });
+
+    if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message || 'Failed to send OTP email');
+    }
+};
+
+module.exports = { 
+    sendConfirmationEmail,
+    sendOTPEmail
+};
+

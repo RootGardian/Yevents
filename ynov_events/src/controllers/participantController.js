@@ -260,3 +260,63 @@ exports.updateParticipant = async (req, res) => {
     }
 };
 
+exports.requestOTP = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        // 1. Check if participant exists
+        const participant = await prisma.participant.findUnique({ where: { email } });
+        if (!participant) {
+            return res.status(404).json({ message: 'Aucun compte trouvé avec cet e-mail.' });
+        }
+
+        // 2. Generate 6-digit OTP
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes
+
+        // 3. Save to DB (Update if exists, or create)
+        await prisma.otp.upsert({
+            where: { email },
+            update: { code, expiresAt, createdAt: new Date() },
+            create: { email, code, expiresAt }
+        });
+
+        // 4. Send Email
+        const { sendOTPEmail } = require('../utils/mailer');
+        await sendOTPEmail(email, code);
+
+        res.json({ message: 'Code envoyé !' });
+    } catch (error) {
+        console.error('[OTP REQUEST] Error:', error);
+        res.status(500).json({ message: 'Erreur lors de l\'envoi du code.' });
+    }
+};
+
+exports.verifyOTP = async (req, res) => {
+    const { email, code } = req.body;
+
+    try {
+        const otpRecord = await prisma.otp.findUnique({ where: { email } });
+
+        if (!otpRecord || otpRecord.code !== code) {
+            return res.status(400).json({ message: 'Code invalide.' });
+        }
+
+        if (new Date() > otpRecord.expiresAt) {
+            return res.status(400).json({ message: 'Code expiré. Veuillez en redemander un.' });
+        }
+
+        // Valid OTP -> Get participant data
+        const participant = await prisma.participant.findUnique({ where: { email } });
+        
+        // Optional: Delete OTP after verification to prevent reuse
+        await prisma.otp.delete({ where: { email } });
+
+        res.json({ participant });
+    } catch (error) {
+        console.error('[OTP VERIFY] Error:', error);
+        res.status(500).json({ message: 'Erreur lors de la vérification.' });
+    }
+};
+
+

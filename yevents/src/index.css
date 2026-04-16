@@ -64,3 +64,28 @@ body {
     @apply antialiased;
   }
 }
+
+/* Print Styles for Badge Download */
+@media print {
+  nav, footer, button, .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .badge-container {
+    padding: 20px !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    background: white !important;
+  }
+}

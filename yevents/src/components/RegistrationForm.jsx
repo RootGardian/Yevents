@@ -5,7 +5,11 @@ import { Link } from 'react-router-dom';
 import api from '../api';
 import BadgePreview from './BadgePreview';
 
+import MyRegistrations from './MyRegistrations';
+
 const RegistrationForm = () => {
+  const [activeTab, setActiveTab] = useState('confirmation'); // 'confirmation' or 'lookup'
+
   const [formData, setFormData] = useState({
     nom: '',
     prenom: '',
@@ -143,26 +147,73 @@ const RegistrationForm = () => {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-12 rounded-3xl sm:rounded-[3rem] text-center shadow-2xl relative overflow-hidden"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-8 rounded-3xl sm:rounded-[3rem] shadow-2xl relative overflow-hidden max-w-5xl mx-auto"
       >
         <div className="absolute top-0 left-0 w-full h-2 bg-ynov"></div>
-        <div className="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-8">
-          <CheckCircle className="text-green-500 w-12 h-12" />
+        
+        {/* Tabs Header */}
+        <div className="flex justify-center mb-8 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl w-fit mx-auto">
+          <button
+            onClick={() => setActiveTab('confirmation')}
+            className={`px-6 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all ${activeTab === 'confirmation' ? 'bg-white dark:bg-slate-700 text-ynov shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            Confirmation
+          </button>
+          <button
+            onClick={() => setActiveTab('lookup')}
+            className={`px-6 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all ${activeTab === 'lookup' ? 'bg-white dark:bg-slate-700 text-ynov shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            Mes Inscriptions
+          </button>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black mb-4 uppercase italic">Inscription Réussie !</h2>
-        <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto text-sm sm:text-lg">
-          Bienvenue à bord, <strong>{formData.prenom}</strong>. <br />
-          Votre badge numérique a été envoyé avec succès à <span className="text-ynov font-bold underline break-all">{formData.email}</span>.
-        </p>
-        <button
-          onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', categorie_badge: 'PARTICIPANT', nb_accompagnateurs: 0, accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
-          className="bg-ynov hover:bg-ynov/90 text-white px-8 py-3 sm:px-10 sm:py-4 rounded-xl sm:rounded-2xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-xs sm:text-base"
-        >
-          Nouvelle inscription
-        </button>
+
+        <AnimatePresence mode="wait">
+          {activeTab === 'confirmation' ? (
+            <motion.div
+              key="conf"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-center"
+            >
+              <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="text-green-500 w-10 h-10" />
+              </div>
+              <h2 className="text-2xl sm:text-4xl font-black mb-4 uppercase italic">Inscription Réussie !</h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto text-sm sm:text-lg">
+                Bienvenue à bord, <strong>{formData.prenom}</strong>. <br />
+                Votre badge numérique a été envoyé avec succès à <span className="text-ynov font-bold underline break-all">{formData.email}</span>.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <button
+                  onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', categorie_badge: 'PARTICIPANT', nb_accompagnateurs: 0, accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
+                  className="bg-ynov hover:bg-ynov/90 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-sm"
+                >
+                  Nouvelle inscription
+                </button>
+                <button
+                  onClick={() => setActiveTab('lookup')}
+                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-8 py-4 rounded-2xl font-black transition-all text-sm"
+                >
+                  Gérer mon inscription
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="lookup"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <MyRegistrations />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     );
   }
+
 
   return (
     <div className="space-y-12">

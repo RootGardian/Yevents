@@ -72,3 +72,14 @@ model Setting {
 
   @@map("settings")
 }
+
+model Otp {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  code      String
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("otps")
+}
+
