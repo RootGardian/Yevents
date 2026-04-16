@@ -148,9 +148,10 @@ const MyRegistrations = () => {
                             <div className="w-16 h-16 bg-ynov/10 rounded-full flex items-center justify-center mx-auto text-ynov mb-4">
                                 <Mail className="w-8 h-8" />
                             </div>
-                            <h2 className="text-2xl font-black uppercase italic">Accéder à mes badges</h2>
-                            <p className="text-slate-500 text-xs font-medium">Saisissez l'adresse e-mail utilisée lors de votre inscription pour recevoir un code d'accès.</p>
+                            <h2 className="text-2xl font-black uppercase italic text-slate-900 dark:text-white">Accéder à mes badges</h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">Saisissez l'adresse e-mail utilisée lors de votre inscription pour recevoir un code d'accès.</p>
                         </div>
+
 
                         <form onSubmit={handleRequestOTP} className="space-y-4">
                             <div className="relative">
@@ -185,9 +186,10 @@ const MyRegistrations = () => {
                             <div className="w-16 h-16 bg-ynov/10 rounded-full flex items-center justify-center mx-auto text-ynov mb-4">
                                 <ShieldCheck className="w-8 h-8" />
                             </div>
-                            <h2 className="text-2xl font-black uppercase italic">Vérification</h2>
-                            <p className="text-slate-500 text-xs font-medium">Un code de vérification a été envoyé à : <br/><strong className="text-slate-900 dark:text-white underline">{email}</strong></p>
+                            <h2 className="text-2xl font-black uppercase italic text-slate-900 dark:text-white">Vérification</h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">Un code de vérification a été envoyé à : <br/><strong className="text-slate-900 dark:text-white underline">{email}</strong></p>
                         </div>
+
 
                         <form onSubmit={handleVerifyOTP} className="space-y-6">
                             <div className="flex justify-center">

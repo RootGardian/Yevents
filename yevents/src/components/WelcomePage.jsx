@@ -13,28 +13,29 @@ const WelcomePage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-8">
-        <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group">
+        <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group shadow-sm dark:shadow-none">
           <Calendar className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-black uppercase text-sm mb-2">Date</h3>
-          <p className="text-slate-400 text-xs">2 Mai 2026</p>
+          <h3 className="font-black uppercase text-sm mb-2 text-slate-900 dark:text-white">Date</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold">2 Mai 2026</p>
         </div>
-        <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group">
+        <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group shadow-sm dark:shadow-none">
           <MapPin className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-black uppercase text-sm mb-2">Lieu</h3>
-          <p className="text-slate-400 text-xs">Campus Ynov Casablanca</p>
+          <h3 className="font-black uppercase text-sm mb-2 text-slate-900 dark:text-white">Lieu</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold">Campus Ynov Casablanca</p>
         </div>
-        <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group">
+        <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group shadow-sm dark:shadow-none">
           <Users className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-black uppercase text-sm mb-2">Public</h3>
-          <p className="text-slate-400 text-xs">Étudiants & Professionnels</p>
+          <h3 className="font-black uppercase text-sm mb-2 text-slate-900 dark:text-white">Public</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold">Étudiants & Professionnels</p>
         </div>
       </div>
 
-      <div className="pt-8 bg-slate-900/30 border border-slate-800/50 p-10 rounded-[3rem] space-y-6">
-        <h2 className="text-2xl font-black uppercase italic">Inscriptions Ouvertes</h2>
-        <p className="text-slate-400 max-w-lg mx-auto text-sm leading-relaxed">
+      <div className="pt-8 bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/50 p-10 rounded-[3rem] space-y-6 shadow-inner dark:shadow-none">
+        <h2 className="text-2xl font-black uppercase italic text-slate-900 dark:text-white">Inscriptions Ouvertes</h2>
+        <p className="text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-sm leading-relaxed font-medium">
           Cet événement est privé. Pour vous inscrire, veuillez utiliser le lien d'invitation qui vous a été communiqué par e-mail ou par SMS.
         </p>
+
         <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
           <Link to="/inscription" className="flex items-center justify-center gap-2 px-8 py-3 bg-ynov hover:bg-ynov/90 rounded-xl font-bold transition-all uppercase text-xs tracking-widest text-white shadow-lg shadow-ynov/20">
             S'inscrire à l'événement <ArrowRight className="w-4 h-4" />

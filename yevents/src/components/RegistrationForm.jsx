@@ -230,9 +230,10 @@ const RegistrationForm = () => {
         <div className="lg:col-span-7 space-y-6 sm:space-y-8">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-10 rounded-3xl sm:rounded-[2.5rem] shadow-xl space-y-6 sm:space-y-8">
             <div className="space-y-2 border-b border-slate-100 dark:border-slate-800 pb-6">
-              <h3 className="text-xl sm:text-2xl font-black leading-tight">Veuillez remplir le formulaire d'inscription ci-dessous.</h3>
+              <h3 className="text-xl sm:text-2xl font-black leading-tight text-slate-900 dark:text-white">Veuillez remplir le formulaire d'inscription ci-dessous.</h3>
               <p className="text-red-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">Les informations doivent être saisies avec soin.</p>
             </div>
+
 
             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
