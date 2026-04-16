@@ -110,7 +110,7 @@ const CheckinDashboard = ({ user, token }) => {
             }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all border ${showManualInput ? 'bg-ynov border-ynov text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
           >
-            <Key className="w-4 h-4" /> Presence
+            <Key className="w-4 h-4" /> UUID
           </button>
         </div>
       </div>
@@ -194,13 +194,23 @@ const CheckinDashboard = ({ user, token }) => {
                   </td>
                   <td className="px-4 py-3">
                     {p.is_checked_in ? (
-                      <span className="px-2 py-1 rounded text-[10px] font-bold bg-green-500/20 text-green-500">PRÉSENT</span>
+                      <span className="px-2 py-0.5 rounded text-[9px] font-black bg-green-500/20 text-green-500 border border-green-500/30">PRÉSENT</span>
+                    ) : p.registration_status === 'email_failed' ? (
+                      <div className="flex flex-col gap-1.5">
+                        <span className="w-fit px-2 py-0.5 rounded text-[9px] font-black bg-red-500/20 text-red-500 border border-red-500/30">ERREUR EMAIL</span>
+                        <button
+                          onClick={() => handleCheckinAction(p.qr_code_token)}
+                          className="flex items-center gap-1 w-fit px-2 py-1 bg-slate-700 hover:bg-ynov/20 hover:text-ynov rounded text-[10px] font-bold transition-all text-slate-400 group"
+                        >
+                          <MousePointerClick className="w-3 h-3 group-hover:scale-110 transition-transform" /> VALIDER MANUELLEMENT
+                        </button>
+                      </div>
                     ) : (
                       <button
                         onClick={() => handleCheckinAction(p.qr_code_token)}
-                        className="flex items-center gap-1 px-2 py-1 bg-slate-700 hover:bg-ynov/20 hover:text-ynov rounded text-[10px] font-bold transition-all text-slate-400"
+                        className="flex items-center gap-1 px-2 py-1 bg-slate-700 hover:bg-ynov/20 hover:text-ynov rounded text-[10px] font-bold transition-all text-slate-400 group"
                       >
-                        <MousePointerClick className="w-3 h-3" /> VALIDER
+                        <MousePointerClick className="w-3 h-3 group-hover:scale-110 transition-transform" /> VALIDER PRÉSENCE
                       </button>
                     )}
                   </td>

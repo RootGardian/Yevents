@@ -217,7 +217,11 @@ const AdminDashboard = ({ user, token }) => {
               <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden h-[312px] overflow-y-auto">
                 <table className="w-full text-left text-sm">
                   <thead className="bg-slate-800 text-slate-400 text-[10px] uppercase font-bold tracking-widest">
-                    <tr><th className="px-4 py-3">Nom</th><th className="px-4 py-3 text-right">Action</th></tr>
+                    <tr>
+                      <th className="px-4 py-3">Nom</th>
+                      <th className="px-4 py-3">État</th>
+                      <th className="px-4 py-3 text-right">Action</th>
+                    </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {filteredParticipants.map(p => (
@@ -226,9 +230,18 @@ const AdminDashboard = ({ user, token }) => {
                           <div className="font-bold text-white">{p.prenom} {p.nom}</div>
                           <div className="text-[10px] text-slate-500">{p.email}</div>
                         </td>
+                        <td className="px-4 py-3">
+                          {p.is_checked_in ? (
+                            <span className="px-2 py-0.5 rounded text-[9px] font-black bg-green-500/20 text-green-500 border border-green-500/30">PRÉSENT</span>
+                          ) : p.registration_status === 'email_failed' ? (
+                            <span className="px-2 py-0.5 rounded text-[9px] font-black bg-red-500/20 text-red-500 border border-red-500/30">ERREUR EMAIL</span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded text-[9px] font-black bg-slate-800 text-slate-500 border border-slate-700">ATTENDU</span>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-right">
                           {p.registration_status === 'email_failed' && (
-                            <button onClick={() => handleResendMail(p.email)} className="p-2 text-ynov hover:bg-ynov/10 rounded-lg"><RefreshCw className="w-4 h-4" /></button>
+                            <button onClick={() => handleResendMail(p.email)} title="Renvoyer l'email" className="p-2 text-ynov hover:bg-ynov/10 rounded-lg"><RefreshCw className="w-4 h-4" /></button>
                           )}
                         </td>
                       </tr>
