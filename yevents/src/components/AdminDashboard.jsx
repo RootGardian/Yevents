@@ -21,7 +21,7 @@ const AdminDashboard = ({ user, token }) => {
   const [view, setView] = useState('stats'); // 'stats', 'audit', 'staff'
   const [auditLogs, setAuditLogs] = useState([]);
   const [staffList, setStaffList] = useState([]);
-  
+
   // Staff Form
   const [newStaff, setNewStaff] = useState({ name: '', email: '', password: '' });
 
@@ -147,20 +147,20 @@ const AdminDashboard = ({ user, token }) => {
           <p className="text-xs sm:text-sm text-slate-400">Contrôle total & Gestion d'évènement</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button 
-            onClick={() => setView('stats')} 
+          <button
+            onClick={() => setView('stats')}
             className={`px-4 py-2 rounded-lg font-bold transition-all border ${view === 'stats' ? 'bg-ynov border-ynov text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
           >
             Stats
           </button>
-          <button 
-            onClick={fetchStaff} 
+          <button
+            onClick={fetchStaff}
             className={`px-4 py-2 rounded-lg font-bold transition-all border ${view === 'staff' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
           >
             Staff
           </button>
-          <button 
-            onClick={fetchAuditLogs} 
+          <button
+            onClick={fetchAuditLogs}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all border ${view === 'audit' ? 'bg-amber-600 border-amber-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
           >
             <ShieldCheck className="w-4 h-4" /> Rapport
@@ -180,7 +180,6 @@ const AdminDashboard = ({ user, token }) => {
               { label: 'Remplissage', value: `${stats?.taux_remplissage}%`, icon: BarChart3, color: 'text-ynov' },
               { label: 'Présents', value: stats?.total_present, icon: CheckCircle2, color: 'text-green-400' },
               { label: 'Echecs Mail', value: stats?.email_failures || 0, icon: AlertTriangle, color: stats?.email_failures > 0 ? 'text-red-500' : 'text-slate-500' },
-              { label: 'Accompagnateurs', value: stats?.total_accompagnateurs, icon: UserPlus, color: 'text-orange-400' },
             ].map((item, idx) => (
               <div key={idx} className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl">
                 <item.icon className={`${item.color} w-5 h-5 mb-4`} />
@@ -284,9 +283,9 @@ const AdminDashboard = ({ user, token }) => {
           <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl h-fit">
             <h3 className="font-bold text-white mb-6 flex items-center gap-2"><UserPlus className="w-5 h-5 text-indigo-400" /> Ajouter Staff</h3>
             <form onSubmit={handleCreateStaff} className="space-y-4">
-              <input type="text" placeholder="Nom complet" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-indigo-500" value={newStaff.name} onChange={e => setNewStaff({...newStaff, name: e.target.value})} required />
-              <input type="email" placeholder="Email" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-indigo-500" value={newStaff.email} onChange={e => setNewStaff({...newStaff, email: e.target.value})} required />
-              <input type="password" placeholder="Mot de passe" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-indigo-500" value={newStaff.password} onChange={e => setNewStaff({...newStaff, password: e.target.value})} required />
+              <input type="text" placeholder="Nom complet" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-indigo-500" value={newStaff.name} onChange={e => setNewStaff({ ...newStaff, name: e.target.value })} required />
+              <input type="email" placeholder="Email" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-indigo-500" value={newStaff.email} onChange={e => setNewStaff({ ...newStaff, email: e.target.value })} required />
+              <input type="password" placeholder="Mot de passe" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-indigo-500" value={newStaff.password} onChange={e => setNewStaff({ ...newStaff, password: e.target.value })} required />
               <button className="w-full bg-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-500 transition-all">Créer le compte</button>
             </form>
           </div>
