@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
+const startKeepAlive = require('./utils/keep-alive');
 const history = require('connect-history-api-fallback');
 
 dotenv.config();
@@ -86,4 +87,14 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`[BOOT] Server listening on 0.0.0.0:${PORT}`);
     console.log(`[BOOT] Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`[BOOT] DATABASE_URL set: ${!!process.env.DATABASE_URL}`);
+
+    // --- Start Keep Alive ---
+    // Make sure to define SELF_URL in Render environment variables
+    // Format: https://your-app-name.onrender.com/health
+    const selfUrl = process.env.SELF_URL || (process.env.RENDER_EXTERNAL_URL ? `${process.env.RENDER_EXTERNAL_URL}/health` : null);
+    if (selfUrl) {
+        startKeepAlive(selfUrl);
+    } else {
+        console.log('[BOOT] KEEP-ALIVE: SELF_URL not defined, skip keep-alive.');
+    }
 });
