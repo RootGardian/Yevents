@@ -33,7 +33,7 @@ const WelcomePage = () => {
       <div className="pt-8 bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/50 p-10 rounded-[3rem] space-y-6 shadow-inner dark:shadow-none">
         <h2 className="text-2xl font-black uppercase italic text-slate-900 dark:text-white">Inscriptions Ouvertes</h2>
         <p className="text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-sm leading-relaxed font-medium">
-          Cet événement est privé. Pour vous inscrire, veuillez utiliser le lien d'invitation qui vous a été communiqué par e-mail ou par SMS.
+          Cet événement est privé. Pour vous inscrire, veuillez utiliser le lien d'invitation qui vous a été communiqué par E-mail.
         </p>
 
         <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
