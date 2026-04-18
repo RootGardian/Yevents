@@ -15,4 +15,9 @@ router.get('/staff', adminController.getStaff);
 router.post('/staff', adminController.createStaff);
 router.delete('/staff/:id', adminController.deleteStaff);
 
+// Admin management (Restricted to Super Admin in controller)
+router.get('/admins', adminController.getAdmins);
+router.post('/admins', adminController.createAdmin);
+router.delete('/admins/:id', adminController.deleteAdmin);
+
 module.exports = router;

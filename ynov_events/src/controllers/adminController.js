@@ -87,3 +87,62 @@ exports.deleteStaff = async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la suppression' });
     }
 };
+
+// --- Admin Management (RESTRICTED TO AHMED BANGOURA) ---
+const SUPER_ADMIN_EMAIL = 'ahmedbangoura@yevents.ma';
+
+exports.getAdmins = async (req, res) => {
+    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
+    try {
+        const admins = await prisma.admin.findMany({
+            select: { id: true, name: true, email: true, createdAt: true },
+            orderBy: { name: 'asc' }
+        });
+        res.json(admins);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+exports.createAdmin = async (req, res) => {
+    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
+    const { name, email, password } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const admin = await prisma.admin.create({
+            data: { name, email, password: hashedPassword },
+            select: { id: true, name: true, email: true }
+        });
+        await audit.log('ADMIN_CREATED', `Admin créé par Super Admin: ${email}`);
+        res.status(201).json(admin);
+    } catch (error) {
+        console.error('Create admin error:', error);
+        res.status(500).json({ message: 'Erreur lors de la création de l\'admin' });
+    }
+};
+
+exports.deleteAdmin = async (req, res) => {
+    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
+    const { id } = req.params;
+    
+    // Prevent self-deletion of Super Admin via API
+    const adminToDelete = await prisma.admin.findUnique({ where: { id: parseInt(id) } });
+    if (adminToDelete && adminToDelete.email === SUPER_ADMIN_EMAIL) {
+        return res.status(400).json({ message: 'Le Super Admin ne peut pas être supprimé' });
+    }
+
+    try {
+        await prisma.admin.delete({ where: { id: parseInt(id) } });
+        await audit.log('ADMIN_DELETED', `Admin supprimé par Super Admin (ID: ${id})`);
+        res.json({ message: 'Administrateur supprimé' });
+    } catch (error) {
+        console.error('Delete admin error:', error);
+        res.status(500).json({ message: 'Erreur lors de la suppression' });
+    }
+};

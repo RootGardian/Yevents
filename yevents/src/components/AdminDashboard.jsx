@@ -21,6 +21,8 @@ const AdminDashboard = ({ user, token }) => {
   const [view, setView] = useState('stats'); // 'stats', 'audit', 'staff'
   const [auditLogs, setAuditLogs] = useState([]);
   const [staffList, setStaffList] = useState([]);
+  const [adminsList, setAdminsList] = useState([]);
+  const [newAdmin, setNewAdmin] = useState({ name: '', email: '', password: '' });
 
   // Staff Form
   const [newStaff, setNewStaff] = useState({ name: '', email: '', password: '' });
@@ -72,6 +74,45 @@ const AdminDashboard = ({ user, token }) => {
       setView('staff');
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const fetchAdmins = async () => {
+    try {
+      const res = await api.get('/admin/admins', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAdminsList(res.data);
+      setView('admins');
+    } catch (err) {
+      console.error(err);
+      alert("Privilèges Super Admin requis.");
+    }
+  };
+
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/admin/admins', newAdmin, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNewAdmin({ name: '', email: '', password: '' });
+      fetchAdmins();
+      alert("Administrateur créé !");
+    } catch (err) {
+      alert(err.response?.data?.message || "Erreur de création");
+    }
+  };
+
+  const handleDeleteAdmin = async (id) => {
+    if (!confirm("Supprimer ce compte administrateur ?")) return;
+    try {
+      await api.delete(`/admin/admins/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchAdmins();
+    } catch (err) {
+      alert(err.response?.data?.message || "Erreur de suppression");
     }
   };
 
@@ -159,6 +200,14 @@ const AdminDashboard = ({ user, token }) => {
           >
             Staff
           </button>
+          {user.email === 'ahmedbangoura@yevents.ma' && (
+            <button
+              onClick={fetchAdmins}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all border ${view === 'admins' ? 'bg-red-600 border-red-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
+            >
+              <Key className="w-4 h-4" /> Administrateurs
+            </button>
+          )}
           <button
             onClick={fetchAuditLogs}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all border ${view === 'audit' ? 'bg-amber-600 border-amber-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
@@ -304,6 +353,47 @@ const AdminDashboard = ({ user, token }) => {
                       <td className="px-6 py-4 text-slate-400">{s.email}</td>
                       <td className="px-6 py-4 text-right">
                         <button onClick={() => handleDeleteStaff(s.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {view === 'admins' && user.email === 'ahmedbangoura@yevents.ma' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl h-fit">
+            <h3 className="font-bold text-white mb-6 flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-red-400" /> Ajouter Admin</h3>
+            <form onSubmit={handleCreateAdmin} className="space-y-4">
+              <input type="text" placeholder="Nom complet" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-red-500" value={newAdmin.name} onChange={e => setNewAdmin({ ...newAdmin, name: e.target.value })} required />
+              <input type="email" placeholder="Email admin" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-red-500" value={newAdmin.email} onChange={e => setNewAdmin({ ...newAdmin, email: e.target.value })} required />
+              <input type="password" placeholder="Mot de passe" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-red-500" value={newAdmin.password} onChange={e => setNewAdmin({ ...newAdmin, password: e.target.value })} required />
+              <button className="w-full bg-red-600 py-3 rounded-xl font-bold hover:bg-red-500 transition-all">Créer Admin</button>
+            </form>
+          </div>
+
+          <div className="md:col-span-2 bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden">
+            <div className="p-6 border-b border-slate-800 font-bold uppercase text-xs tracking-widest text-red-400">Liste des Administrateurs</div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-800/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                  <tr><th className="px-6 py-4">Nom</th><th className="px-6 py-4">Email</th><th className="px-6 py-4 text-right">Actions</th></tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {adminsList.map(adm => (
+                    <tr key={adm.id} className="hover:bg-slate-800/20">
+                      <td className="px-6 py-4 font-bold text-white">{adm.name}</td>
+                      <td className="px-6 py-4 text-slate-400">
+                        {adm.email}
+                        {adm.email === 'ahmedbangoura@yevents.ma' && <span className="ml-2 text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded">SUPER ADMIN</span>}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {adm.email !== 'ahmedbangoura@yevents.ma' && (
+                          <button onClick={() => handleDeleteAdmin(adm.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                        )}
                       </td>
                     </tr>
                   ))}
