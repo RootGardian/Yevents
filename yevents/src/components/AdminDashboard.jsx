@@ -213,7 +213,7 @@ const AdminDashboard = ({ user, token }) => {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden h-[312px] overflow-y-auto">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden h-[312px] overflow-y-auto overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead className="bg-slate-800 text-slate-400 text-[10px] uppercase font-bold tracking-widest">
                     <tr>
@@ -292,22 +292,24 @@ const AdminDashboard = ({ user, token }) => {
 
           <div className="md:col-span-2 bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden">
             <div className="p-6 border-b border-slate-800 font-bold uppercase text-xs tracking-widest text-slate-400">Liste du Staff</div>
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-800/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
-                <tr><th className="px-6 py-4">Nom</th><th className="px-6 py-4">Email</th><th className="px-6 py-4 text-right">Actions</th></tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {staffList.map(s => (
-                  <tr key={s.id} className="hover:bg-slate-800/20">
-                    <td className="px-6 py-4 font-bold text-white">{s.name}</td>
-                    <td className="px-6 py-4 text-slate-400">{s.email}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button onClick={() => handleDeleteStaff(s.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><Trash2 className="w-4 h-4" /></button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-800/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                  <tr><th className="px-6 py-4">Nom</th><th className="px-6 py-4">Email</th><th className="px-6 py-4 text-right">Actions</th></tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {staffList.map(s => (
+                    <tr key={s.id} className="hover:bg-slate-800/20">
+                      <td className="px-6 py-4 font-bold text-white">{s.name}</td>
+                      <td className="px-6 py-4 text-slate-400">{s.email}</td>
+                      <td className="px-6 py-4 text-right">
+                        <button onClick={() => handleDeleteStaff(s.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
