@@ -9,6 +9,7 @@ import RegistrationCorrection from './components/RegistrationCorrection';
 import TermsOfUse from './components/TermsOfUse';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import MyRegistrations from './components/MyRegistrations';
+import FAQ from './components/FAQ';
 import ScrollToTop from './components/ScrollToTop';
 import api from './api';
 import { useNavigate } from 'react-router-dom';
@@ -89,12 +90,19 @@ const Layout = ({ children, user, onLogout }) => {
               <li>Ynov Days 2026</li>
               <li>Campus de Casablanca</li>
               <li className="pt-2">
-                <a href="mailto:ahmedrachid.bangoura@ynov.com" className="hover:text-ynov transition-colors font-bold tracking-tight">Support : ahmedrachid.bangoura@ynov.com</a>
+                <Link to="/faq" className="hover:text-ynov transition-colors font-bold tracking-tight">FAQ / Aide</Link>
+              </li>
+              <li className="pt-1">
+                <a href="mailto:ahmedrachid.bangoura@ynov.com" className="hover:text-ynov transition-colors font-bold tracking-tight text-[10px] opacity-70">Support : ahmedrachid.bangoura@ynov.com</a>
               </li>
             </ul>
           </div>
           <div className="space-y-4 text-right">
             <p className="text-[10px] font-bold text-slate-400 uppercase">© 2026 YNOV MOROCCO</p>
+            <div className="flex justify-end gap-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+               <Link to="/cgu" className="hover:text-ynov transition-colors">CGU</Link>
+               <Link to="/confidentialite" className="hover:text-ynov transition-colors">Confidentialité</Link>
+            </div>
           </div>
         </div>
       </footer>
@@ -181,6 +189,7 @@ function App() {
           <Route path="/inscription" element={<RegistrationForm />} />
           <Route path="/cgu" element={<TermsOfUse />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/mes-inscriptions" element={<MyRegistrations />} />
           <Route path="/correction" element={<RegistrationCorrection onBack={() => window.location.hash = '#/'} />} />
 

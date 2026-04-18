@@ -54,7 +54,7 @@ const WelcomePage = () => {
     },
     {
       question: "Comment accéder au campus ?",
-      answer: "Le campus est situé à Casablanca, quartier Bournazel. Vous trouverez un lien Google Maps interactif directement sur votre badge numérique pour faciliter votre navigation."
+      answer: "Le campus est situé à Casablanca, quartier des hôpitaux. Vous trouverez un lien Google Maps interactif directement sur votre badge numérique pour faciliter votre navigation."
     },
     {
       question: "Puis-je venir avec un accompagnateur ?",
@@ -82,30 +82,30 @@ const WelcomePage = () => {
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <MapPin className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase text-xs tracking-widest mb-2 text-slate-900 dark:text-white">Lieu & Accès</h3>
-          <a 
-            href="https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic" 
-            target="_blank" 
+          <a
+            href="https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-slate-500 dark:text-slate-400 text-[11px] font-bold hover:text-ynov transition-colors underline underline-offset-4 decoration-slate-200 dark:decoration-slate-800"
           >
-            CAMPUS BOURNAZEL, CASABLANCA
+            Casablanca Ynov campus
           </a>
         </div>
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <Users className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase text-xs tracking-widest mb-2 text-slate-900 dark:text-white">Public Cible</h3>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold">INVITÉS & ÉTUDIANTS YNOV</p>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold">PROFESSIONELS & ÉTUDIANTS YNOV</p>
         </div>
       </div>
 
       {/* Action Box */}
       <div className="bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/50 p-8 sm:p-12 rounded-[3.5rem] space-y-8 shadow-inner dark:shadow-none text-center relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-ynov/5 blur-3xl rounded-full"></div>
-        
+
         <div className="space-y-4">
           <h2 className="text-3xl sm:text-4xl font-black uppercase italic text-slate-900 dark:text-white tracking-tighter">Inscriptions Ouvertes</h2>
           <p className="text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-sm sm:text-base leading-relaxed font-medium">
-            Réservez votre place dès maintenant pour participer aux conférences et ateliers exclusifs de l'édition 2026.
+            Cet événement est privé. Pour vous inscrire, veuillez utiliser le lien d'invitation qui vous a été communiqué par E-mail.
           </p>
         </div>
 
@@ -120,7 +120,7 @@ const WelcomePage = () => {
 
         <div className="pt-6 border-t border-slate-200/50 dark:border-slate-800/50 w-full max-w-md mx-auto">
           <Link to="/mes-inscriptions" className="flex items-center justify-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-slate-500 hover:text-ynov transition-colors group">
-            <CheckCircle className="w-4 h-4 text-ynov" /> 
+            <CheckCircle className="w-4 h-4 text-ynov" />
             <span className="underline underline-offset-8 decoration-slate-200 dark:decoration-slate-800/50 group-hover:decoration-ynov">Gérer mon inscription ou récupérer mon badge</span>
           </Link>
         </div>
