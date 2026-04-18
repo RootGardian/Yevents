@@ -188,7 +188,7 @@ const AdminDashboard = ({ user, token }) => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-4xl font-black mb-1 italic uppercase underline decoration-ynov decoration-4 underline-offset-8">Dashboard Admin</h1>
-          <p className="text-xs sm:text-sm text-slate-400">Yevents Management System</p>
+          <p className="text-xs sm:text-sm text-slate-400">Bienvenue, <span className="text-white font-bold">{user.nom}</span> | Yevents Management System</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setView('stats')} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'stats' ? 'bg-ynov border-ynov text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Stats</button>

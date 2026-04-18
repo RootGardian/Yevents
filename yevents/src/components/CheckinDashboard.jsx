@@ -101,7 +101,7 @@ const CheckinDashboard = ({ user, token }) => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-4xl font-black mb-1 italic uppercase underline decoration-ynov decoration-4 underline-offset-8">CHECK-IN</h1>
-          <p className="text-xs sm:text-sm text-slate-400">Scanner & Validation des présences</p>
+          <p className="text-xs sm:text-sm text-slate-400">Bienvenue, <span className="text-white font-bold">{user.nom}</span> | Scanner & Validation des présences</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <button onClick={fetchData} className="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors">
