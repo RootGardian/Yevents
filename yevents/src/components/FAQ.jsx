@@ -29,10 +29,10 @@ const FAQItem = ({ question, answer }) => {
             className="overflow-hidden"
           >
             <div className="px-6 pb-6 pt-2">
-                <div className="h-px w-full bg-slate-50 dark:bg-slate-800 mb-4" />
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+              <div className="h-px w-full bg-slate-50 dark:bg-slate-800 mb-4" />
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                 {answer}
-                </p>
+              </p>
             </div>
           </motion.div>
         )}
@@ -69,7 +69,7 @@ const FAQ = () => {
     },
     {
       question: "Comment accéder au campus ?",
-      answer: "Le campus est situé à Casablanca, quartier Bournazel. Un lien Google Maps interactif est présent sur votre badge numérique et sur la page d'accueil pour faciliter votre itinéraire."
+      answer: "Le campus est situé à Casablanca, au quartier des hôpitaux8 Ibnou Katima (Ex Bournazel), Casablanca 20000. Facilitez votre trajet en utilisant le lien interactif Google Maps présent sur votre badge. Vous pouvez également cliquer sur la localisation au bas de la page d'accueil pour être redirigé vers l'application."
     },
     {
       question: "Le badge est-il obligatoire pour entrer ?",
@@ -116,8 +116,8 @@ const FAQ = () => {
           <h2 className="text-2xl font-black uppercase italic tracking-tight">Besoin d'aide supplémentaire ?</h2>
           <p className="text-white/80 text-sm font-medium">Notre équipe support vous répond sous 24h.</p>
         </div>
-        <a 
-          href="mailto:ahmedrachid.bangoura@ynov.com" 
+        <a
+          href="mailto:ahmedrachid.bangoura@ynov.com"
           className="relative z-10 flex items-center gap-3 px-8 py-4 bg-white text-ynov rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-slate-50 transition-all shadow-xl active:scale-95"
         >
           <Mail className="w-4 h-4" /> Nous contacter
