@@ -74,7 +74,14 @@ const Layout = ({ children, user, onLogout }) => {
               <div className="w-6 h-6 bg-ynov rounded flex items-center justify-center"><Calendar className="text-white w-3 h-3" /></div>
               <span className="font-black tracking-tighter dark:text-white uppercase">Ynov Events</span>
             </div>
-            <p className="text-slate-500 text-xs">8 Ibnou Katima (Ex Bournazel)<br />Casablanca 20000</p>
+            <a 
+              href="https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-slate-500 text-xs hover:text-ynov transition-colors cursor-pointer"
+            >
+              8 Ibnou Katima (Ex Bournazel)<br />Casablanca 20000
+            </a>
           </div>
           <div className="space-y-4">
             <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">L'Événement</h4>

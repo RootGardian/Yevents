@@ -2,8 +2,8 @@ const QRCode = require('qrcode');
 
 const sendConfirmationEmail = async (participant) => {
     console.log(`[MAILER] Sending email via Brevo API to ${participant.email}...`);
-    
-    const apiKey = process.env.BREVO_API_KEY; 
+
+    const apiKey = process.env.BREVO_API_KEY;
     const url = 'https://api.brevo.com/v3/smtp/email';
 
     if (!apiKey) {
@@ -22,48 +22,48 @@ const sendConfirmationEmail = async (participant) => {
         const qrBase64 = qrDataUrl.split('base64,')[1];
 
         const emailData = {
-            sender: { 
-                name: process.env.MAIL_FROM_NAME || 'Ynov Events', 
-                email: process.env.MAIL_FROM_ADDRESS 
+            sender: {
+                name: process.env.MAIL_FROM_NAME || 'Ynov Events',
+                email: process.env.MAIL_FROM_ADDRESS
             },
-            to: [{ 
-                email: participant.email, 
-                name: `${participant.prenom} ${participant.nom}` 
+            to: [{
+                email: participant.email,
+                name: `${participant.prenom} ${participant.nom}`
             }],
             subject: 'Confirmation d\'inscription - Ynov Talk Events 2026',
             htmlContent: `
             <div style="background-color: #1a1a1a; color: #ffffff; font-family: 'Helvetica', Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto;">
                 <div style="text-align: left; padding-bottom: 20px;">
-                    <p style="font-size: 16px; margin: 0;">Hi ${participant.prenom} ${participant.nom},</p>
-                    <p style="font-size: 16px; margin: 15px 0 5px 0;">Thank you for registering to attend <b>YNOV TALK EVENTS 2026</b>.</p>
-                    <p style="font-size: 16px; margin: 5px 0;">Your registration is now confirmed.</p>
+                    <p style="font-size: 16px; margin: 0;">Bonjour ${participant.prenom} ${participant.nom},</p>
+                    <p style="font-size: 16px; margin: 15px 0 5px 0;">Merci de vous être inscrit à l'événement <b>YNOV TALK EVENTS 2026</b>.</p>
+                    <p style="font-size: 16px; margin: 5px 0;">Votre inscription est désormais confirmée.</p>
                 </div>
 
                 <div style="background-color: #262626; padding: 30px; border-radius: 8px; margin: 20px 0; border: 1px solid #333;">
-                    <h2 style="text-align: center; font-size: 18px; margin-bottom: 30px; border-bottom: 1px solid #444; padding-bottom: 20px; letter-spacing: 1px;">YOUR VISITOR REGISTRATION SUMMARY:</h2>
+                    <h2 style="text-align: center; font-size: 18px; margin-bottom: 30px; border-bottom: 1px solid #444; padding-bottom: 20px; letter-spacing: 1px;">RÉSUMÉ DE VOTRE INSCRIPTION :</h2>
                     
                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                         <tr>
                             <td width="40%" valign="top" style="text-align: center;">
-                                <p style="font-size: 12px; color: #aaa; margin: 0;">Your Unique Registration Number</p>
+                                <p style="font-size: 12px; color: #aaa; margin: 0;">Votre numéro d'inscription unique</p>
                                 <p style="font-size: 18px; font-weight: bold; margin: 10px 0;">${urn}</p>
                                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${participant.qrCodeToken}" width="150" height="150" style="display: block; margin: auto; background: white; padding: 5px;" alt="QR Code" />
                             </td>
                             <td width="60%" valign="top" style="padding-left: 20px;">
                                 <div style="margin-bottom: 15px;">
-                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Unique Registration Number (URN):</p>
+                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Numéro d'inscription unique (URN) :</p>
                                     <p style="font-size: 16px; font-weight: bold; margin: 5px 0;">${urn}</p>
                                 </div>
                                 <div style="margin-bottom: 15px;">
-                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Badge Category:</p>
+                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Catégorie du badge :</p>
                                     <p style="font-size: 16px; font-weight: bold; margin: 5px 0;">${participant.categorieBadge}</p>
                                 </div>
                                 <div style="margin-bottom: 15px;">
-                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Full Name:</p>
+                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Nom complet :</p>
                                     <p style="font-size: 16px; font-weight: bold; margin: 5px 0; text-transform: uppercase;">${participant.prenom} ${participant.nom}</p>
                                 </div>
                                 <div style="margin-bottom: 15px;">
-                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Company Name:</p>
+                                    <p style="font-size: 12px; color: #aaa; margin: 0;">Entreprise / Université :</p>
                                     <p style="font-size: 16px; font-weight: bold; margin: 5px 0; text-transform: uppercase;">${participant.entreprise || 'N/A'}</p>
                                 </div>
                             </td>
@@ -72,17 +72,17 @@ const sendConfirmationEmail = async (participant) => {
                 </div>
 
                 <div style="background-color: #8c2d2d; padding: 15px; text-align: center; border-radius: 4px 4px 0 0;">
-                    <h3 style="margin: 0; letter-spacing: 1px;">EVENT INFORMATION</h3>
+                    <h3 style="margin: 0; letter-spacing: 1px;">INFORMATIONS SUR L'ÉVÉNEMENT</h3>
                 </div>
                 <div style="background-color: #262626; padding: 20px; border-radius: 0 0 4px 4px; border: 1px solid #333;">
                     <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                             <td width="55%" valign="top">
-                                <p style="font-weight: bold; margin: 0 0 10px 0;">Show timings:</p>
-                                <p style="font-size: 14px; margin: 5px 0;">Saturday, 2 May : 02:00 pm – 06:00 pm</p>
+                                <p style="font-weight: bold; margin: 0 0 10px 0;">Horaires :</p>
+                                <p style="font-size: 14px; margin: 5px 0;">Samedi 2 Mai : 14h00 – 18h00</p>
                             </td>
                             <td width="45%" valign="top">
-                                <p style="font-weight: bold; margin: 0 0 10px 0;">Location:</p>
+                                <p style="font-weight: bold; margin: 0 0 10px 0;">Lieu :</p>
                                 <p style="font-size: 14px; margin: 5px 0;">Maroc Ynov Campus, 8 Ibnou Katima (Ex Bournazel), Casablanca 20000</p>
                             </td>
                         </tr>
@@ -90,7 +90,7 @@ const sendConfirmationEmail = async (participant) => {
                 </div>
 
                 <div style="padding-top: 30px; text-align: center; border-top: 1px solid #333; margin-top: 30px;">
-                    <p style="font-size: 12px; color: #888;">&copy; 2026 YNOV MOROCCO. All rights reserved.</p>
+                    <p style="font-size: 12px; color: #888;">&copy; 2026 Maroc Ynov Campus. Tous droits réservés.</p>
                 </div>
             </div>
             `,
@@ -137,9 +137,9 @@ const sendOTPEmail = async (email, otp) => {
     }
 
     const emailData = {
-        sender: { 
-            name: process.env.MAIL_FROM_NAME || 'Ynov Events', 
-            email: process.env.MAIL_FROM_ADDRESS 
+        sender: {
+            name: process.env.MAIL_FROM_NAME || 'Ynov Events',
+            email: process.env.MAIL_FROM_ADDRESS
         },
         to: [{ email }],
         subject: `Votre code de vérification - Ynov Events`,
@@ -172,7 +172,7 @@ const sendOTPEmail = async (email, otp) => {
     }
 };
 
-module.exports = { 
+module.exports = {
     sendConfirmationEmail,
     sendOTPEmail
 };

@@ -21,7 +21,14 @@ const WelcomePage = () => {
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group shadow-sm dark:shadow-none">
           <MapPin className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase text-sm mb-2 text-slate-900 dark:text-white">Lieu</h3>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold">Campus Ynov Casablanca</p>
+          <a 
+            href="https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-slate-500 dark:text-slate-400 text-xs font-semibold hover:text-ynov transition-colors"
+          >
+            Campus Ynov Casablanca
+          </a>
         </div>
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-colors group shadow-sm dark:shadow-none">
           <Users className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
