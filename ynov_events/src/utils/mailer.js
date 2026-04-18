@@ -197,7 +197,7 @@ const sendReminderEmail = async (email, name, role = 'Participant') => {
             <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">Plus que 2 jours avant <b>Ynov Talk Events 2026</b>. Nous avons hâte de vous retrouver au Campus de Casablanca pour ce moment de partage authentique.</p>
             
             <div style="background-color: #1e293b; padding: 25px; border-radius: 8px; border-left: 4px solid #8c2d2d; margin: 30px 0;">
-                <p style="font-size: 14px; font-weight: bold; color: #ffffff; margin-top: 0; text-transform: uppercase; letter-spacing: 1px;">ℹ️ INFORMATION CRITIQUE :</p>
+                <p style="font-size: 14px; font-weight: bold; color: #ffffff; margin-top: 0; text-transform: uppercase; letter-spacing: 1px;">ℹINFORMATION CRITIQUE :</p>
                 <p style="font-size: 15px; color: #f8fafc; margin-bottom: 0;">
                     Le <b>badge QR Code</b> qui vous a été transmis par mail lors de votre inscription est <b>STRICTEMENT OBLIGATOIRE</b> pour accéder au campus. Veuillez le préparer sur votre téléphone ou l'imprimer pour fluidifier votre entrée.
                 </p>
@@ -210,7 +210,7 @@ const sendReminderEmail = async (email, name, role = 'Participant') => {
             </p>
 
             <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b;">
-                <p style="font-size: 12px; color: #64748b;">Ce message est un rappel automatique pour l'événement Ynov Talk Events 2026.</p>
+                <p style="font-size: 12px; color: #64748b;">Ce message est un rappel pour l'événement Ynov Talk Events 2026.</p>
             </div>
         </div>
         `

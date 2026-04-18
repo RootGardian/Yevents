@@ -129,19 +129,27 @@ exports.checkIn = async (req, res) => {
         const participant = participants[0];
 
         if (participant.isCheckedIn) {
-            return res.json({ message: 'Déjà présent', participant });
+            return res.status(409).json({ 
+                status: 'ALREADY_CHECKED_IN',
+                message: 'ALERTE : Ce badge a déjà été contrôlé !', 
+                participant 
+            });
         }
 
         const updated = await prisma.participant.update({
             where: { id: participant.id },
-            data: { isCheckedIn: true }
+            data: { 
+                isCheckedIn: true,
+                checkedInAt: new Date()
+            }
         });
 
         await audit.log('CHECKIN', `Validation de présence: ${updated.prenom} ${updated.nom}`, updated);
 
-        res.json({ message: 'Check-in réussi !', participant: updated });
+        res.json({ message: 'Check-in réussi ! Entrée validée.', participant: updated });
     } catch (error) {
-        res.status(500).json({ message: 'Erreur serveur' });
+        console.error('[CHECKIN] Error:', error);
+        res.status(500).json({ message: 'Erreur serveur lors du check-in' });
     }
 };
 
@@ -170,7 +178,18 @@ exports.stats = async (req, res) => {
             taux_remplissage: Math.round((totalInscrits / maxCapacity) * 100),
             taux_presence: totalInscrits > 0 ? Math.round((totalPresent / totalInscrits) * 100) : 0,
             stats_par_categorie: Object.entries(statsParCategorie).map(([k, v]) => ({ categorie_badge: k, total: v })),
-            email_failures: emailFailures
+            email_failures: emailFailures,
+            presences_par_heure: participants
+                .filter(p => p.isCheckedIn && p.checkedInAt)
+                .reduce((acc, p) => {
+                    const hour = new Date(p.checkedInAt).getHours();
+                    const hourStr = `${hour}h`;
+                    const existing = acc.find(item => item.hour === hourStr);
+                    if (existing) existing.count++;
+                    else acc.push({ hour: hourStr, count: 1 });
+                    return acc;
+                }, [])
+                .sort((a, b) => parseInt(a.hour) - parseInt(b.hour))
         });
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur' });

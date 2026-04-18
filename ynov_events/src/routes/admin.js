@@ -8,6 +8,7 @@ router.use(isAdmin);
 
 router.get('/export', adminController.exportParticipants);
 router.post('/resend-email', adminController.resendEmail);
+router.post('/trigger-reminders', adminController.triggerManualReminders);
 router.get('/audit-logs', adminController.getAuditLogs);
 
 // Staff management

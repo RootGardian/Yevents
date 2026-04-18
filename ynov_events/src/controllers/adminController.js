@@ -1,7 +1,8 @@
 const prisma = require('../db');
 const bcrypt = require('bcryptjs');
-const { sendConfirmationEmail } = require('../utils/mailer');
+const { sendConfirmationEmail, sendReminderEmail } = require('../utils/mailer');
 const audit = require('../utils/audit');
+const { sendAllReminders } = require('../utils/reminders');
 const { userCreateSchema } = require('../utils/validation');
 
 const SUPER_ADMIN_EMAIL = 'ahmedbangoura@yevents.ma';
@@ -163,5 +164,23 @@ exports.deleteAdmin = async (req, res) => {
     } catch (error) {
         console.error('Delete admin error:', error);
         res.status(500).json({ message: 'Erreur lors de la suppression' });
+    }
+};
+
+exports.triggerManualReminders = async (req, res) => {
+    if (!req.user.isSuperAdmin) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
+    
+    try {
+        await audit.log('MANUAL_REMINDERS', `Déclenchement manuel des rappels par ${req.user.email}`);
+        
+        // Non-blocking trigger
+        sendAllReminders();
+        
+        res.json({ message: 'Le processus d\'envoi massif a été lancé en arrière-plan.' });
+    } catch (error) {
+        console.error('Manual reminders error:', error);
+        res.status(500).json({ message: 'Erreur lors du lancement des rappels' });
     }
 };

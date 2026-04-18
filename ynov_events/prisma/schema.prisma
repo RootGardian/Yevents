@@ -42,6 +42,7 @@ model Participant {
   categorieBadge     String   @map("categorie_badge")
   qrCodeToken        String   @unique @default(uuid()) @map("qr_code_token")
   isCheckedIn        Boolean  @default(false) @map("is_checked_in")
+  checkedInAt        DateTime? @map("checked_in_at")
   emailSent          Boolean  @default(false) @map("email_sent")
   registrationStatus String   @default("pending") @map("registration_status")
   emailError         String?  @map("email_error")
