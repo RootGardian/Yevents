@@ -9,6 +9,7 @@ import RegistrationCorrection from './components/RegistrationCorrection';
 import TermsOfUse from './components/TermsOfUse';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import MyRegistrations from './components/MyRegistrations';
+import ScrollToTop from './components/ScrollToTop';
 import api from './api';
 import { useNavigate } from 'react-router-dom';
 
@@ -160,6 +161,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Layout user={user} onLogout={handleLogout}>
         <Routes>
           <Route path="/" element={<WelcomePage />} />
