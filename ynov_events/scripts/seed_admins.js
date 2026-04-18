@@ -7,8 +7,8 @@ async function main() {
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const admins = [
-    { name: 'Ahmed Bangoura', email: 'ahmedbangoura@yevents.ma' },
-    { name: 'Daphne Bouyedi', email: 'daphneebouyedi@yevents.ma' }
+    { name: 'Ahmed Bangoura', email: 'ahmedbangoura@yevents.ma', isSuperAdmin: true },
+    { name: 'Daphne Bouyedi', email: 'daphneebouyedi@yevents.ma', isSuperAdmin: false }
   ];
 
   console.log('--- Starting Admin Seeding ---');
@@ -18,12 +18,14 @@ async function main() {
       where: { email: adminData.email },
       update: {
         name: adminData.name,
-        password: hashedPassword
+        password: hashedPassword,
+        isSuperAdmin: adminData.isSuperAdmin
       },
       create: {
         name: adminData.name,
         email: adminData.email,
-        password: hashedPassword
+        password: hashedPassword,
+        isSuperAdmin: adminData.isSuperAdmin
       }
     });
     console.log(`[SEED] Admin created/updated: ${user.email}`);

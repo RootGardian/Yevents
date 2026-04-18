@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const history = require('connect-history-api-fallback');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config();
 
@@ -20,13 +21,44 @@ app.use((req, res, next) => {
 });
 
 // --- Middleware ---
-app.use(helmet({ contentSecurityPolicy: false }));
-app.use(cors({
-    origin: ['https://yevents-7o90.onrender.com', 'http://localhost:5173'],
-    credentials: true
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Needed for some SPA logic
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "blob:"],
+            connectSrc: ["'self'", "https://yevents-7o90.onrender.com"]
+        }
+    }
 }));
+
+const corsOptions = {
+    origin: ['https://yevents-7o90.onrender.com', 'http://localhost:5173'],
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan('dev'));
+
+// --- Rate Limiting ---
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { message: 'Trop de requêtes, veuillez réessayer plus tard.' }
+});
+
+const strictLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10, // Max 10 attempts per 15 mins for login/register
+    message: { message: 'Trop de tentatives, accès bloqué temporairement (15 min).' }
+});
+
+app.use('/api/', globalLimiter);
+app.use('/api/login', strictLimiter);
+app.use('/api/register', strictLimiter);
+app.use('/api/request-otp', strictLimiter);
 
 // --- API Routes ---
 try {

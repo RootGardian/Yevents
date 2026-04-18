@@ -35,7 +35,7 @@ const Layout = ({ children, user, onLogout }) => {
               >
                 Check-in
               </Link>
-              {(!user || user.role === 'admin') && (
+              {(!user || user.role === 'admin' || user.isSuperAdmin) && (
                 <Link
                   to="/admin"
                   className={`text-[11px] font-black uppercase tracking-[0.25em] transition-all duration-300 ${location.pathname === '/admin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}

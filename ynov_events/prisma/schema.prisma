@@ -13,6 +13,7 @@ model Admin {
   name      String   @map("nom")
   email     String   @unique
   password  String
+  isSuperAdmin Boolean  @default(false) @map("is_super_admin")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -39,7 +40,6 @@ model Participant {
   telephone          String
   entreprise         String?
   categorieBadge     String   @map("categorie_badge")
-  nbAccompagnateurs  Int      @default(0) @map("nb_accompagnateurs")
   qrCodeToken        String   @unique @default(uuid()) @map("qr_code_token")
   isCheckedIn        Boolean  @default(false) @map("is_checked_in")
   emailSent          Boolean  @default(false) @map("email_sent")

@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const { sendConfirmationEmail } = require('../utils/mailer');
 const audit = require('../utils/audit');
+const { userCreateSchema } = require('../utils/validation');
 
 const SUPER_ADMIN_EMAIL = 'ahmedbangoura@yevents.ma';
 
@@ -57,7 +58,7 @@ exports.getAuditLogs = async (req, res) => {
 };
 
 exports.getStaff = async (req, res) => {
-    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+    if (!req.user.isSuperAdmin) {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
     try {
@@ -69,24 +70,29 @@ exports.getStaff = async (req, res) => {
 };
 
 exports.createStaff = async (req, res) => {
-    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+    if (!req.user.isSuperAdmin) {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
-    const { name, email, password } = req.body;
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const validatedData = userCreateSchema.parse(req.body);
+        const { name, email, password } = validatedData;
+
+        const hashedPassword = await bcrypt.hash(password, 12);
         const staff = await prisma.staff.create({
             data: { name, email, password: hashedPassword }
         });
         res.status(201).json(staff);
     } catch (error) {
+        if (error.name === 'ZodError') {
+            return res.status(400).json({ message: error.errors[0].message });
+        }
         console.error('Create staff error:', error);
         res.status(500).json({ message: 'Erreur lors de la création du staff' });
     }
 };
 
 exports.deleteStaff = async (req, res) => {
-    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+    if (!req.user.isSuperAdmin) {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
     const { id } = req.params;
@@ -99,15 +105,15 @@ exports.deleteStaff = async (req, res) => {
     }
 };
 
-// --- Admin Management (RESTRICTED TO AHMED BANGOURA) ---
+// --- Admin Management (RESTRICTED TO SUPER ADMIN) ---
 
 exports.getAdmins = async (req, res) => {
-    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+    if (!req.user.isSuperAdmin) {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
     try {
         const admins = await prisma.admin.findMany({
-            select: { id: true, name: true, email: true, createdAt: true },
+            select: { id: true, name: true, email: true, isSuperAdmin: true, createdAt: true },
             orderBy: { name: 'asc' }
         });
         res.json(admins);
@@ -117,37 +123,41 @@ exports.getAdmins = async (req, res) => {
 };
 
 exports.createAdmin = async (req, res) => {
-    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+    if (!req.user.isSuperAdmin) {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
-    const { name, email, password } = req.body;
     try {
+        const validatedData = userCreateSchema.parse(req.body);
+        const { name, email, password } = validatedData;
+
         const hashedPassword = await bcrypt.hash(password, 12);
         const admin = await prisma.admin.create({
-            data: { name, email, password: hashedPassword },
-            select: { id: true, name: true, email: true }
+            data: { name, email, password: hashedPassword, isSuperAdmin: false },
+            select: { id: true, name: true, email: true, isSuperAdmin: true }
         });
         await audit.log('ADMIN_CREATED', `Admin créé par Super Admin: ${email}`);
         res.status(201).json(admin);
     } catch (error) {
+        if (error.name === 'ZodError') {
+            return res.status(400).json({ message: error.errors[0].message });
+        }
         console.error('Create admin error:', error);
         res.status(500).json({ message: 'Erreur lors de la création de l\'admin' });
     }
 };
 
 exports.deleteAdmin = async (req, res) => {
-    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+    if (!req.user.isSuperAdmin) {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
     const { id } = req.params;
     
-    // Prevent self-deletion of Super Admin via API
-    const adminToDelete = await prisma.admin.findUnique({ where: { id: parseInt(id) } });
-    if (adminToDelete && adminToDelete.email === SUPER_ADMIN_EMAIL) {
-        return res.status(400).json({ message: 'Le Super Admin ne peut pas être supprimé' });
-    }
-
     try {
+        const adminToDelete = await prisma.admin.findUnique({ where: { id: parseInt(id) } });
+        if (adminToDelete && adminToDelete.isSuperAdmin) {
+            return res.status(400).json({ message: 'Le Super Admin ne peut pas être supprimé' });
+        }
+
         await prisma.admin.delete({ where: { id: parseInt(id) } });
         await audit.log('ADMIN_DELETED', `Admin supprimé par Super Admin (ID: ${id})`);
         res.json({ message: 'Administrateur supprimé' });

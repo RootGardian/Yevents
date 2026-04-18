@@ -194,7 +194,7 @@ const AdminDashboard = ({ user, token }) => {
           >
             Stats
           </button>
-          {user.email === 'ahmedbangoura@yevents.ma' && (
+          {user.isSuperAdmin && (
             <button
               onClick={fetchStaff}
               className={`px-4 py-2 rounded-lg font-bold transition-all border ${view === 'staff' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
@@ -202,7 +202,7 @@ const AdminDashboard = ({ user, token }) => {
               Staff
             </button>
           )}
-          {user.email === 'ahmedbangoura@yevents.ma' && (
+          {user.isSuperAdmin && (
             <button
               onClick={fetchAdmins}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all border ${view === 'admins' ? 'bg-red-600 border-red-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
@@ -225,9 +225,9 @@ const AdminDashboard = ({ user, token }) => {
       {view === 'stats' && (
         <>
           {/* Stats Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Inscrits', value: stats?.total_attendu, icon: Users, color: 'text-blue-400' },
+              { label: 'Total Inscrits', value: stats?.total_inscrits, icon: Users, color: 'text-blue-400' },
               { label: 'Remplissage', value: `${stats?.taux_remplissage}%`, icon: BarChart3, color: 'text-ynov' },
               { label: 'Présents', value: stats?.total_present, icon: CheckCircle2, color: 'text-green-400' },
               { label: 'Echecs Mail', value: stats?.email_failures || 0, icon: AlertTriangle, color: stats?.email_failures > 0 ? 'text-red-500' : 'text-slate-500' },
@@ -281,16 +281,16 @@ const AdminDashboard = ({ user, token }) => {
                           <div className="text-[10px] text-slate-500">{p.email}</div>
                         </td>
                         <td className="px-4 py-3">
-                          {p.is_checked_in ? (
+                          {p.isCheckedIn ? (
                             <span className="px-2 py-0.5 rounded text-[9px] font-black bg-green-500/20 text-green-500 border border-green-500/30">PRÉSENT</span>
-                          ) : p.registration_status === 'email_failed' ? (
+                          ) : p.registrationStatus === 'email_failed' ? (
                             <span className="px-2 py-0.5 rounded text-[9px] font-black bg-red-500/20 text-red-500 border border-red-500/30">ERREUR EMAIL</span>
                           ) : (
                             <span className="px-2 py-0.5 rounded text-[9px] font-black bg-slate-800 text-slate-500 border border-slate-700">ATTENDU</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          {p.registration_status === 'email_failed' && (
+                          {p.registrationStatus === 'email_failed' && (
                             <button onClick={() => handleResendMail(p.email)} title="Renvoyer l'email" className="p-2 text-ynov hover:bg-ynov/10 rounded-lg"><RefreshCw className="w-4 h-4" /></button>
                           )}
                         </td>
@@ -329,7 +329,7 @@ const AdminDashboard = ({ user, token }) => {
         </div>
       )}
 
-      {view === 'staff' && user.email === 'ahmedbangoura@yevents.ma' && (
+      {view === 'staff' && user.isSuperAdmin && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl h-fit">
             <h3 className="font-bold text-white mb-6 flex items-center gap-2"><UserPlus className="w-5 h-5 text-indigo-400" /> Ajouter Staff</h3>
@@ -365,7 +365,7 @@ const AdminDashboard = ({ user, token }) => {
         </div>
       )}
 
-      {view === 'admins' && user.email === 'ahmedbangoura@yevents.ma' && (
+      {view === 'admins' && user.isSuperAdmin && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl h-fit">
             <h3 className="font-bold text-white mb-6 flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-red-400" /> Ajouter Admin</h3>
@@ -390,10 +390,10 @@ const AdminDashboard = ({ user, token }) => {
                       <td className="px-6 py-4 font-bold text-white">{adm.name}</td>
                       <td className="px-6 py-4 text-slate-400">
                         {adm.email}
-                        {adm.email === 'ahmedbangoura@yevents.ma' && <span className="ml-2 text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded">SUPER ADMIN</span>}
+                        {adm.isSuperAdmin && <span className="ml-2 text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded">SUPER ADMIN</span>}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        {adm.email !== 'ahmedbangoura@yevents.ma' && (
+                        {!adm.isSuperAdmin && (
                           <button onClick={() => handleDeleteAdmin(adm.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                         )}
                       </td>

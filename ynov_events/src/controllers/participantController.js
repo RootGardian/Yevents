@@ -2,27 +2,28 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { sendConfirmationEmail } = require('../utils/mailer');
 const { v4: uuidv4 } = require('uuid');
+const { registrationSchema } = require('../utils/validation');
 
 exports.register = async (req, res) => {
-    const { nom, prenom, email, telephone, entreprise, categorie_badge, nb_accompagnateurs } = req.body;
-
     try {
-        // Capacity check
+        // 0. Validation with Zod
+        const validatedData = registrationSchema.parse(req.body);
+        const { nom, prenom, email, telephone, entreprise, categorie_badge } = validatedData;
+
+        // 1. Capacity check
         const config = await prisma.setting.findUnique({ where: { key: 'max_capacity' } });
         const maxCapacity = config ? parseInt(config.value) : 100;
         
-        const participants = await prisma.participant.findMany();
-        const currentTotal = participants.reduce((acc, p) => acc + 1 + p.nbAccompagnateurs, 0);
-        const requested = 1 + (parseInt(nb_accompagnateurs) || 0);
-
-        if ((currentTotal + requested) > maxCapacity) {
+        const totalInscrits = await prisma.participant.count();
+        
+        if (totalInscrits >= maxCapacity) {
             return res.status(422).json({
                 message: 'Événement complet',
-                places_restantes: Math.max(0, maxCapacity - currentTotal)
+                places_restantes: 0
             });
         }
 
-        // 1. Check if email already exists
+        // 2. Check if email already exists
         const existing = await prisma.participant.findUnique({ where: { email } });
         if (existing) {
             return res.status(400).json({ 
@@ -30,7 +31,7 @@ exports.register = async (req, res) => {
             });
         }
 
-        // 2. Create the participant record
+        // 3. Create the participant record
         let participant;
         try {
             participant = await prisma.participant.create({
@@ -41,7 +42,6 @@ exports.register = async (req, res) => {
                     telephone,
                     entreprise,
                     categorieBadge: categorie_badge,
-                    nbAccompagnateurs: parseInt(nb_accompagnateurs) || 0,
                     qrCodeToken: uuidv4(),
                     registrationStatus: 'pending',
                     emailSent: false,
@@ -53,7 +53,7 @@ exports.register = async (req, res) => {
             return res.status(500).json({ message: 'Erreur lors de la création du profil participant.' });
         }
 
-        // 3. Attempt email sending
+        // 4. Attempt email sending
         try {
             await sendConfirmationEmail(participant);
             
@@ -74,7 +74,6 @@ exports.register = async (req, res) => {
         } catch (emailError) {
             console.error('[REGISTRATION] Email sending failed:', emailError);
             
-            // Update the record with the error status for tracing
             await prisma.participant.update({
                 where: { id: participant.id },
                 data: { 
@@ -83,14 +82,16 @@ exports.register = async (req, res) => {
                 }
             });
 
-            // Return 500 as requested: success only if mail is confirmed
             return res.status(500).json({ 
-                message: 'Erreur lors de l\'envoi du mail de confirmation. Votre inscription est enregistrée mais en attente de validation manuelle.', 
+                message: 'Erreur lors de l\'envois du mail de confirmation. Votre inscription est enregistrée mais en attente de validation manuelle.', 
                 error: emailError.message 
             });
         }
 
     } catch (error) {
+        if (error.name === 'ZodError') {
+            return res.status(400).json({ message: error.errors[0].message });
+        }
         console.error('Registration error:', error);
         res.status(500).json({ message: 'Erreur lors de l\'inscription' });
     }
@@ -153,12 +154,7 @@ exports.stats = async (req, res) => {
         const participants = await prisma.participant.findMany();
         
         const totalInscrits = participants.length;
-        const totalAccompagnateurs = participants.reduce((acc, p) => acc + p.nbAccompagnateurs, 0);
-        const totalAttendu = totalInscrits + totalAccompagnateurs;
-        
-        const presents = participants.filter(p => p.isCheckedIn);
-        const totalPresent = presents.length + presents.reduce((acc, p) => acc + p.nbAccompagnateurs, 0);
-
+        const totalPresent = participants.filter(p => p.isCheckedIn).length;
         const emailFailures = participants.filter(p => p.registrationStatus === 'email_failed').length;
 
         // Stats by category
@@ -170,11 +166,10 @@ exports.stats = async (req, res) => {
         res.json({
             jauge_max: maxCapacity,
             total_inscrits: totalInscrits,
-            total_accompagnateurs: totalAccompagnateurs,
-            total_attendu: totalAttendu,
+            total_attendu: totalInscrits,
             total_present: totalPresent,
-            taux_remplissage: Math.round((totalAttendu / maxCapacity) * 100),
-            taux_presence: totalAttendu > 0 ? Math.round((totalPresent / totalAttendu) * 100) : 0,
+            taux_remplissage: Math.round((totalInscrits / maxCapacity) * 100),
+            taux_presence: totalInscrits > 0 ? Math.round((totalPresent / totalInscrits) * 100) : 0,
             stats_par_categorie: Object.entries(statsParCategorie).map(([k, v]) => ({ categorie_badge: k, total: v })),
             email_failures: emailFailures
         });
@@ -206,9 +201,12 @@ exports.lookup = async (req, res) => {
 };
 
 exports.updateParticipant = async (req, res) => {
-    const { id, nom, prenom, email, telephone, entreprise, categorie_badge } = req.body;
-
     try {
+        const validatedData = registrationSchema.parse(req.body);
+        const { id } = req.body; // ID is not in registrationSchema usually, but it's passed here
+        
+        const { nom, prenom, email, telephone, entreprise, categorie_badge } = validatedData;
+
         // Check if new email is already used by someone else
         const existing = await prisma.participant.findFirst({
             where: {
@@ -230,12 +228,11 @@ exports.updateParticipant = async (req, res) => {
                 telephone,
                 entreprise,
                 categorieBadge: categorie_badge,
-                registrationStatus: 'pending', // Reset status for re-validation
+                registrationStatus: 'pending',
                 emailSent: false
             }
         });
 
-        // Reuse existing email logic
         try {
             await sendConfirmationEmail(updated);
             await prisma.participant.update({
@@ -255,8 +252,63 @@ exports.updateParticipant = async (req, res) => {
         }
 
     } catch (error) {
+        if (error.name === 'ZodError') {
+            return res.status(400).json({ message: error.errors[0].message });
+        }
         console.error('Update error:', error);
         res.status(500).json({ message: 'Erreur lors de la mise à jour.' });
+    }
+};
+
+exports.requestOTP = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const participant = await prisma.participant.findUnique({ where: { email } });
+        if (!participant) {
+            return res.status(404).json({ message: 'Aucun compte trouvé avec cet e-mail.' });
+        }
+
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes
+
+        await prisma.otp.upsert({
+            where: { email },
+            update: { code, expiresAt, createdAt: new Date() },
+            create: { email, code, expiresAt }
+        });
+
+        const { sendOTPEmail } = require('../utils/mailer');
+        await sendOTPEmail(email, code);
+
+        res.json({ message: 'Code envoyé !' });
+    } catch (error) {
+        console.error('[OTP REQUEST] Error:', error);
+        res.status(500).json({ message: 'Erreur lors de l\'envoi du code.' });
+    }
+};
+
+exports.verifyOTP = async (req, res) => {
+    const { email, code } = req.body;
+
+    try {
+        const otpRecord = await prisma.otp.findUnique({ where: { email } });
+
+        if (!otpRecord || otpRecord.code !== code) {
+            return res.status(400).json({ message: 'Code invalide.' });
+        }
+
+        if (new Date() > otpRecord.expiresAt) {
+            return res.status(400).json({ message: 'Code expiré. Veuillez en redemander un.' });
+        }
+
+        const participant = await prisma.participant.findUnique({ where: { email } });
+        await prisma.otp.delete({ where: { email } });
+
+        res.json({ participant });
+    } catch (error) {
+        console.error('[OTP VERIFY] Error:', error);
+        res.status(500).json({ message: 'Erreur lors de la vérification.' });
     }
 };
 

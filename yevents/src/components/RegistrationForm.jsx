@@ -17,7 +17,6 @@ const RegistrationForm = () => {
     telephone: '',
     entreprise: '',
     categorie_badge: 'PARTICIPANT',
-    nb_accompagnateurs: 0,
     accepted_terms: false,
     accepted_data_processing: false,
     indicatif: '+212'
@@ -191,7 +190,7 @@ const RegistrationForm = () => {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <button
-                  onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', categorie_badge: 'PARTICIPANT', nb_accompagnateurs: 0, accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
+                  onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', categorie_badge: 'PARTICIPANT', accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
                   className="bg-ynov hover:bg-ynov/90 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-sm"
                 >
                   Nouvelle inscription

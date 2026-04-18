@@ -1,12 +1,11 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { loginSchema } = require('../utils/validation');
 
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
-
     try {
+        // Validation with Zod
+        const validatedData = loginSchema.parse(req.body);
+        const { email, password } = validatedData;
+
         // Try Admin first
         let user = await prisma.admin.findUnique({ where: { email } });
         let role = 'admin';
@@ -29,7 +28,7 @@ exports.login = async (req, res) => {
 
         // Generate token
         const token = jwt.sign(
-            { id: user.id, email: user.email, role },
+            { id: user.id, email: user.email, role, isSuperAdmin: user.isSuperAdmin || false },
             process.env.JWT_SECRET,
             { expiresIn: '12h' }
         );
@@ -40,10 +39,14 @@ exports.login = async (req, res) => {
                 id: user.id,
                 email: user.email,
                 nom: user.nom || user.name,
-                role
+                role,
+                isSuperAdmin: user.isSuperAdmin || false
             }
         });
     } catch (error) {
+        if (error.name === 'ZodError') {
+            return res.status(400).json({ message: error.errors[0].message });
+        }
         console.error('Login error:', error);
         res.status(500).json({ message: 'Erreur serveur' });
     }
