@@ -120,7 +120,7 @@ const CheckinDashboard = ({ user, token }) => {
             }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all border ${showManualInput ? 'bg-ynov border-ynov text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
           >
-            <Key className="w-4 h-4" /> UUID
+            UUID
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ const CheckinDashboard = ({ user, token }) => {
 
       {lastScanResult && (
         <div className={`fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in zoom-in duration-300 backdrop-blur-md ${lastScanResult.success ? 'bg-green-500/90' :
-            lastScanResult.isWarning ? 'bg-amber-500/90' : 'bg-red-500/90'
+          lastScanResult.isWarning ? 'bg-amber-500/90' : 'bg-red-500/90'
           }`}>
           <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl max-w-lg w-full text-center space-y-6 border-4 border-white/20">
             <div className="flex justify-center">
@@ -166,7 +166,7 @@ const CheckinDashboard = ({ user, token }) => {
 
             <div className="space-y-2">
               <h3 className={`text-3xl font-black uppercase italic ${lastScanResult.success ? 'text-green-500' :
-                  lastScanResult.isWarning ? 'text-amber-500' : 'text-red-500'
+                lastScanResult.isWarning ? 'text-amber-500' : 'text-red-500'
                 }`}>
                 {lastScanResult.message}
               </h3>
