@@ -162,7 +162,7 @@ app.listen(PORT, '0.0.0.0', () => {
 // Envoie une requête toutes les minutes pour empêcher le service de s'endormir
 const https = require('https');
 const PING_INTERVAL = 60 * 1000; // 1 minute
-const TARGET_URL = 'https://yevents-7o90.onrender.com/health';
+const TARGET_URL = 'https://yevents-7o90.onrender.com/#/health';
 
 setInterval(() => {
     https.get(TARGET_URL, (res) => {
