@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+const settingsController = require('../controllers/settingsController');
 const { authMiddleware, isAdmin } = require('../middleware/auth');
 
 router.use(authMiddleware);
 router.use(isAdmin);
+
+router.post('/settings', settingsController.updateSettings);
 
 router.get('/export', adminController.exportParticipants);
 router.post('/resend-email', adminController.resendEmail);

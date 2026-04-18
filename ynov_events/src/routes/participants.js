@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const participantController = require('../controllers/participantController');
+const settingsController = require('../controllers/settingsController');
 const { authMiddleware } = require('../middleware/auth');
 
 // Public
+router.get('/settings', settingsController.getPublicSettings);
 router.post('/register', participantController.register);
 
 // Protected (Web or App scan)

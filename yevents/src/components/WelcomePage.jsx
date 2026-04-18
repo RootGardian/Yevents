@@ -1,41 +1,84 @@
-import React from 'react';
-import { Calendar, MapPin, Users, ArrowRight, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, MapPin, Users, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import api from '../api';
 
 const WelcomePage = () => {
+  const [settings, setSettings] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/settings');
+        setSettings(res.data);
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-ynov animate-spin opacity-20" />
+      </div>
+    );
+  }
+
+  const {
+    event_name = 'Ynov Talk 2026',
+    event_date_text = 'SAMEDI 2 MAI 2026',
+    event_hours = '09:00 - 18:00',
+    event_location = 'Casablanca Ynov campus',
+    event_location_link = '#',
+    event_public_target = 'PROFESSIONELS & ÉTUDIANTS YNOV'
+  } = settings || {};
+
+  // Extract year from event_name or default
+  const match = event_name.match(/\d{4}/);
+  const eventYear = match ? match[0] : '2026';
+  const eventTitleBase = event_name.replace(eventYear, '').trim();
+
   return (
     <div className="max-w-4xl mx-auto space-y-16 py-12 animate-in fade-in duration-1000">
       {/* Hero Section */}
       <div className="text-center space-y-4">
         <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-none">
-          Ynov Talk <span className="text-ynov">2026</span>
+          {eventTitleBase} <span className="text-ynov">{eventYear}</span>
         </h1>
-        <p className="text-xl text-slate-500 font-medium uppercase tracking-widest">AGIR POUR REUSSIR</p>
+        <p className="text-xl text-slate-500 font-medium uppercase tracking-widest leading-tight">{event_name}</p>
       </div>
 
       {/* Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <Calendar className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-black uppercase text-xs tracking-widest mb-2 text-slate-900 dark:text-white">Date de l'événement</h3>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold font-mono">SAMEDI 2 MAI 2026</p>
+          <h3 className="font-black uppercase text-xs tracking-widest mb-2 text-slate-900 dark:text-white">Date & Horaires</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-[10px] font-bold font-mono">
+            {event_date_text.toUpperCase()}<br/>
+            {event_hours}
+          </p>
         </div>
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <MapPin className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase text-xs tracking-widest mb-2 text-slate-900 dark:text-white">Lieu & Accès</h3>
           <a
-            href="https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic"
+            href={event_location_link}
             target="_blank"
             rel="noopener noreferrer"
             className="text-slate-500 dark:text-slate-400 text-[11px] font-bold hover:text-ynov transition-colors underline underline-offset-4 decoration-slate-200 dark:decoration-slate-800"
           >
-            Casablanca Ynov campus
+            {event_location}
           </a>
         </div>
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <Users className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase text-xs tracking-widest mb-2 text-slate-900 dark:text-white">Public Cible</h3>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold">PROFESSIONELS & ÉTUDIANTS YNOV</p>
+          <p className="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">{event_public_target}</p>
         </div>
       </div>
 

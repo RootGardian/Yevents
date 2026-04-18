@@ -21,16 +21,53 @@ const AdminDashboard = ({ user, token }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [isTriggering, setIsTriggering] = useState(false);
-  const [view, setView] = useState('stats'); // 'stats', 'audit', 'staff', 'admins'
+  const [view, setView] = useState('stats'); // 'stats', 'audit', 'staff', 'admins', 'settings'
   const [auditLogs, setAuditLogs] = useState([]);
   const [staffList, setStaffList] = useState([]);
   const [adminsList, setAdminsList] = useState([]);
   const [newAdmin, setNewAdmin] = useState({ name: '', email: '', password: '' });
   const [newStaff, setNewStaff] = useState({ name: '', email: '', password: '' });
+  const [eventSettings, setEventSettings] = useState({
+    event_name: '',
+    event_date: '',
+    event_date_text: '',
+    event_hours: '',
+    event_location: '',
+    event_location_link: '',
+    event_public_target: '',
+    max_capacity: '',
+    support_email: ''
+  });
+  const [settingsLoading, setSettingsLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
+    fetchSettingsData();
   }, []);
+
+  const fetchSettingsData = async () => {
+    try {
+      const res = await api.get('/settings');
+      setEventSettings(res.data);
+    } catch (err) {
+      console.error("Erreur settings:", err);
+    }
+  };
+
+  const handleUpdateSettings = async (e) => {
+    e.preventDefault();
+    setSettingsLoading(true);
+    try {
+      await api.post('/admin/settings', eventSettings, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert("Paramètres mis à jour !");
+    } catch (err) {
+      alert(err.response?.data?.message || "Erreur de mise à jour");
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -193,7 +230,10 @@ const AdminDashboard = ({ user, token }) => {
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setView('stats')} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'stats' ? 'bg-ynov border-ynov text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Stats</button>
           {user.isSuperAdmin && (
-            <button onClick={fetchStaff} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'staff' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Staff</button>
+            <button onClick={() => setView('settings')} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'settings' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Configuration</button>
+          )}
+          {user.isSuperAdmin && (
+            <button onClick={fetchStaff} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'staff' ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Staff</button>
           )}
           {user.isSuperAdmin && (
             <button onClick={fetchAdmins} className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${view === 'admins' ? 'bg-red-600 border-red-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}> Admins</button>
@@ -274,15 +314,36 @@ const AdminDashboard = ({ user, token }) => {
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {filteredParticipants.map(p => (
-                      <tr key={p.id}>
-                        <td className="px-4 py-3"><div className="font-bold text-white">{p.prenom} {p.nom}</div></td>
+                      <tr key={p.id} className="hover:bg-slate-800/10 transition-colors">
                         <td className="px-4 py-3">
-                          {p.isCheckedIn ? <span className="text-[9px] font-black text-green-500">PRÉSENT</span> : <span className="text-[9px] font-black text-slate-500 uppercase">Attendu</span>}
+                          <div className="font-bold text-white text-xs">{p.prenom} {p.nom}</div>
+                          <div className="text-[10px] text-slate-500 truncate max-w-[150px]">{p.email}</div>
+                        </td>
+                        <td className="px-4 py-3">
+                          {p.isCheckedIn ? 
+                            <span className="text-[9px] font-black text-green-500 bg-green-500/10 px-2 py-0.5 rounded">PRÉSENT</span> : 
+                            <span className="text-[9px] font-black text-slate-500 uppercase">Attendu</span>
+                          }
                         </td>
                         <td className="px-4 py-3 text-right">
-                          {p.registrationStatus === 'email_failed' && (
-                            <button onClick={() => handleResendMail(p.email)} className="text-ynov"><RefreshCw className="w-4 h-4" /></button>
-                          )}
+                          <div className="flex justify-end gap-2">
+                            <button 
+                              onClick={() => handleResendMail(p.email)} 
+                              title="Renvoyer le mail"
+                              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-ynov transition-all"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </button>
+                            {p.registrationStatus === 'email_failed' && (
+                              <button 
+                                onClick={() => handleResendMail(p.email)} 
+                                title="Erreur mail - Renvoyer"
+                                className="p-1.5 bg-red-500/10 rounded-lg text-red-500"
+                              >
+                                <RefreshCw className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -365,6 +426,72 @@ const AdminDashboard = ({ user, token }) => {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {view === 'settings' && user.isSuperAdmin && (
+        <div className="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-[2.5rem] overflow-hidden animate-in slide-in-from-top-4 duration-500">
+          <div className="bg-indigo-600 p-8 text-white relative h-32 flex items-end">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+            <h2 className="text-3xl font-black uppercase italic tracking-tighter relative z-10">Configuration de l'Événement</h2>
+          </div>
+          
+          <form onSubmit={handleUpdateSettings} className="p-8 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Nom de l'événement</label>
+                <input type="text" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.event_name} onChange={e => setEventSettings({...eventSettings, event_name: e.target.value})} required />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Cible Publique</label>
+                <input type="text" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.event_public_target} onChange={e => setEventSettings({...eventSettings, event_public_target: e.target.value})} required />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Date (ISO: YYYY-MM-DD)</label>
+                <input type="date" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.event_date} onChange={e => setEventSettings({...eventSettings, event_date: e.target.value})} required />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Date Affichée (Texte)</label>
+                <input type="text" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.event_date_text} onChange={e => setEventSettings({...eventSettings, event_date_text: e.target.value})} required placeholder="SAMEDI 2 MAI" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Horaires (Texte)</label>
+                <input type="text" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.event_hours} onChange={e => setEventSettings({...eventSettings, event_hours: e.target.value})} required placeholder="09:00 - 18:00" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Localisation (Texte)</label>
+              <input type="text" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.event_location} onChange={e => setEventSettings({...eventSettings, event_location: e.target.value})} required />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Lien Google Maps (URL)</label>
+              <input type="url" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.event_location_link} onChange={e => setEventSettings({...eventSettings, event_location_link: e.target.value})} required />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Capacité Maximale</label>
+                <input type="number" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.max_capacity} onChange={e => setEventSettings({...eventSettings, max_capacity: e.target.value})} required />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Email Support</label>
+                <input type="email" className="w-full bg-slate-800 border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-indigo-500 transition-all" value={eventSettings.support_email} onChange={e => setEventSettings({...eventSettings, support_email: e.target.value})} required />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={settingsLoading}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-500/20 disabled:opacity-50"
+            >
+              {settingsLoading ? "Mise à jour..." : "Enregistrer les modifications"}
+            </button>
+          </form>
         </div>
       )}
 

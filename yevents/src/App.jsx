@@ -15,10 +15,16 @@ import api from './api';
 import { useNavigate } from 'react-router-dom';
 
 
-const Layout = ({ children, user, onLogout }) => {
+const Layout = ({ children, user, onLogout, settings }) => {
   const location = useLocation();
   const isRegistrationPage = location.pathname === '/inscription';
   const isHome = location.pathname === '/';
+
+  const currentYear = new Date().getFullYear();
+  const event_name = settings?.event_name || 'Ynov Events';
+  const support_email = settings?.support_email || 'ahmedrachid.bangoura@ynov.com';
+  const event_location = settings?.event_location || '8 Ibnou Katima (Ex Bournazel), Casablanca 20000';
+  const event_location_link = settings?.event_location_link || 'https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic';
 
   return (
     <div className="min-h-screen font-sans selection:bg-ynov selection:text-white transition-colors duration-300">
@@ -82,32 +88,32 @@ const Layout = ({ children, user, onLogout }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-ynov rounded flex items-center justify-center"><Calendar className="text-white w-3 h-3" /></div>
-              <span className="font-black tracking-tighter dark:text-white uppercase">Ynov Events</span>
+              <span className="font-black tracking-tighter dark:text-white uppercase">{event_name}</span>
             </div>
             <a 
-              href="https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic" 
+              href={event_location_link} 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-slate-500 text-xs hover:text-ynov transition-colors cursor-pointer"
             >
-              8 Ibnou Katima (Ex Bournazel)<br />Casablanca 20000
+              {event_location}
             </a>
           </div>
           <div className="space-y-4">
             <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">L'Événement</h4>
             <ul className="space-y-2 text-slate-500 text-xs">
-              <li>Ynov Days 2026</li>
-              <li>Campus de Casablanca</li>
+              <li className="font-bold">{event_name}</li>
+              <li>Propulsé par Ynov Campus</li>
               <li className="pt-2">
                 <Link to="/faq" className="hover:text-ynov transition-colors font-bold tracking-tight">FAQ / Aide</Link>
               </li>
               <li className="pt-1">
-                <a href="mailto:ahmedrachid.bangoura@ynov.com" className="hover:text-ynov transition-colors font-bold tracking-tight text-[10px] opacity-70">Support : ahmedrachid.bangoura@ynov.com</a>
+                <a href={`mailto:${support_email}`} className="hover:text-ynov transition-colors font-bold tracking-tight text-[10px] opacity-70">Support : {support_email}</a>
               </li>
             </ul>
           </div>
           <div className="space-y-4 text-right">
-            <p className="text-[10px] font-bold text-slate-400 uppercase">© 2026 YNOV MOROCCO</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">© {currentYear} YNOV MOROCCO</p>
             <div className="flex justify-end gap-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">
                <Link to="/cgu" className="hover:text-ynov transition-colors">CGU</Link>
                <Link to="/confidentialite" className="hover:text-ynov transition-colors">Confidentialité</Link>
@@ -174,6 +180,19 @@ function App() {
 
   const [user, setUser] = useState(getSafeStorage('user'));
   const [token, setToken] = useState(localStorage.getItem('admin_token'));
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/settings');
+        setSettings(res.data);
+      } catch (err) {
+        console.error("Error fetching global settings:", err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleLogin = (userData, userToken) => {
     setUser(userData);
@@ -192,7 +211,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Layout user={user} onLogout={handleLogout}>
+      <Layout user={user} onLogout={handleLogout} settings={settings}>
         <Routes>
           <Route path="/" element={<WelcomePage />} />
           <Route path="/inscription" element={<RegistrationForm />} />

@@ -103,24 +103,30 @@ const RegistrationForm = () => {
   ];
 
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [settings, setSettings] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
 
   const [participant, setParticipant] = useState(null);
 
   useEffect(() => {
-    fetchStats();
+    fetchData();
   }, []);
 
-  const fetchStats = async () => {
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      const res = await api.get('/admin/stats', {
-        headers: { 'X-Admin-Token': 'ynov_secret_2026' }
-      });
-      setStats(res.data);
+      const [statsRes, settingsRes] = await Promise.all([
+        api.get('/admin/stats', { headers: { 'X-Admin-Token': 'ynov_secret_2026' } }),
+        api.get('/settings')
+      ]);
+      setStats(statsRes.data);
+      setSettings(settingsRes.data);
     } catch (err) {
-      console.error("Erreur stats:", err);
+      console.error("Erreur stats/settings:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,7 +143,7 @@ const RegistrationForm = () => {
       const res = await api.post('/register', submissionData);
       setParticipant(res.data.participant);
       setSuccess(true);
-      fetchStats();
+      fetchData();
     } catch (err) {
       setError(err.response?.data?.message || "Une erreur est survenue lors de l'inscription.");
     } finally {
@@ -147,6 +153,7 @@ const RegistrationForm = () => {
 
 
   if (success) {
+    const event_name = settings?.event_name || 'l\'événement';
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -185,7 +192,7 @@ const RegistrationForm = () => {
               </div>
               <h2 className="text-2xl sm:text-4xl font-black mb-4 uppercase italic">Inscription Réussie !</h2>
               <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto text-sm sm:text-lg">
-                Bienvenue à bord, <strong>{formData.prenom}</strong>. <br />
+                Bienvenue à <strong>{event_name}</strong>, <strong>{formData.prenom}</strong>. <br />
                 Votre badge numérique a été envoyé avec succès à <span className="text-ynov font-bold underline break-all">{formData.email}</span>.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">

@@ -3,10 +3,37 @@ const cors = require('cors');
 const cron = require('node-cron');
 const { sendAllReminders } = require('./utils/reminders');
 
-// Schedule Reminders: April 30th, 2026 at 10:00 AM (2 days before event)
-cron.schedule('0 10 30 4 *', () => {
-    console.log('[CRON] Triggering scheduled reminders for April 30th...');
-    sendAllReminders();
+const prisma = require('./db');
+
+// Dynamic Cron Job: Runs every day at 10:00 AM
+// Checks if today is exactly 2 days before the event_date in settings
+cron.schedule('0 10 * * *', async () => {
+    try {
+        const eventDateSetting = await prisma.setting.findUnique({ where: { key: 'event_date' } });
+        if (!eventDateSetting) return;
+
+        const eventDate = new Date(eventDateSetting.value);
+        const today = new Date();
+        
+        // Calculate difference in days
+        const diffTime = eventDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 2) {
+            console.log(`[CRON] Event is in 2 days (${eventDateSetting.value}). Sending automated reminders...`);
+            await sendAllReminders();
+            // Log this as a system audit
+            await prisma.auditLog.create({
+                data: {
+                    action: 'AUTO_REMINDERS',
+                    details: `Envoi automatique des rappels à J-2 effectué par le système.`,
+                    causerType: 'system'
+                }
+            });
+        }
+    } catch (err) {
+        console.error('[CRON] Error during scheduled check:', err);
+    }
 }, {
     scheduled: true,
     timezone: "Africa/Casablanca"
