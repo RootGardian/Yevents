@@ -55,7 +55,7 @@ const Layout = ({ children, user, onLogout }) => {
                 </Link>
               ) : (
                 <>
-                  <div className="flex flex-col items-end mr-2">
+                  <div className="hidden sm:flex flex-col items-end mr-2">
                     <span className="text-[10px] font-black tracking-[0.1em] text-white uppercase italic">{user.nom}</span>
                     <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">{user.role}</span>
                   </div>
