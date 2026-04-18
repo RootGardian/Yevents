@@ -47,17 +47,26 @@ const Layout = ({ children, user, onLogout }) => {
             </div>
 
             {/* Right - Profile Actions */}
-            <div className="w-32 flex justify-end">
+            <div className="flex items-center gap-4">
               {!user ? (
                 <Link to="/admin" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-ynov transition-colors flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4" />
                   Connexion
                 </Link>
               ) : (
-                <div className="flex items-center gap-2 group cursor-pointer" onClick={onLogout}>
-                  <span className="hidden sm:inline text-[9px] font-bold text-slate-600 group-hover:text-red-500 transition-colors uppercase tracking-[0.2em]">Quitter</span>
-                  <LogOut className="w-4 h-4 text-slate-600 group-hover:text-red-500 transition-colors" />
-                </div>
+                <>
+                  <div className="flex flex-col items-end mr-2">
+                    <span className="text-[10px] font-black tracking-[0.1em] text-white uppercase italic">{user.nom}</span>
+                    <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">{user.role}</span>
+                  </div>
+                  <div 
+                    onClick={onLogout}
+                    className="p-2 bg-slate-800/50 hover:bg-red-500/10 border border-white/5 hover:border-red-500/20 rounded-xl cursor-pointer transition-all group"
+                    title="Déconnexion"
+                  >
+                    <LogOut className="w-4 h-4 text-slate-500 group-hover:text-red-500 transition-colors" />
+                  </div>
+                </>
               )}
             </div>
           </div>
