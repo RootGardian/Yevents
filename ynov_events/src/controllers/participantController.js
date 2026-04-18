@@ -144,7 +144,7 @@ exports.checkIn = async (req, res) => {
             }
         });
 
-        await audit.log('CHECKIN', `Validation de présence: ${updated.prenom} ${updated.nom}`, updated);
+        await audit.log('CHECKIN', `Validation de présence: ${updated.prenom} ${updated.nom}`, req.user);
 
         res.json({ message: 'Check-in réussi ! Entrée validée.', participant: updated });
     } catch (error) {

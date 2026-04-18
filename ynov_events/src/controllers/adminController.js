@@ -21,7 +21,7 @@ exports.exportParticipants = async (req, res) => {
         res.setHeader('Content-Disposition', 'attachment; filename=participants.csv');
         res.send(csv);
 
-        await audit.log('EXPORT', 'Export CSV des participants effectué.');
+        await audit.log('EXPORT', 'Export CSV des participants effectué.', req.user);
     } catch (error) {
         console.error('Export error:', error);
         res.status(500).json({ message: 'Erreur lors de l\'export' });
@@ -40,7 +40,7 @@ exports.resendEmail = async (req, res) => {
             data: { emailSent: true, registrationStatus: 'confirmed', emailError: null }
         });
 
-        await audit.log('RESEND_EMAIL', `Renvoi mail à: ${email}`, participant);
+        await audit.log('RESEND_EMAIL', `Renvoi mail à: ${email}`, req.user);
         res.json({ message: 'Email renvoyé' });
     } catch (error) {
         console.error('Resend email error:', error);
@@ -81,6 +81,7 @@ exports.createStaff = async (req, res) => {
         const staff = await prisma.staff.create({
             data: { name, email, password: hashedPassword }
         });
+        await audit.log('STAFF_CREATED', `Membre du staff créé: ${email}`, req.user);
         res.status(201).json(staff);
     } catch (error) {
         if (error.name === 'ZodError') {
@@ -98,6 +99,7 @@ exports.deleteStaff = async (req, res) => {
     const { id } = req.params;
     try {
         await prisma.staff.delete({ where: { id: parseInt(id) } });
+        await audit.log('STAFF_DELETED', `Staff supprimé (ID: ${id})`, req.user);
         res.json({ message: 'Staff supprimé' });
     } catch (error) {
         console.error('Delete staff error:', error);
@@ -135,7 +137,7 @@ exports.createAdmin = async (req, res) => {
             data: { name, email, password: hashedPassword, isSuperAdmin: false },
             select: { id: true, name: true, email: true, isSuperAdmin: true }
         });
-        await audit.log('ADMIN_CREATED', `Admin créé par Super Admin: ${email}`);
+        await audit.log('ADMIN_CREATED', `Admin créé par Super Admin: ${email}`, req.user);
         res.status(201).json(admin);
     } catch (error) {
         if (error.name === 'ZodError') {
@@ -159,7 +161,7 @@ exports.deleteAdmin = async (req, res) => {
         }
 
         await prisma.admin.delete({ where: { id: parseInt(id) } });
-        await audit.log('ADMIN_DELETED', `Admin supprimé par Super Admin (ID: ${id})`);
+        await audit.log('ADMIN_DELETED', `Admin supprimé par Super Admin (ID: ${id})`, req.user);
         res.json({ message: 'Administrateur supprimé' });
     } catch (error) {
         console.error('Delete admin error:', error);
@@ -171,9 +173,20 @@ exports.triggerManualReminders = async (req, res) => {
     if (!req.user.isSuperAdmin) {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
+
+    const { password } = req.body;
+    if (!password) {
+        return res.status(400).json({ message: 'Le mot de passe est requis pour cette opération critique.' });
+    }
     
     try {
-        await audit.log('MANUAL_REMINDERS', `Déclenchement manuel des rappels par ${req.user.email}`);
+        const isMatch = await bcrypt.compare(password, req.user.password);
+        if (!isMatch) {
+            await audit.log('REMINDERS_AUTH_FAILED', `Tentative de rappel avec mauvais mot de passe par ${req.user.email}`, req.user);
+            return res.status(401).json({ message: 'Mot de passe incorrect. Action refusée.' });
+        }
+
+        await audit.log('MANUAL_REMINDERS', `Déclenchement manuel des rappels par ${req.user.email}`, req.user);
         
         // Non-blocking trigger
         sendAllReminders();

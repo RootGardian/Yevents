@@ -1,6 +1,7 @@
 const prisma = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const audit = require('../utils/audit');
 const { loginSchema } = require('../utils/validation');
 
 exports.login = async (req, res) => {
@@ -20,12 +21,14 @@ exports.login = async (req, res) => {
         }
 
         if (!user) {
+            await audit.log('LOGIN_FAILED', `Tentative de connexion (Email inconnu): ${email}`);
             return res.status(401).json({ message: 'Identifiants invalides' });
         }
 
         // Verify password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            await audit.log('LOGIN_FAILED', `Mot de passe incorrect pour: ${email}`);
             return res.status(401).json({ message: 'Identifiants invalides' });
         }
 
@@ -36,15 +39,19 @@ exports.login = async (req, res) => {
             { expiresIn: '12h' }
         );
 
+        const userData = {
+            id: user.id,
+            email: user.email,
+            nom: user.nom || user.name,
+            role,
+            isSuperAdmin: user.isSuperAdmin || false
+        };
+
+        await audit.log('LOGIN', 'Connexion réussie', { ...user, role });
+
         res.json({
             token,
-            user: {
-                id: user.id,
-                email: user.email,
-                nom: user.nom || user.name,
-                role,
-                isSuperAdmin: user.isSuperAdmin || false
-            }
+            user: userData
         });
     } catch (error) {
         if (error.name === 'ZodError') {
@@ -55,7 +62,9 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.logout = (req, res) => {
-    // With JWT, client just needs to discard the token
+exports.logout = async (req, res) => {
+    if (req.user) {
+        await audit.log('LOGOUT', 'Déconnexion effectuée', req.user);
+    }
     res.json({ message: 'Déconnexion réussie' });
 };
