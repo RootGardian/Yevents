@@ -65,7 +65,7 @@ const PrivacyPolicy = () => {
                         <section className="space-y-4">
                             <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase italic border-l-4 border-ynov pl-4">Vos Droits</h2>
                             <p className="text-sm text-slate-600 dark:text-slate-400">
-                                Vous bénéficiez d'un droit d'accès, de rectification et d'opposition au traitement de vos données personnelles. Vous pouvez exercer ces droits en nous contactant par email à l'adresse de l'administration du campus de Casablanca.
+                                Vous bénéficiez d'un droit d'accès, de rectification et d'opposition au traitement de vos données personnelles. Vous pouvez exercer ces droits en nous contactant par email à <a href="mailto:ahmedrachid.bangoura@ynov.com" className="text-ynov font-black hover:underline">ahmedrachid.bangoura@ynov.com</a>.
                             </p>
                         </section>
 
@@ -75,13 +75,6 @@ const PrivacyPolicy = () => {
                                 Pour les résidents de l'Union Européenne, nous appliquons également les principes du Règlement Général sur la Protection des Données (RGPD) en matière de portabilité, de droit à l'oubli et de minimisation des données.
                             </p>
                         </section>
-                    </div>
-                </div>
-
-                <div className="bg-slate-50 dark:bg-slate-950/50 p-8 sm:p-12 border-t border-slate-100 dark:border-slate-800 text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-800 rounded-full mb-4">
-                        <Scale className="w-4 h-4 text-slate-500" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-xs">CNDP Maroc • Autorisation en cours</span>
                     </div>
                 </div>
             </div>

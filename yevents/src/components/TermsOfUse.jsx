@@ -65,10 +65,13 @@ const TermsOfUse = () => {
                     </section>
                 </div>
 
-                <div className="bg-slate-50 dark:bg-slate-950/50 p-8 sm:p-12 border-t border-slate-100 dark:border-slate-800">
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center leading-relaxed">
+                <div className="bg-slate-50 dark:bg-slate-950/50 p-8 sm:p-12 border-t border-slate-100 dark:border-slate-800 text-center space-y-4">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
                         En utilisant ce service, vous acceptez ces conditions sans réserve.<br />
                         Maroc Ynov Campus se réserve le droit de modifier ces termes à tout moment.
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                        Contact support : <a href="mailto:ahmedrachid.bangoura@ynov.com" className="text-ynov hover:underline">ahmedrachid.bangoura@ynov.com</a>
                     </p>
                 </div>
             </div>

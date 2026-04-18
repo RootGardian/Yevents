@@ -85,7 +85,13 @@ const Layout = ({ children, user, onLogout }) => {
           </div>
           <div className="space-y-4">
             <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">L'Événement</h4>
-            <ul className="space-y-2 text-slate-500 text-xs"><li>Ynov Days 2026</li><li>Campus de Casablanca</li></ul>
+            <ul className="space-y-2 text-slate-500 text-xs">
+              <li>Ynov Days 2026</li>
+              <li>Campus de Casablanca</li>
+              <li className="pt-2">
+                <a href="mailto:ahmedrachid.bangoura@ynov.com" className="hover:text-ynov transition-colors font-bold tracking-tight">Support : ahmedrachid.bangoura@ynov.com</a>
+              </li>
+            </ul>
           </div>
           <div className="space-y-4 text-right">
             <p className="text-[10px] font-bold text-slate-400 uppercase">© 2026 YNOV MOROCCO</p>
