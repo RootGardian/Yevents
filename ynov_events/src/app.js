@@ -161,7 +161,7 @@ app.listen(PORT, '0.0.0.0', () => {
 // --- Render Keep-Alive Autoping (Free Tier) ---
 // Envoie une requête toutes les minutes pour empêcher le service de s'endormir
 const https = require('https');
-const PING_INTERVAL = 60 * 1000; // 1 minute
+const PING_INTERVAL = 10 * 60 * 1000; // 10 minutes (suffisant pour éviter la veille de 15 min)
 const TARGET_URL = 'https://yevents-7o90.onrender.com/#/health';
 
 setInterval(() => {
