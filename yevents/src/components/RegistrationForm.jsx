@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, Building, Briefcase, Users, CheckCircle, AlertCircle, Loader2, Linkedin, Twitter, Facebook, Globe, ChevronDown } from 'lucide-react';
+import { User, Mail, Phone, Building, Briefcase, Users, CheckCircle, AlertCircle, Loader2, Linkedin, Twitter, Facebook, Globe, ChevronDown, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import api from '../api';
@@ -29,7 +29,7 @@ const RegistrationForm = () => {
     { code: '+33', country: 'France' },
     { code: '+221', country: 'Sénégal' },
     { code: '+225', country: 'Côte d’Ivoire' },
-    
+
     // --- Afrique (Nord & Sahel) ---
     { code: '+213', country: 'Algérie' },
     { code: '+216', country: 'Tunisie' },
@@ -41,7 +41,7 @@ const RegistrationForm = () => {
     { code: '+227', country: 'Niger' },
     { code: '+228', country: 'Togo' },
     { code: '+229', country: 'Bénin' },
-    
+
     // --- Afrique (Centrale & Est) ---
     { code: '+235', country: 'Tchad' },
     { code: '+236', country: 'RCA' },
@@ -56,7 +56,7 @@ const RegistrationForm = () => {
     { code: '+254', country: 'Kenya' },
     { code: '+257', country: 'Burundi' },
     { code: '+258', country: 'Mozambique' },
-    
+
     // --- Afrique (Ouest & Sud) ---
     { code: '+231', country: 'Liberia' },
     { code: '+232', country: 'Sierra Leone' },
@@ -70,7 +70,7 @@ const RegistrationForm = () => {
     { code: '+220', country: 'Gambie' },
     { code: '+238', country: 'Cap-Vert' },
     { code: '+245', country: 'Guinée-Biss.' },
-    
+
     // --- Europe (Ouest & Sud) ---
     { code: '+32', country: 'Belgique' },
     { code: '+41', country: 'Suisse' },
@@ -83,7 +83,7 @@ const RegistrationForm = () => {
     { code: '+44', country: 'Royaume-Uni' },
     { code: '+353', country: 'Irlande' },
     { code: '+31', country: 'Pays-Bas' },
-    
+
     // --- Europe (Centrale & Nord) ---
     { code: '+49', country: 'Allemagne' },
     { code: '+43', country: 'Autriche' },
@@ -95,7 +95,7 @@ const RegistrationForm = () => {
     { code: '+420', country: 'Rép. Tchèque' },
     { code: '+36', country: 'Hongrie' },
     { code: '+40', country: 'Roumanie' },
-    
+
     // --- Autres ---
     { code: '+1', country: 'USA/Canada' },
     { code: '+971', country: 'UAE' },
@@ -154,7 +154,7 @@ const RegistrationForm = () => {
         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-8 rounded-3xl sm:rounded-[3rem] shadow-2xl relative overflow-hidden max-w-5xl mx-auto"
       >
         <div className="absolute top-0 left-0 w-full h-2 bg-ynov"></div>
-        
+
         {/* Tabs Header */}
         <div className="flex justify-center mb-8 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl w-fit mx-auto">
           <button
@@ -190,16 +190,16 @@ const RegistrationForm = () => {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <button
-                  onClick={() => { setSuccess(false); setFormData({ nom: '', prenom: '', email: '', telephone: '', entreprise: '', categorie_badge: 'PARTICIPANT', accepted_terms: false, accepted_data_processing: false, indicatif: '+212' }); }}
-                  className="bg-ynov hover:bg-ynov/90 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-sm"
+                  onClick={() => window.print()}
+                  className="bg-ynov hover:bg-ynov/90 text-white px-8 py-4 rounded-xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-2"
                 >
-                  Nouvelle inscription
+                  <Download className="w-4 h-4" /> Imprimer mon badge
                 </button>
                 <button
                   onClick={() => setActiveTab('lookup')}
-                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-8 py-4 rounded-2xl font-black transition-all text-sm"
+                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-8 py-4 rounded-xl font-black transition-all text-xs uppercase tracking-widest"
                 >
-                  Gérer mon inscription
+                  Gérer mes infos
                 </button>
               </div>
             </motion.div>
@@ -256,7 +256,7 @@ const RegistrationForm = () => {
                   <label className="text-xs font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Numéro de téléphone *</label>
                   <div className="flex gap-2 min-w-0">
                     <div className="relative shrink-0 w-24 sm:w-28">
-                      <select 
+                      <select
                         className="w-full bg-slate-100 dark:bg-slate-800 flex items-center px-3 pr-8 rounded-xl text-base sm:text-xs font-bold text-slate-500 h-full border-none focus:ring-2 focus:ring-ynov appearance-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap"
                         value={formData.indicatif}
                         onChange={(e) => setFormData({ ...formData, indicatif: e.target.value })}

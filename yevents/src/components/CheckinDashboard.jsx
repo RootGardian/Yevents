@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Users, CheckCircle2, QrCode, Search, LogOut, Scan, Key, MousePointerClick, X, RefreshCw
+  Users, CheckCircle2, QrCode, Search, LogOut, Scan, Key, MousePointerClick, X, RefreshCw, AlertTriangle
 } from 'lucide-react';
 import api from '../api';
 import QRScanner from './QRScanner';
@@ -55,7 +55,8 @@ const CheckinDashboard = ({ user, token }) => {
       soundService.playSuccess();
       setLastScanResult({
         success: true,
-        message: res.data.message
+        message: res.data.message,
+        participant: res.data.participant
       });
 
       setShowScanner(false);
@@ -63,16 +64,25 @@ const CheckinDashboard = ({ user, token }) => {
       setManualCode('');
       fetchData();
 
-      setTimeout(() => setLastScanResult(null), 3000);
+      setTimeout(() => setLastScanResult(null), 4000);
     } catch (err) {
       console.error(err);
-      soundService.playError();
+      const isAlready = err.response?.data?.status === 'ALREADY_CHECKED_IN';
+      
+      if (isAlready) {
+          soundService.playError(); // Or maybe a neutral sound? playError for now
+      } else {
+          soundService.playError();
+      }
+
       setLastScanResult({
         success: false,
-        message: err.response?.data?.message || "Erreur de validation"
+        isWarning: isAlready,
+        message: err.response?.data?.message || "Erreur de validation",
+        participant: err.response?.data?.participant
       });
       setShowScanner(false);
-      setTimeout(() => setLastScanResult(null), 3000);
+      setTimeout(() => setLastScanResult(null), 4000);
     }
   };
 
@@ -140,9 +150,47 @@ const CheckinDashboard = ({ user, token }) => {
       )}
 
       {lastScanResult && (
-        <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[110] px-6 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-top duration-500 flex items-center gap-3 font-bold ${lastScanResult.success ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
-          {lastScanResult.success ? <CheckCircle2 className="w-6 h-6" /> : <X className="w-6 h-6" />}
-          {lastScanResult.message}
+        <div className={`fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in zoom-in duration-300 backdrop-blur-md ${
+             lastScanResult.success ? 'bg-green-500/90' : 
+             lastScanResult.isWarning ? 'bg-amber-500/90' : 'bg-red-500/90'
+           }`}>
+           <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl max-w-lg w-full text-center space-y-6 border-4 border-white/20">
+             <div className="flex justify-center">
+                {lastScanResult.success ? (
+                    <CheckCircle2 className="w-24 h-24 text-green-500 animate-bounce" />
+                ) : lastScanResult.isWarning ? (
+                    <AlertTriangle className="w-24 h-24 text-amber-500 animate-pulse" />
+                ) : (
+                    <X className="w-24 h-24 text-red-500" />
+                )}
+             </div>
+             
+             <div className="space-y-2">
+                <h3 className={`text-3xl font-black uppercase italic ${
+                    lastScanResult.success ? 'text-green-500' : 
+                    lastScanResult.isWarning ? 'text-amber-500' : 'text-red-500'
+                }`}>
+                    {lastScanResult.message}
+                </h3>
+                {lastScanResult.participant && (
+                    <p className="text-xl font-bold text-slate-700 dark:text-white uppercase tracking-tighter">
+                        {lastScanResult.participant.prenom} {lastScanResult.participant.nom}
+                    </p>
+                )}
+                {lastScanResult.isWarning && (
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest pt-2 border-t border-slate-100 dark:border-slate-800 mt-4">
+                        ⚠️ DÉJÀ VALIDÉ PRÉCÉDEMMENT
+                    </p>
+                )}
+             </div>
+
+             <button 
+                onClick={() => setLastScanResult(null)}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all"
+             >
+                Fermer
+             </button>
+           </div>
         </div>
       )}
 
