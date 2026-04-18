@@ -2,13 +2,21 @@ import React from 'react';
 import { QrCode, Building, Briefcase, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const BadgePreview = ({ formData }) => {
+const BadgePreview = ({ formData, settings }) => {
   const fullName = `${formData.prenom} ${formData.nom}`.trim() || "NOM COMPLET";
   const company = formData.entreprise || "NOM DE L'ENTREPRISE";
   const category = formData.categorie_badge || "VISITOR PASS";
   const qrCodeToken = formData.qrCodeToken;
   const isRealBadge = !!qrCodeToken;
   const urn = isRealBadge ? qrCodeToken.substring(0, 8).toUpperCase() : 'PREVIEW';
+
+  const {
+    event_name = 'Ynov Talk Events 2026',
+    event_date_text = 'SAMEDI 2 MAI',
+    event_hours = '09:00 – 18:00',
+    event_location = 'Maroc Ynov Campus, Casablanca 20000',
+    event_location_link = '#',
+  } = settings || {};
 
   return (
     <div className="lg:sticky lg:top-32 space-y-6">
@@ -23,14 +31,14 @@ const BadgePreview = ({ formData }) => {
       >
         {/* Top Header - Branding */}
         <div className="bg-[#8c2d2d] p-5 sm:p-8 text-center ring-1 ring-inset ring-white/10">
-          <h2 className="text-xs sm:text-base font-black tracking-[0.2em] sm:tracking-[0.25em] uppercase leading-none text-white">Ynov Talk Events 2026</h2>
+          <h2 className="text-xs sm:text-base font-black tracking-[0.2em] sm:tracking-[0.25em] uppercase leading-none text-white">{event_name}</h2>
         </div>
 
         {/* Badge Content Card */}
         <div className="p-3 sm:p-6">
           <div className="bg-slate-50 dark:bg-[#262626] rounded-[1.2rem] sm:rounded-[2rem] p-4 sm:p-8 border border-slate-200 dark:border-white/5 space-y-4 sm:space-y-8">
             <h3 className="text-center text-[7px] sm:text-[10px] font-black text-slate-400 dark:text-white/40 uppercase tracking-[0.2em] sm:tracking-[0.25em] border-b border-slate-100 dark:border-white/10 pb-3 sm:pb-5">
-              Résumé de l'inscription
+              Badge Officiel
             </h3>
 
             <div className="flex gap-4 sm:gap-8 items-center">
@@ -58,7 +66,7 @@ const BadgePreview = ({ formData }) => {
               {/* Right: Personal Info */}
               <div className="w-1/2 space-y-3 sm:space-y-6 pt-1">
                 <div className="space-y-1">
-                  <p className="text-[7px] sm:text-[8px] font-black text-slate-400 dark:text-white/30 uppercase tracking-widest sm:tracking-[0.2em]">Nom</p>
+                  <p className="text-[7px] sm:text-[8px] font-black text-slate-400 dark:text-white/30 uppercase tracking-widest sm:tracking-[0.2em]">Nom Complet</p>
                   <p className="text-xs sm:text-lg font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">{fullName}</p>
                 </div>
                 <div className="space-y-1">
@@ -77,22 +85,22 @@ const BadgePreview = ({ formData }) => {
         {/* Event Information Section */}
         <div className="px-3 sm:px-6 pb-3 sm:pb-6">
           <div className="bg-[#8c2d2d] py-2 sm:py-4 text-center rounded-t-xl sm:rounded-t-2xl">
-            <p className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.25em] text-white uppercase text-center">INFORMATIONS DE L'ÉVÉNEMENT</p>
+            <p className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.25em] text-white uppercase text-center">INFORMATIONS PRATIQUES</p>
           </div>
           <div className="bg-slate-50 dark:bg-[#262626] p-4 sm:p-6 rounded-b-xl sm:rounded-b-2xl border-x border-b border-slate-200 dark:border-white/5 grid grid-cols-2 gap-4 sm:gap-8">
             <div className="space-y-1 sm:space-y-2">
-              <p className="text-[6px] sm:text-[8px] font-black text-slate-400 dark:text-white/40 uppercase tracking-widest">Horaires</p>
-              <p className="text-[9px] sm:text-xs font-bold text-slate-700 dark:text-white/90 leading-relaxed">Samedi 2 Mai<br />14:00 – 18:00</p>
+              <p className="text-[6px] sm:text-[8px] font-black text-slate-400 dark:text-white/40 uppercase tracking-widest">Date & Horaires</p>
+              <p className="text-[9px] sm:text-xs font-bold text-slate-700 dark:text-white/90 leading-relaxed">{event_date_text}<br />{event_hours}</p>
             </div>
             <div className="space-y-1 sm:space-y-2">
               <p className="text-[6px] sm:text-[8px] font-black text-slate-400 dark:text-white/40 uppercase tracking-widest">Lieu</p>
               <a
-                href="https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic"
+                href={event_location_link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[9px] sm:text-xs font-bold text-slate-700 dark:text-white/90 leading-relaxed hover:text-ynov transition-colors cursor-pointer"
               >
-                Maroc Ynov Campus,<br />Casablanca 20000
+                {event_location}
               </a>
             </div>
           </div>
@@ -100,7 +108,7 @@ const BadgePreview = ({ formData }) => {
 
         {/* Footer */}
         <div className="p-4 sm:p-8 pt-1 sm:pt-2 text-center">
-          <p className="text-[6px] sm:text-[8px] font-medium text-slate-400 dark:text-white/20 uppercase tracking-[0.3em] sm:tracking-[0.4em]">&copy; 2026 YNOV MOROCCO</p>
+          <p className="text-[6px] sm:text-[8px] font-medium text-slate-400 dark:text-white/20 uppercase tracking-[0.3em] sm:tracking-[0.4em]">&copy; {new Date().getFullYear()} YNOV MOROCCO</p>
         </div>
       </motion.div>
 

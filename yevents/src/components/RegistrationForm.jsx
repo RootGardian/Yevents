@@ -187,27 +187,33 @@ const RegistrationForm = () => {
               exit={{ opacity: 0, y: -10 }}
               className="text-center"
             >
-              <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="text-green-500 w-10 h-10" />
+              <div className="no-print">
+                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="text-green-500 w-10 h-10" />
+                </div>
+                <h2 className="text-2xl sm:text-4xl font-black mb-4 uppercase italic">Inscription Réussie !</h2>
+                <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto text-sm sm:text-lg">
+                  Bienvenue à <strong>{event_name}</strong>, <strong>{formData.prenom}</strong>. <br />
+                  Votre badge numérique a été envoyé avec succès à <span className="text-ynov font-bold underline break-all">{formData.email}</span>.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <button
+                    onClick={() => window.print()}
+                    className="bg-ynov hover:bg-ynov/90 text-white px-8 py-4 rounded-xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Imprimer mon badge
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('lookup')}
+                    className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-8 py-4 rounded-xl font-black transition-all text-xs uppercase tracking-widest"
+                  >
+                    Gérer mes infos
+                  </button>
+                </div>
               </div>
-              <h2 className="text-2xl sm:text-4xl font-black mb-4 uppercase italic">Inscription Réussie !</h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto text-sm sm:text-lg">
-                Bienvenue à <strong>{event_name}</strong>, <strong>{formData.prenom}</strong>. <br />
-                Votre badge numérique a été envoyé avec succès à <span className="text-ynov font-bold underline break-all">{formData.email}</span>.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <button
-                  onClick={() => window.print()}
-                  className="bg-ynov hover:bg-ynov/90 text-white px-8 py-4 rounded-xl font-black transition-all shadow-xl shadow-ynov/20 active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-2"
-                >
-                  <Download className="w-4 h-4" /> Imprimer mon badge
-                </button>
-                <button
-                  onClick={() => setActiveTab('lookup')}
-                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-8 py-4 rounded-xl font-black transition-all text-xs uppercase tracking-widest"
-                >
-                  Gérer mes infos
-                </button>
+
+              <div className="mt-12 flex justify-center">
+                <BadgePreview formData={participant || formData} settings={settings} />
               </div>
             </motion.div>
           ) : (

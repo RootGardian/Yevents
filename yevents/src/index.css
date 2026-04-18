@@ -85,31 +85,45 @@ body {
 
   .badge-container {
     padding: 0 !important;
-    border: 2px solid #eee !important;
+    border: 1px solid #ddd !important;
     box-shadow: none !important;
     transform: none !important;
-    background: white !important; /* Force white background for printing */
+    background: white !important;
     color: black !important;
+    width: 420px !important; /* Fixed width for standard badge size */
+    margin: 0 auto !important;
+    page-break-inside: avoid !important;
   }
 
   /* Force internal badge elements to be visible */
   .badge-container * {
     color: black !important;
     background-color: transparent !important;
-    border-color: #ddd !important;
+    border-color: #eee !important;
+    box-shadow: none !important;
   }
 
-  /* Keep the header red (if possible) */
-  .badge-container > div:first-child {
+  /* Force the Red Header to stay red */
+  .badge-container > div:first-child,
+  .badge-container .bg-\[\#8c2d2d\] {
     background-color: #8c2d2d !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
     color: white !important;
   }
-  .badge-container > div:first-child * {
+  
+  .badge-container .bg-\[\#8c2d2d\] * {
     color: white !important;
   }
 
-  /* Ensure QR code is black on white */
-  .badge-container img, .badge-container .bg-white {
+  /* Ensure QR code and images are printed */
+  .badge-container img {
+    display: block !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .badge-container .bg-white {
     background-color: white !important;
   }
 }
