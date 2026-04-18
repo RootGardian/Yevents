@@ -11,6 +11,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import MyRegistrations from './components/MyRegistrations';
 import FAQ from './components/FAQ';
 import ScrollToTop from './components/ScrollToTop';
+import ForceChangePassword from './components/ForceChangePassword';
 import api from './api';
 import { useNavigate } from 'react-router-dom';
 
@@ -201,6 +202,12 @@ function App() {
     localStorage.setItem('admin_token', userToken);
   };
 
+  const handlePasswordChanged = () => {
+    const updatedUser = { ...user, requiresPasswordChange: false };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   const handleLogout = () => {
     setUser(null);
     setToken(null);
@@ -225,14 +232,24 @@ function App() {
             path="/admin"
             element={
               user ? (
-                user.role === 'admin' ? <AdminDashboard user={user} token={token} /> : <Navigate to="/checkin" />
+                user.requiresPasswordChange ? (
+                  <ForceChangePassword token={token} onPasswordChanged={handlePasswordChanged} />
+                ) : (
+                  user.role === 'admin' ? <AdminDashboard user={user} token={token} /> : <Navigate to="/checkin" />
+                )
               ) : <Login onLogin={handleLogin} />
             }
           />
           <Route
             path="/checkin"
             element={
-              user ? <CheckinDashboard user={user} token={token} /> : <Login onLogin={handleLogin} />
+              user ? (
+                user.requiresPasswordChange ? (
+                  <ForceChangePassword token={token} onPasswordChanged={handlePasswordChanged} />
+                ) : (
+                  <CheckinDashboard user={user} token={token} />
+                )
+              ) : <Login onLogin={handleLogin} />
             }
           />
         </Routes>

@@ -23,8 +23,19 @@ const userCreateSchema = z.object({
     password: z.string().min(6, 'Le mot de passe doit faire au moins 6 caractères')
 });
 
+// Schema for Password Change
+const changePasswordSchema = z.object({
+    oldPassword: z.string().min(1, 'Ancien mot de passe requis'),
+    newPassword: z.string().min(6, 'Le nouveau mot de passe doit faire au moins 6 caractères'),
+    confirmPassword: z.string()
+}).refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmPassword"],
+});
+
 module.exports = {
     loginSchema,
     registrationSchema,
-    userCreateSchema
+    userCreateSchema,
+    changePasswordSchema
 };

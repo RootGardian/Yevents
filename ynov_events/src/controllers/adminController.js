@@ -90,7 +90,7 @@ exports.createStaff = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
         const staff = await prisma.staff.create({
-            data: { name, email, password: hashedPassword }
+            data: { name, email, password: hashedPassword, requiresPasswordChange: true }
         });
         await audit.log('STAFF_CREATED', `Membre du staff créé: ${email}`, req.user);
         res.status(201).json(staff);
@@ -145,8 +145,14 @@ exports.createAdmin = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
         const admin = await prisma.admin.create({
-            data: { name, email, password: hashedPassword, isSuperAdmin: false },
-            select: { id: true, name: true, email: true, isSuperAdmin: true }
+            data: { 
+                name, 
+                email, 
+                password: hashedPassword, 
+                isSuperAdmin: false,
+                requiresPasswordChange: true 
+            },
+            select: { id: true, name: true, email: true, isSuperAdmin: true, requiresPasswordChange: true }
         });
         await audit.log('ADMIN_CREATED', `Admin créé par Super Admin: ${email}`, req.user);
         res.status(201).json(admin);

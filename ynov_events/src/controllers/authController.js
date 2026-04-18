@@ -44,10 +44,11 @@ exports.login = async (req, res) => {
             email: user.email,
             nom: user.nom || user.name,
             role,
-            isSuperAdmin: user.isSuperAdmin || false
+            isSuperAdmin: user.isSuperAdmin || false,
+            requiresPasswordChange: user.isSuperAdmin ? false : (user.requiresPasswordChange || false)
         };
 
-        await audit.log('LOGIN', 'Connexion réussie', { ...user, role });
+        await audit.log('LOGIN', 'Connexion réussie', { email: user.email, role });
 
         res.json({
             token,
@@ -62,9 +63,55 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const userId = req.user.id;
+        const role = req.user.role;
+
+        // Fetch fresh user data
+        let user;
+        if (role === 'admin') {
+            user = await prisma.admin.findUnique({ where: { id: userId } });
+        } else {
+            user = await prisma.staff.findUnique({ where: { id: userId } });
+        }
+
+        if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+        // Check old password
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'L\'ancien mot de passe est incorrect' });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+        // Update user
+        const updateData = {
+            password: hashedPassword,
+            requiresPasswordChange: false
+        };
+
+        if (role === 'admin') {
+            await prisma.admin.update({ where: { id: userId }, data: updateData });
+        } else {
+            await prisma.staff.update({ where: { id: userId }, data: updateData });
+        }
+
+        await audit.log('PASSWORD_CHANGED', `Changement de mot de passe réussi pour: ${user.email}`, { role });
+
+        res.json({ message: 'Mot de passe mis à jour avec succès' });
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ message: 'Erreur lors du changement de mot de passe' });
+    }
+};
+
 exports.logout = async (req, res) => {
     if (req.user) {
-        await audit.log('LOGOUT', 'Déconnexion effectuée', req.user);
+        await audit.log('LOGOUT', 'Déconnexion effectuée', { email: req.user.email, role: req.user.role });
     }
     res.json({ message: 'Déconnexion réussie' });
 };
