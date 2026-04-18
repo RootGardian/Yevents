@@ -85,7 +85,7 @@ const BadgePreview = ({ formData, settings }) => {
         {/* Event Information Section */}
         <div className="px-3 sm:px-6 pb-3 sm:pb-6">
           <div className="bg-[#8c2d2d] py-2 sm:py-4 text-center rounded-t-xl sm:rounded-t-2xl">
-            <p className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.25em] text-white uppercase text-center">INFORMATIONS PRATIQUES</p>
+            <p className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.25em] text-white uppercase text-center">INFORMATIONS DE L'ÉVÉNEMENT</p>
           </div>
           <div className="bg-slate-50 dark:bg-[#262626] p-4 sm:p-6 rounded-b-xl sm:rounded-b-2xl border-x border-b border-slate-200 dark:border-white/5 grid grid-cols-2 gap-4 sm:gap-8">
             <div className="space-y-1 sm:space-y-2">

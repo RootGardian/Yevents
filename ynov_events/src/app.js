@@ -157,3 +157,17 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`[BOOT] Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`[BOOT] DATABASE_URL set: ${!!process.env.DATABASE_URL}`);
 });
+
+// --- Render Keep-Alive Autoping (Free Tier) ---
+// Envoie une requête toutes les minutes pour empêcher le service de s'endormir
+const https = require('https');
+const PING_INTERVAL = 60 * 1000; // 1 minute
+const TARGET_URL = 'https://yevents-7o90.onrender.com/health';
+
+setInterval(() => {
+    https.get(TARGET_URL, (res) => {
+        console.log(`[AUTOPING] Status: ${res.statusCode} (v${APP_VERSION})`);
+    }).on('error', (err) => {
+        console.error(`[AUTOPING] Error: ${err.message}`);
+    });
+}, PING_INTERVAL);
