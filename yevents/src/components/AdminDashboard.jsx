@@ -194,12 +194,14 @@ const AdminDashboard = ({ user, token }) => {
           >
             Stats
           </button>
-          <button
-            onClick={fetchStaff}
-            className={`px-4 py-2 rounded-lg font-bold transition-all border ${view === 'staff' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
-          >
-            Staff
-          </button>
+          {user.email === 'ahmedbangoura@yevents.ma' && (
+            <button
+              onClick={fetchStaff}
+              className={`px-4 py-2 rounded-lg font-bold transition-all border ${view === 'staff' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
+            >
+              Staff
+            </button>
+          )}
           {user.email === 'ahmedbangoura@yevents.ma' && (
             <button
               onClick={fetchAdmins}
@@ -327,7 +329,7 @@ const AdminDashboard = ({ user, token }) => {
         </div>
       )}
 
-      {view === 'staff' && (
+      {view === 'staff' && user.email === 'ahmedbangoura@yevents.ma' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl h-fit">
             <h3 className="font-bold text-white mb-6 flex items-center gap-2"><UserPlus className="w-5 h-5 text-indigo-400" /> Ajouter Staff</h3>

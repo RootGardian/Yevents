@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const { sendConfirmationEmail } = require('../utils/mailer');
 const audit = require('../utils/audit');
 
+const SUPER_ADMIN_EMAIL = 'ahmedbangoura@yevents.ma';
+
 exports.exportParticipants = async (req, res) => {
     try {
         const participants = await prisma.participant.findMany();
@@ -55,6 +57,9 @@ exports.getAuditLogs = async (req, res) => {
 };
 
 exports.getStaff = async (req, res) => {
+    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
     try {
         const staff = await prisma.staff.findMany({ orderBy: { name: 'asc' } });
         res.json(staff);
@@ -64,6 +69,9 @@ exports.getStaff = async (req, res) => {
 };
 
 exports.createStaff = async (req, res) => {
+    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
     const { name, email, password } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -78,6 +86,9 @@ exports.createStaff = async (req, res) => {
 };
 
 exports.deleteStaff = async (req, res) => {
+    if (req.user.email !== SUPER_ADMIN_EMAIL) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
     const { id } = req.params;
     try {
         await prisma.staff.delete({ where: { id: parseInt(id) } });
@@ -89,7 +100,6 @@ exports.deleteStaff = async (req, res) => {
 };
 
 // --- Admin Management (RESTRICTED TO AHMED BANGOURA) ---
-const SUPER_ADMIN_EMAIL = 'ahmedbangoura@yevents.ma';
 
 exports.getAdmins = async (req, res) => {
     if (req.user.email !== SUPER_ADMIN_EMAIL) {
