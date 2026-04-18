@@ -9,19 +9,30 @@ const SUPER_ADMIN_EMAIL = 'ahmedbangoura@yevents.ma';
 
 exports.exportParticipants = async (req, res) => {
     try {
-        const participants = await prisma.participant.findMany();
+        const participants = await prisma.participant.findMany({ orderBy: { createdAt: 'desc' } });
         
-        let csv = 'Nom;Prénom;Email;Téléphone;Entreprise;Catégorie;Présence;Date Inscription\n';
+        // UTF-8 BOM to tell Excel this is UTF-8 encoding (fixes Ã© issues)
+        let csv = '\ufeff';
+        
+        // Header
+        csv += 'Nom;Prénom;Email;Téléphone;Entreprise;Catégorie;Présence;Date Inscription\n';
         
         participants.forEach(p => {
-            csv += `${p.nom};${p.prenom};${p.email};${p.telephone};${p.entreprise || ''};${p.categorieBadge};${p.isCheckedIn ? 'PRÉSENT' : 'ABSENT'};${p.createdAt.toISOString()}\n`;
+            const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleString('fr-FR') : '';
+            // Escape semicolons and force Excel to treat certain fields as text
+            const phone = p.telephone ? `="${p.telephone}"` : '';
+            const entreprise = (p.entreprise || '').replace(/;/g, ',');
+            const nom = (p.nom || '').replace(/;/g, ',');
+            const prenom = (p.prenom || '').replace(/;/g, ',');
+
+            csv += `${nom};${prenom};${p.email};${phone};${entreprise};${p.categorieBadge};${p.isCheckedIn ? 'PRÉSENT' : 'ABSENT'};${dateStr}\n`;
         });
 
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', 'attachment; filename=participants.csv');
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', 'attachment; filename=participants_ynov.csv');
         res.send(csv);
 
-        await audit.log('EXPORT', 'Export CSV des participants effectué.', req.user);
+        await audit.log('EXPORT', 'Export CSV des participants optimisé pour Excel effectué.', req.user);
     } catch (error) {
         console.error('Export error:', error);
         res.status(500).json({ message: 'Erreur lors de l\'export' });
