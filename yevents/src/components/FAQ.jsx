@@ -44,6 +44,18 @@ const FAQItem = ({ question, answer }) => {
 const FAQ = () => {
   const faqs = [
     {
+      question: "QU'EST-CE QUI REND LE YNOV TALK EVENT UNIQUE ?",
+      answer: "Ici, on oublie les discours formatés. Nous avons conçu cet événement pour briser l'idéalisation du monde du travail. Entre le défi du premier emploi, les barrières de la langue et les réalités du terrain parfois injustes, nous avons choisi des panélistes qui ont vécu ces obstacles et qui partagent leurs vraies stratégies. Ce n'est pas une conférence, c'est un partage d'expérience pour ceux qui veulent vraiment oser et réussir."
+    },
+    {
+      question: "QUEL EST L'OBJECTIF DE CE TALK ?",
+      answer: "L’objectif est de vous donner des stratégies de survie et de réussite que vous n'apprendrez pas dans vos cours techniques. Nous voulons briser l'idéalisation du monde du travail et vous montrer que chaque panéliste a dû faire preuve d'audace pour traverser des moments de stigmatisation ou de doute. On ne sort pas d'ici avec juste des notes, mais avec la rage d'agir et des clés pour contourner les obstacles du système."
+    },
+    {
+      question: "À QUI S'ADRESSE RÉELLEMENT CET ÉVÉNEMENT ?",
+      answer: "Il s'adresse à toute personne qui se demande si elle est vraiment à la hauteur de ses ambitions, qu'il s'agisse d'étudiants, de jeunes diplômés ou de profils en pleine transition. Si vous redoutez le saut vers le monde professionnel, ou si vous craignez de ne pas être pris au sérieux dans votre domaine, ce Talk est pour vous. Que vous fassiez vos premiers pas ou que vous soyez déjà sur le terrain, si vous cherchez des modèles auxquels vous pouvez vraiment vous identifier et qui partagent leurs réalités sans filtre, vous êtes au bon endroit."
+    },
+    {
       question: "Je me suis trompé dans mes informations, puis-je les modifier ?",
       answer: "Oui ! C'est tout à fait possible. Vous pouvez rectifier vos informations vous-même à tout moment en utilisant la section 'Mes Inscriptions' ou en cliquant sur 'Gérer mon inscription' sur la page d'accueil. Un nouveau badge avec les informations corrigées vous sera automatiquement renvoyé par e-mail."
     },
