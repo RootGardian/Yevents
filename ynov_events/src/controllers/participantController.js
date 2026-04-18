@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../db');
 const { sendConfirmationEmail } = require('../utils/mailer');
 const { v4: uuidv4 } = require('uuid');
 const { registrationSchema } = require('../utils/validation');
@@ -83,7 +82,7 @@ exports.register = async (req, res) => {
             });
 
             return res.status(500).json({ 
-                message: 'Erreur lors de l\'envois du mail de confirmation. Votre inscription est enregistrée mais en attente de validation manuelle.', 
+                message: 'Erreur lors de l\'envoi du mail de confirmation. Votre inscription est enregistrée mais en attente de validation manuelle.', 
                 error: emailError.message 
             });
         }
@@ -180,13 +179,17 @@ exports.stats = async (req, res) => {
 
 exports.lookup = async (req, res) => {
     const { email, telephone } = req.body;
+    if (!email && !telephone) {
+        return res.status(400).json({ message: 'Veuillez fournir un email ou un numéro de téléphone.' });
+    }
+
     try {
         const participant = await prisma.participant.findFirst({
             where: {
                 OR: [
-                    { email: email },
-                    { telephone: telephone }
-                ]
+                    email ? { email: email } : null,
+                    telephone ? { telephone: telephone } : null
+                ].filter(Boolean)
             }
         });
 
