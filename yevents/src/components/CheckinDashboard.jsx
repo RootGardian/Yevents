@@ -68,11 +68,11 @@ const CheckinDashboard = ({ user, token }) => {
     } catch (err) {
       console.error(err);
       const isAlready = err.response?.data?.status === 'ALREADY_CHECKED_IN';
-      
+
       if (isAlready) {
-          soundService.playError(); // Or maybe a neutral sound? playError for now
+        soundService.playError(); // Or maybe a neutral sound? playError for now
       } else {
-          soundService.playError();
+        soundService.playError();
       }
 
       setLastScanResult({
@@ -97,7 +97,7 @@ const CheckinDashboard = ({ user, token }) => {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-4xl font-black mb-1 italic">CHECK-IN</h1>
+          <h1 className="text-2xl sm:text-4xl font-black mb-1 italic uppercase underline decoration-ynov decoration-4 underline-offset-8">CHECK-IN</h1>
           <p className="text-xs sm:text-sm text-slate-400">Scanner & Validation des présences</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -150,47 +150,45 @@ const CheckinDashboard = ({ user, token }) => {
       )}
 
       {lastScanResult && (
-        <div className={`fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in zoom-in duration-300 backdrop-blur-md ${
-             lastScanResult.success ? 'bg-green-500/90' : 
-             lastScanResult.isWarning ? 'bg-amber-500/90' : 'bg-red-500/90'
-           }`}>
-           <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl max-w-lg w-full text-center space-y-6 border-4 border-white/20">
-             <div className="flex justify-center">
-                {lastScanResult.success ? (
-                    <CheckCircle2 className="w-24 h-24 text-green-500 animate-bounce" />
-                ) : lastScanResult.isWarning ? (
-                    <AlertTriangle className="w-24 h-24 text-amber-500 animate-pulse" />
-                ) : (
-                    <X className="w-24 h-24 text-red-500" />
-                )}
-             </div>
-             
-             <div className="space-y-2">
-                <h3 className={`text-3xl font-black uppercase italic ${
-                    lastScanResult.success ? 'text-green-500' : 
-                    lastScanResult.isWarning ? 'text-amber-500' : 'text-red-500'
-                }`}>
-                    {lastScanResult.message}
-                </h3>
-                {lastScanResult.participant && (
-                    <p className="text-xl font-bold text-slate-700 dark:text-white uppercase tracking-tighter">
-                        {lastScanResult.participant.prenom} {lastScanResult.participant.nom}
-                    </p>
-                )}
-                {lastScanResult.isWarning && (
-                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest pt-2 border-t border-slate-100 dark:border-slate-800 mt-4">
-                        ⚠️ DÉJÀ VALIDÉ PRÉCÉDEMMENT
-                    </p>
-                )}
-             </div>
+        <div className={`fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in zoom-in duration-300 backdrop-blur-md ${lastScanResult.success ? 'bg-green-500/90' :
+            lastScanResult.isWarning ? 'bg-amber-500/90' : 'bg-red-500/90'
+          }`}>
+          <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl max-w-lg w-full text-center space-y-6 border-4 border-white/20">
+            <div className="flex justify-center">
+              {lastScanResult.success ? (
+                <CheckCircle2 className="w-24 h-24 text-green-500 animate-bounce" />
+              ) : lastScanResult.isWarning ? (
+                <AlertTriangle className="w-24 h-24 text-amber-500 animate-pulse" />
+              ) : (
+                <X className="w-24 h-24 text-red-500" />
+              )}
+            </div>
 
-             <button 
-                onClick={() => setLastScanResult(null)}
-                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all"
-             >
-                Fermer
-             </button>
-           </div>
+            <div className="space-y-2">
+              <h3 className={`text-3xl font-black uppercase italic ${lastScanResult.success ? 'text-green-500' :
+                  lastScanResult.isWarning ? 'text-amber-500' : 'text-red-500'
+                }`}>
+                {lastScanResult.message}
+              </h3>
+              {lastScanResult.participant && (
+                <p className="text-xl font-bold text-slate-700 dark:text-white uppercase tracking-tighter">
+                  {lastScanResult.participant.prenom} {lastScanResult.participant.nom}
+                </p>
+              )}
+              {lastScanResult.isWarning && (
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest pt-2 border-t border-slate-100 dark:border-slate-800 mt-4">
+                  ⚠️ DÉJÀ VALIDÉ PRÉCÉDEMMENT
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={() => setLastScanResult(null)}
+              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all"
+            >
+              Fermer
+            </button>
+          </div>
         </div>
       )}
 

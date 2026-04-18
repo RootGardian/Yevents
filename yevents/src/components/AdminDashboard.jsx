@@ -18,6 +18,9 @@ const AdminDashboard = ({ user, token }) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualCode, setManualCode] = useState('');
   const [lastScanResult, setLastScanResult] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isTriggering, setIsTriggering] = useState(false);
   const [view, setView] = useState('stats'); // 'stats', 'audit', 'staff', 'admins'
   const [auditLogs, setAuditLogs] = useState([]);
   const [staffList, setStaffList] = useState([]);
@@ -140,13 +143,27 @@ const AdminDashboard = ({ user, token }) => {
     }
   };
 
-  const handleTriggerReminders = async () => {
-    if (!confirm("Envoyer les rappels J-2 à TOUS ?")) return;
+  const handleTriggerReminders = () => {
+    setShowAuthModal(true);
+  };
+
+  const confirmTriggerReminders = async (e) => {
+    e.preventDefault();
+    if (!adminPassword) return;
+
+    setIsTriggering(true);
     try {
-      const res = await api.post('/admin/trigger-reminders', {}, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await api.post('/admin/trigger-reminders',
+        { password: adminPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       alert(res.data.message);
+      setShowAuthModal(false);
+      setAdminPassword('');
     } catch (err) {
-      alert("Erreur déclenchement");
+      alert(err.response?.data?.message || "Erreur d'authentification");
+    } finally {
+      setIsTriggering(false);
     }
   };
 
@@ -179,13 +196,18 @@ const AdminDashboard = ({ user, token }) => {
             <button onClick={fetchStaff} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'staff' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Staff</button>
           )}
           {user.isSuperAdmin && (
-            <button onClick={fetchAdmins} className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${view === 'admins' ? 'bg-red-600 border-red-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}><Key className="w-4 h-4" /> Admins</button>
+            <button onClick={fetchAdmins} className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${view === 'admins' ? 'bg-red-600 border-red-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}> Admins</button>
           )}
-          <button onClick={fetchAuditLogs} className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${view === 'audit' ? 'bg-amber-600 border-amber-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}><ShieldCheck className="w-4 h-4" /> Logs</button>
+          <button onClick={fetchAuditLogs} className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${view === 'audit' ? 'bg-amber-600 border-amber-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}> Logs</button>
           <button onClick={handleExport} className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl font-bold hover:bg-slate-700">CSV</button>
           {user.isSuperAdmin && (
-            <button onClick={handleTriggerReminders} className="flex items-center gap-2 px-4 py-2 bg-ynov/10 border border-ynov/30 text-ynov rounded-xl font-bold hover:bg-ynov/20 transition-all group">
-              <RefreshCw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" /> Rappels J-2
+            <button
+              onClick={handleTriggerReminders}
+              disabled={isTriggering}
+              className={`flex items-center gap-2 px-4 py-2 border rounded-xl font-bold transition-all group ${isTriggering ? 'bg-slate-700 border-slate-600 text-slate-500 cursor-not-allowed' : 'bg-ynov/10 border-ynov/30 text-ynov hover:bg-ynov/20'}`}
+            >
+              <RefreshCw className={`w-4 h-4 ${isTriggering ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
+              {isTriggering ? 'Envoi...' : 'Rappels J-2'}
             </button>
           )}
         </div>
@@ -342,6 +364,66 @@ const AdminDashboard = ({ user, token }) => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Auth Modal for Reminders */}
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-start mb-6">
+              <div className="p-3 bg-ynov/10 rounded-2xl">
+                <ShieldCheck className="w-8 h-8 text-ynov" />
+              </div>
+              <button
+                onClick={() => { setShowAuthModal(false); setAdminPassword(''); }}
+                className="p-2 hover:bg-slate-800 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+
+            <h3 className="text-2xl font-black text-white mb-2 uppercase italic">Action Critique</h3>
+            <p className="text-slate-400 text-sm mb-6">
+              L'envoi automatique des rappels à tous les participants est une action irréversible.
+              Veuillez saisir votre mot de passe pour confirmer.
+            </p>
+
+            <form onSubmit={confirmTriggerReminders} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Mot de Passe Admin</label>
+                <input
+                  type="password"
+                  autoFocus
+                  className="w-full bg-slate-800 border-none rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-ynov transition-all placeholder:text-slate-600"
+                  placeholder="••••••••"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isTriggering}
+                className="w-full bg-ynov hover:bg-ynov_dark text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-ynov/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              >
+                {isTriggering ? (
+                  <RefreshCw className="w-6 h-6 animate-spin mx-auto" />
+                ) : (
+                  'Confirmer l\'envoi'
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setShowAuthModal(false); setAdminPassword(''); }}
+                className="w-full py-3 text-slate-500 text-xs font-bold hover:text-slate-300 transition-colors"
+              >
+                Annuler
+              </button>
+            </form>
           </div>
         </div>
       )}
