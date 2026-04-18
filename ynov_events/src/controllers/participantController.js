@@ -312,11 +312,5 @@ exports.verifyOTP = async (req, res) => {
     }
 };
 
-        res.json({ participant });
-    } catch (error) {
-        console.error('[OTP VERIFY] Error:', error);
-        res.status(500).json({ message: 'Erreur lors de la vérification.' });
-    }
-};
 
 
