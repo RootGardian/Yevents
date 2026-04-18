@@ -42,6 +42,9 @@ const CheckinDashboard = ({ user, token }) => {
   };
 
   const handleScanSuccessful = async (decodedText) => {
+    // Fermer le scanner immédiatement pour éviter les scans multiples
+    setShowScanner(false);
+    
     const tokenPart = decodedText.split('/').pop();
     handleCheckinAction(tokenPart);
   };
