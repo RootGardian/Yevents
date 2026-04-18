@@ -172,8 +172,68 @@ const sendOTPEmail = async (email, otp) => {
     }
 };
 
+const sendReminderEmail = async (email, name, role = 'Participant') => {
+    console.log(`[MAILER] Sending reminder email to ${email}...`);
+    const apiKey = process.env.BREVO_API_KEY;
+    const url = 'https://api.brevo.com/v3/smtp/email';
+
+    if (!apiKey) throw new Error('Missing Brevo API Key');
+
+    const emailData = {
+        sender: {
+            name: process.env.MAIL_FROM_NAME || 'Ynov Events',
+            email: process.env.MAIL_FROM_ADDRESS
+        },
+        to: [{ email, name }],
+        subject: 'RAPPEL : J-2 avant Ynov Talk Events 2026',
+        htmlContent: `
+        <div style="background-color: #0f172a; color: #ffffff; font-family: 'Helvetica', Arial, sans-serif; padding: 40px; border-radius: 12px; max-width: 600px; margin: auto;">
+            <div style="text-align: center; border-bottom: 2px solid #8c2d2d; padding-bottom: 20px; margin-bottom: 30px;">
+                <h1 style="color: #ffffff; font-size: 28px; margin: 0; font-style: italic; font-weight: 900; text-transform: uppercase;">Préparez-vous à l'Impact</h1>
+            </div>
+            
+            <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">Bonjour ${name},</p>
+            
+            <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">Plus que 2 jours avant <b>Ynov Talk Events 2026</b>. Nous avons hâte de vous retrouver au Campus de Casablanca pour ce moment de partage authentique.</p>
+            
+            <div style="background-color: #1e293b; padding: 25px; border-radius: 8px; border-left: 4px solid #8c2d2d; margin: 30px 0;">
+                <p style="font-size: 14px; font-weight: bold; color: #ffffff; margin-top: 0; text-transform: uppercase; letter-spacing: 1px;">ℹ️ INFORMATION CRITIQUE :</p>
+                <p style="font-size: 15px; color: #f8fafc; margin-bottom: 0;">
+                    Le <b>badge QR Code</b> qui vous a été transmis par mail lors de votre inscription est <b>STRICTEMENT OBLIGATOIRE</b> pour accéder au campus. Veuillez le préparer sur votre téléphone ou l'imprimer pour fluidifier votre entrée.
+                </p>
+            </div>
+
+            <p style="font-size: 14px; color: #94a3b8;">
+                Rappel du lieu :<br>
+                <b>Maroc Ynov Campus, 8 Ibnou Katima (Ex Bournazel), Casablanca</b><br>
+                Début de l'événement : 14h00
+            </p>
+
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b;">
+                <p style="font-size: 12px; color: #64748b;">Ce message est un rappel automatique pour l'événement Ynov Talk Events 2026.</p>
+            </div>
+        </div>
+        `
+    };
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'api-key': apiKey
+        },
+        body: JSON.stringify(emailData)
+    });
+
+    if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message || 'Failed to send reminder email');
+    }
+};
+
 module.exports = {
     sendConfirmationEmail,
-    sendOTPEmail
+    sendOTPEmail,
+    sendReminderEmail
 };
 

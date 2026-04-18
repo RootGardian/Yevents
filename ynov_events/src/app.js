@@ -1,5 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const cron = require('node-cron');
+const { sendAllReminders } = require('./utils/reminders');
+
+// Schedule Reminders: April 30th, 2026 at 10:00 AM (2 days before event)
+cron.schedule('0 10 30 4 *', () => {
+    console.log('[CRON] Triggering scheduled reminders for April 30th...');
+    sendAllReminders();
+}, {
+    scheduled: true,
+    timezone: "Africa/Casablanca"
+});
 const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');

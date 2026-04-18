@@ -1,16 +1,68 @@
-import React from 'react';
-import { Calendar, MapPin, Users, ArrowRight, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, MapPin, Users, ArrowRight, CheckCircle, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+const Countdown = () => {
+  const calculateTimeLeft = () => {
+    const eventDate = new Date('2026-05-02T09:00:00');
+    const difference = +eventDate - +new Date();
+    let timeLeft = {};
+
+    if (difference > 0) {
+      timeLeft = {
+        jours: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        heures: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        secondes: Math.floor((difference / 1000) % 60),
+      };
+    }
+    return timeLeft;
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const timerComponents = Object.keys(timeLeft).map((interval) => {
+    return (
+      <div key={interval} className="flex flex-col items-center px-4">
+        <span className="text-2xl sm:text-4xl font-black italic text-slate-800 dark:text-white leading-none">
+          {timeLeft[interval] < 10 ? `0${timeLeft[interval]}` : timeLeft[interval]}
+        </span>
+        <span className="text-[9px] font-black uppercase tracking-widest text-ynov mt-1">
+          {interval}
+        </span>
+      </div>
+    );
+  });
+
+  return (
+    <div className="flex items-center justify-center divide-x divide-slate-100 dark:divide-slate-800 py-4">
+      {timerComponents.length ? timerComponents : <span className="text-ynov font-black uppercase tracking-widest">L'événement commence !</span>}
+    </div>
+  );
+};
 
 const WelcomePage = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-16 py-12 animate-in fade-in duration-1000">
       {/* Hero Section */}
-      <div className="text-center space-y-4">
-        <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-none">
-          Ynov Talk <span className="text-ynov">2026</span>
-        </h1>
-        <p className="text-xl text-slate-500 font-medium uppercase tracking-widest">AGIR POUR REUSSIR</p>
+      <div className="text-center space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-none">
+            Ynov Talk <span className="text-ynov">2026</span>
+          </h1>
+          <p className="text-xl text-slate-500 font-medium uppercase tracking-widest">AGIR POUR REUSSIR</p>
+        </div>
+        
+        <div className="inline-block bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl px-8 py-2 shadow-sm">
+          <Countdown />
+        </div>
       </div>
 
       {/* Info Cards */}
