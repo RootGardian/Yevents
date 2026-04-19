@@ -33,8 +33,8 @@ const WelcomePage = ({ settings }) => {
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <Calendar className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase italic text-sm tracking-tighter mb-2 text-slate-900 dark:text-white">Date & Horaires</h3>
-          <div className="text-slate-500 dark:text-slate-400 font-mono">
-            <p className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight">
+          <div className="text-slate-900 dark:text-white">
+            <p className="text-sm sm:text-base font-black italic tracking-tighter text-slate-900 dark:text-white leading-tight">
               {event_date_text.toUpperCase()}
             </p>
             <p className="text-xs font-black italic tracking-tighter mt-1 text-slate-900 dark:text-white uppercase">
@@ -49,7 +49,7 @@ const WelcomePage = ({ settings }) => {
             href={event_location_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-slate-500 dark:text-slate-400 text-sm font-black italic tracking-tighter hover:text-ynov transition-colors underline underline-offset-4 decoration-slate-200 dark:decoration-slate-800"
+            className="text-slate-900 dark:text-white text-sm font-black italic tracking-tighter hover:text-ynov transition-colors underline underline-offset-4 decoration-slate-200 dark:decoration-slate-800"
           >
             {event_location}
           </a>
@@ -57,7 +57,7 @@ const WelcomePage = ({ settings }) => {
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <Users className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
           <h3 className="font-black uppercase italic text-sm tracking-tighter mb-2 text-slate-900 dark:text-white">Public Cible</h3>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-black italic tracking-tighter uppercase">{event_public_target}</p>
+          <p className="text-slate-900 dark:text-white text-xs font-black italic tracking-tighter uppercase">{event_public_target}</p>
         </div>
       </div>
 
