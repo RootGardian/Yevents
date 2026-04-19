@@ -12,6 +12,7 @@ const MyRegistrations = () => {
     const [error, setError] = useState(null);
     const [participant, setParticipant] = useState(null);
     const [timer, setTimer] = useState(0);
+    const [token, setToken] = useState(null);
     const [showEdit, setShowEdit] = useState(false);
 
     // Timer logic for resend
@@ -47,6 +48,7 @@ const MyRegistrations = () => {
         try {
             const res = await api.post('/otp/verify', { email, code });
             setParticipant(res.data.participant);
+            setToken(res.data.token);
             setStep('verified');
         } catch (err) {
             setError(err.response?.data?.message || "Code invalide ou expiré.");
@@ -65,8 +67,7 @@ const MyRegistrations = () => {
         try {
             const res = await api.post('/register/update', {
                 ...updatedData,
-                currentEmail: email, // L'email avec lequel on s'est connecté via OTP
-                otpCode: code        // Le code valide encore présent en base
+                correctionToken: token // Utilisation du jeton obtenu lors de la connexion
             });
             setParticipant(res.data.participant);
             setShowEdit(false);

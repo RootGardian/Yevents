@@ -4,10 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 
 const RegistrationCorrection = ({ onBack }) => {
-  const [step, setStep] = useState('lookup'); // 'lookup' or 'edit'
+  const [step, setStep] = useState('lookup'); // 'lookup', 'verify', 'edit'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [correctionToken, setCorrectionToken] = useState(null);
 
   const [lookupData, setLookupData] = useState({
     email: '',
@@ -24,8 +25,6 @@ const RegistrationCorrection = ({ onBack }) => {
     entreprise: '',
     categorie_badge: 'PARTICIPANT'
   });
-  const [initialEmail, setInitialEmail] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
 
@@ -80,8 +79,10 @@ const RegistrationCorrection = ({ onBack }) => {
         entreprise: participant.entreprise || '',
         categorie_badge: participant.categorieBadge || 'PARTICIPANT'
       });
-      setInitialEmail(participant.email);
-      setStep('edit');
+      
+      // Automatic OTP request after lookup
+      setStep('verify');
+      handleRequestOTP(participant.email);
     } catch (err) {
       setError(err.response?.data?.message || "Aucune inscription trouvée. Vérifiez vos informations.");
     } finally {
@@ -89,15 +90,30 @@ const RegistrationCorrection = ({ onBack }) => {
     }
   };
 
-  const handleRequestOTP = async () => {
+  const handleRequestOTP = async (targetEmail) => {
+    const emailToUse = targetEmail || formData.email;
     setOtpLoading(true);
     setError(null);
     try {
-      await api.post('/otp/request', { email: initialEmail });
-      setOtpSent(true);
-      alert("Un code de vérification a été envoyé à votre e-mail.");
+      await api.post('/otp/request', { email: emailToUse });
+      alert("Un code de vérification a été envoyé à votre e-mail actuel.");
     } catch (err) {
       setError(err.response?.data?.message || "Erreur lors de l'envoi du code.");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    setOtpLoading(true);
+    setError(null);
+    try {
+      const res = await api.post('/otp/verify', { email: formData.email, code: otpCode });
+      setCorrectionToken(res.data.token);
+      setStep('edit');
+    } catch (err) {
+      setError(err.response?.data?.message || "Code invalide ou expiré.");
     } finally {
       setOtpLoading(false);
     }
@@ -110,8 +126,7 @@ const RegistrationCorrection = ({ onBack }) => {
     try {
       const submissionData = {
         ...formData,
-        currentEmail: initialEmail, // Identifying the user by the email that received the OTP
-        otpCode,
+        correctionToken, // Using the JWT session token
         telephone: `${formData.indicatif}${formData.telephone}`
       };
       await api.post('/register/update', submissionData);
@@ -223,7 +238,53 @@ const RegistrationCorrection = ({ onBack }) => {
               </button>
             </form>
           </motion.div>
-        ) : (
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-xl space-y-8"
+          >
+            <div className="text-center space-y-4">
+               <div className="w-16 h-16 bg-ynov/10 rounded-full flex items-center justify-center mx-auto text-ynov">
+                  <Mail className="w-8 h-8" />
+               </div>
+               <h3 className="text-2xl font-black italic uppercase">Vérifiez votre boîte mail</h3>
+               <p className="text-slate-500 text-sm max-w-sm mx-auto">
+                 Nous avons envoyé un code de vérification à l'adresse associée à votre badge : <br/>
+                 <strong className="text-slate-900 dark:text-white underline">{formData.email}</strong>
+               </p>
+            </div>
+
+            <form onSubmit={handleVerifyOTP} className="space-y-6">
+                <div className="flex justify-center">
+                    <input
+                      required
+                      autoFocus
+                      type="text"
+                      maxLength={6}
+                      className="w-full max-w-[280px] bg-slate-50 dark:bg-slate-800 border-none rounded-2xl py-5 px-4 text-center text-3xl font-black tracking-[0.25em] focus:ring-2 focus:ring-ynov transition-all"
+                      placeholder="••••••"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                    />
+                </div>
+
+                {error && (
+                  <div className="bg-red-50 text-red-500 p-4 rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  disabled={otpLoading || otpCode.length < 6}
+                  type="submit"
+                  className="w-full bg-ynov text-white font-black py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {otpLoading ? <Loader2 className="animate-spin w-5 h-5" /> : "VÉRIFIER ET MODIFIER"}
+                </button>
+
+                <button type="button" onClick={() => handleRequestOTP()} className="w-full text-slate-400 hover:text-ynov text-[10px] font-black uppercase tracking-widest transition-colors">
+                  Renvoyer le code
+                </button>
+            </form>
+          </motion.div>
+        ) : step === 'edit' ? (
           <motion.div
             key="edit"
             initial={{ opacity: 0, y: 20 }}
@@ -278,37 +339,8 @@ const RegistrationCorrection = ({ onBack }) => {
                 <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
               </div>
 
-              <div className="bg-slate-900/5 dark:bg-slate-800/50 p-6 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 space-y-4">
-                <div className="flex items-center gap-3 text-ynov font-bold text-xs">
-                  <AlertCircle className="w-4 h-4" /> VÉRIFICATION D'IDENTITÉ REQUISE
-                </div>
-                <p className="text-[10px] text-slate-500 uppercase font-black">
-                  Pour enregistrer les modifications, vous devez valider votre identité via un code envoyé à votre e-mail.
-                </p>
-                
-                {!otpSent ? (
-                  <button
-                    type="button"
-                    onClick={handleRequestOTP}
-                    disabled={otpLoading}
-                    className="w-full bg-slate-800 text-white text-xs font-black py-3 rounded-xl hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-                  >
-                    {otpLoading ? <Loader2 className="animate-spin w-4 h-4" /> : "ENVOYER LE CODE PAR MAIL"}
-                  </button>
-                ) : (
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Code reçu (6 chiffres)</label>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      className="w-full bg-white dark:bg-slate-900 border-2 border-ynov/30 rounded-xl py-3 px-4 text-center text-lg font-black tracking-[1em] focus:ring-2 focus:ring-ynov"
-                      placeholder="000000"
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
-                    />
-                    <button type="button" onClick={handleRequestOTP} className="text-[10px] text-slate-400 font-bold hover:text-ynov">Renvoyer le code</button>
-                  </div>
-                )}
+              <div className="bg-green-500/5 dark:bg-green-500/10 p-4 rounded-xl border border-green-500/20 text-center">
+                <p className="text-[10px] text-green-600 dark:text-green-400 font-black uppercase tracking-widest">Identité vérifiée ✓ Session active</p>
               </div>
 
               {error && (
@@ -318,11 +350,11 @@ const RegistrationCorrection = ({ onBack }) => {
               )}
 
               <button
-                disabled={loading || !otpSent || otpCode.length < 6}
+                disabled={loading}
                 type="submit"
-                className="w-full bg-ynov hover:opacity-90 text-white font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-full bg-ynov hover:opacity-90 text-white font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3"
               >
-                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-5 h-5" /> CONFIRMER ET ENREGISTRER</>}
+                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-5 h-5" /> ENREGISTRER LES MODIFICATIONS</>}
               </button>
 
               <button type="button" onClick={() => setStep('lookup')} className="w-full text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest py-2 transition-colors">
