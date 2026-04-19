@@ -5,7 +5,7 @@ const DEFAULT_SETTINGS = {
     event_name: 'Ynov Talk 2026',
     event_date: '2026-05-02',
     event_date_text: 'SAMEDI 2 MAI 2026',
-    event_hours: '09:00 - 18:00',
+    event_hours: '14:00 - 18:00',
     event_location: 'Casablanca Ynov campus',
     event_location_link: 'https://maps.app.goo.gl/B6KTip19rMJmUVMp7?g_st=ic',
     event_public_target: 'PROFESSIONNELS & ÉTUDIANTS YNOV',
@@ -17,7 +17,7 @@ exports.getPublicSettings = async (req, res) => {
     try {
         const settings = await prisma.setting.findMany();
         const settingsMap = {};
-        
+
         // Fill with defaults first
         Object.keys(DEFAULT_SETTINGS).forEach(key => {
             settingsMap[key] = DEFAULT_SETTINGS[key];
@@ -52,7 +52,7 @@ exports.updateSettings = async (req, res) => {
 
         await prisma.$transaction(operations);
         await audit.log('SETTINGS_UPDATE', `Mise à jour des paramètres de l'événement`, req.user);
-        
+
         res.json({ message: 'Paramètres mis à jour avec succès' });
     } catch (error) {
         console.error('Update settings error:', error);

@@ -216,7 +216,17 @@ exports.lookup = async (req, res) => {
             return res.status(404).json({ message: 'Aucune inscription trouvée avec ces informations.' });
         }
 
-        res.json(participant);
+        // Filter sensitive data
+        const safeParticipant = {
+            prenom: participant.prenom,
+            nom: participant.nom,
+            email: participant.email,
+            telephone: participant.telephone,
+            entreprise: participant.entreprise,
+            categorieBadge: participant.categorieBadge
+        };
+
+        res.json(safeParticipant);
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la recherche.' });
     }
@@ -225,28 +235,30 @@ exports.lookup = async (req, res) => {
 exports.updateParticipant = async (req, res) => {
     try {
         const validatedData = registrationSchema.parse(req.body);
-        const { id } = req.body; // ID is not in registrationSchema usually, but it's passed here
+        const { email, otpCode } = req.body;
+        const { nom, prenom, telephone, entreprise, categorie_badge } = validatedData;
         
-        const { nom, prenom, email, telephone, entreprise, categorie_badge } = validatedData;
-
-        // Check if new email is already used by someone else
-        const existing = await prisma.participant.findFirst({
-            where: {
-                email: email,
-                NOT: { id: parseInt(id) }
-            }
-        });
-
-        if (existing) {
-            return res.status(400).json({ message: 'Cet email est déjà utilisé par un autre participant.' });
+        // 1. Verify OTP first
+        const otpRecord = await prisma.otp.findUnique({ where: { email } });
+        if (!otpRecord || otpRecord.code !== otpCode) {
+            return res.status(401).json({ message: 'Code de vérification invalide. Veuillez recommencer.' });
+        }
+        if (new Date() > otpRecord.expiresAt) {
+            return res.status(401).json({ message: 'Code expiré.' });
         }
 
+        // 2. Fetch participant by the email verified by OTP
+        const participant = await prisma.participant.findUnique({ where: { email } });
+        if (!participant) {
+            return res.status(404).json({ message: 'Participant non trouvé.' });
+        }
+
+        // 3. Update the record
         const updated = await prisma.participant.update({
-            where: { id: parseInt(id) },
+            where: { id: participant.id },
             data: {
                 nom,
                 prenom,
-                email,
                 telephone,
                 entreprise,
                 categorieBadge: categorie_badge,
@@ -254,6 +266,9 @@ exports.updateParticipant = async (req, res) => {
                 emailSent: false
             }
         });
+
+        // Delete OTP after success
+        await prisma.otp.delete({ where: { email } });
 
         try {
             await sendConfirmationEmail(updated);
@@ -264,6 +279,8 @@ exports.updateParticipant = async (req, res) => {
                     registrationStatus: 'confirmed'
                 }
             });
+            const audit = require('../utils/audit');
+            await audit.log('SELF_UPDATE', `Mise à jour des informations par le participant: ${updated.email}`, { participantId: updated.id });
             res.json({ message: 'Informations mises à jour et nouveau badge envoyé !', participant: updated });
         } catch (emailError) {
             console.error('[UPDATE] Email failed:', emailError);
@@ -327,7 +344,17 @@ exports.verifyOTP = async (req, res) => {
         const participant = await prisma.participant.findUnique({ where: { email } });
         await prisma.otp.delete({ where: { email } });
 
-        res.json({ participant });
+        // Filter sensitive data
+        const safeParticipant = {
+            prenom: participant.prenom,
+            nom: participant.nom,
+            email: participant.email,
+            telephone: participant.telephone,
+            entreprise: participant.entreprise,
+            categorieBadge: participant.categorieBadge
+        };
+
+        res.json({ participant: safeParticipant });
     } catch (error) {
         console.error('[OTP VERIFY] Error:', error);
         res.status(500).json({ message: 'Erreur lors de la vérification.' });

@@ -63,10 +63,10 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Needed for some SPA logic
+            scriptSrc: ["'self'"], // Removed unsafe-inline/eval for better security
             styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'", "data:", "blob:"],
-            connectSrc: ["'self'", "https://yevents-7o90.onrender.com"]
+            imgSrc: ["'self'", "data:", "blob:", "https://api.qrserver.com"],
+            connectSrc: ["'self'", "https://yevents-7o90.onrender.com", "https://api.brevo.com"]
         }
     }
 }));
@@ -96,7 +96,8 @@ const strictLimiter = rateLimit({
 app.use('/api/', globalLimiter);
 app.use('/api/login', strictLimiter);
 app.use('/api/register', strictLimiter);
-app.use('/api/request-otp', strictLimiter);
+app.use('/api/otp/request', strictLimiter);
+app.use('/api/otp/verify', strictLimiter);
 
 // --- API Routes ---
 try {

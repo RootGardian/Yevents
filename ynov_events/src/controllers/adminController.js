@@ -73,7 +73,10 @@ exports.getStaff = async (req, res) => {
         return res.status(403).json({ message: 'Privilèges Super Admin requis' });
     }
     try {
-        const staff = await prisma.staff.findMany({ orderBy: { name: 'asc' } });
+        const staff = await prisma.staff.findMany({ 
+            select: { id: true, name: true, email: true, requiresPasswordChange: true, createdAt: true },
+            orderBy: { name: 'asc' } 
+        });
         res.json(staff);
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur' });
@@ -90,7 +93,8 @@ exports.createStaff = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
         const staff = await prisma.staff.create({
-            data: { name, email, password: hashedPassword, requiresPasswordChange: true }
+            data: { name, email, password: hashedPassword, requiresPasswordChange: true },
+            select: { id: true, name: true, email: true, requiresPasswordChange: true }
         });
         await audit.log('STAFF_CREATED', `Membre du staff créé: ${email}`, req.user);
         res.status(201).json(staff);
