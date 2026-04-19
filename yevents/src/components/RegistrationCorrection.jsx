@@ -24,6 +24,9 @@ const RegistrationCorrection = ({ onBack }) => {
     entreprise: '',
     categorie_badge: 'PARTICIPANT'
   });
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
 
   const countryCodes = [
     { code: '+212', country: 'Maroc' },
@@ -84,6 +87,20 @@ const RegistrationCorrection = ({ onBack }) => {
     }
   };
 
+  const handleRequestOTP = async () => {
+    setOtpLoading(true);
+    setError(null);
+    try {
+      await api.post('/otp/request', { email: formData.email });
+      setOtpSent(true);
+      alert("Un code de vérification a été envoyé à votre e-mail.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Erreur lors de l'envoi du code.");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -91,12 +108,14 @@ const RegistrationCorrection = ({ onBack }) => {
     try {
       const submissionData = {
         ...formData,
+        email: formData.email, // Backend uses this to find the participant
+        otpCode,
         telephone: `${formData.indicatif}${formData.telephone}`
       };
       await api.post('/register/update', submissionData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || "Une erreur est survenue lors de la mise à jour.");
+      setError(err.response?.data?.message || "Code invalide ou erreur de mise à jour.");
     } finally {
       setLoading(false);
     }
@@ -257,14 +276,51 @@ const RegistrationCorrection = ({ onBack }) => {
                 <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
               </div>
 
+              <div className="bg-slate-900/5 dark:bg-slate-800/50 p-6 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 space-y-4">
+                <div className="flex items-center gap-3 text-ynov font-bold text-xs">
+                  <AlertCircle className="w-4 h-4" /> VÉRIFICATION D'IDENTITÉ REQUISE
+                </div>
+                <p className="text-[10px] text-slate-500 uppercase font-black">
+                  Pour enregistrer les modifications, vous devez valider votre identité via un code envoyé à votre e-mail.
+                </p>
+                
+                {!otpSent ? (
+                  <button
+                    type="button"
+                    onClick={handleRequestOTP}
+                    disabled={otpLoading}
+                    className="w-full bg-slate-800 text-white text-xs font-black py-3 rounded-xl hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    {otpLoading ? <Loader2 className="animate-spin w-4 h-4" /> : "ENVOYER LE CODE PAR MAIL"}
+                  </button>
+                ) : (
+                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Code reçu (6 chiffres)</label>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      className="w-full bg-white dark:bg-slate-900 border-2 border-ynov/30 rounded-xl py-3 px-4 text-center text-lg font-black tracking-[1em] focus:ring-2 focus:ring-ynov"
+                      placeholder="000000"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value)}
+                    />
+                    <button type="button" onClick={handleRequestOTP} className="text-[10px] text-slate-400 font-bold hover:text-ynov">Renvoyer le code</button>
+                  </div>
+                )}
+              </div>
+
               {error && (
                 <div className="bg-red-50 text-red-500 p-4 rounded-xl flex items-center gap-3 text-xs font-bold">
                   <AlertCircle className="w-4 h-4" /> {error}
                 </div>
               )}
 
-              <button disabled={loading} type="submit" className="w-full bg-ynov hover:opacity-90 text-white font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3">
-                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-5 h-5" /> ENREGISTRER LES MODIFICATIONS</>}
+              <button
+                disabled={loading || !otpSent || otpCode.length < 6}
+                type="submit"
+                className="w-full bg-ynov hover:opacity-90 text-white font-black py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-5 h-5" /> CONFIRMER ET ENREGISTRER</>}
               </button>
 
               <button type="button" onClick={() => setStep('lookup')} className="w-full text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest py-2 transition-colors">
