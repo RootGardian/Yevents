@@ -238,6 +238,10 @@ exports.updateParticipant = async (req, res) => {
         const { currentEmail, otpCode } = req.body;
         const { nom, prenom, email, telephone, entreprise, categorie_badge } = validatedData;
         
+        if (!currentEmail || !otpCode) {
+            return res.status(400).json({ message: 'Identification requise (Email + Code OTP manquant).' });
+        }
+
         // 1. Verify OTP first (on the email where it was sent)
         const otpRecord = await prisma.otp.findUnique({ where: { email: currentEmail } });
         if (!otpRecord || otpRecord.code !== otpCode) {
@@ -351,7 +355,8 @@ exports.verifyOTP = async (req, res) => {
         }
 
         const participant = await prisma.participant.findUnique({ where: { email } });
-        await prisma.otp.delete({ where: { email } });
+        // OTP is NOT deleted here anymore, it will be deleted by updateParticipant or expiration.
+        // This allows the code to be used for the final save transaction.
 
         // Filter sensitive data
         const safeParticipant = {
