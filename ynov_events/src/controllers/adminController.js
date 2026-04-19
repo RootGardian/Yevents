@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const { sendConfirmationEmail, sendReminderEmail } = require('../utils/mailer');
 const audit = require('../utils/audit');
 const { sendAllReminders } = require('../utils/reminders');
-const { userCreateSchema } = require('../utils/validation');
+const { userCreateSchema, passwordResetSchema } = require('../utils/validation');
 
 const SUPER_ADMIN_EMAIL = 'ahmedbangoura@yevents.ma';
 
@@ -183,6 +183,47 @@ exports.deleteAdmin = async (req, res) => {
     } catch (error) {
         console.error('Delete admin error:', error);
         res.status(500).json({ message: 'Erreur lors de la suppression' });
+    }
+};
+
+exports.resetUserPassword = async (req, res) => {
+    if (!req.user.isSuperAdmin) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
+
+    try {
+        const validatedData = passwordResetSchema.parse(req.body);
+        const { userId, role, newPassword } = validatedData;
+
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+        if (role === 'admin') {
+            const admin = await prisma.admin.findUnique({ where: { id: userId } });
+            if (!admin) return res.status(404).json({ message: 'Admin non trouvé' });
+            
+            await prisma.admin.update({
+                where: { id: userId },
+                data: { password: hashedPassword, requiresPasswordChange: true }
+            });
+            await audit.log('ADMIN_PASSWORD_RESET', `Mot de passe réinitialisé pour l'admin: ${admin.email}`, req.user);
+        } else {
+            const staff = await prisma.staff.findUnique({ where: { id: userId } });
+            if (!staff) return res.status(404).json({ message: 'Staff non trouvé' });
+
+            await prisma.staff.update({
+                where: { id: userId },
+                data: { password: hashedPassword, requiresPasswordChange: true }
+            });
+            await audit.log('STAFF_PASSWORD_RESET', `Mot de passe réinitialisé pour le staff: ${staff.email}`, req.user);
+        }
+
+        res.json({ message: 'Mot de passe réinitialisé avec succès' });
+    } catch (error) {
+        if (error.name === 'ZodError') {
+            return res.status(400).json({ message: error.errors[0].message });
+        }
+        console.error('Reset password error:', error);
+        res.status(500).json({ message: 'Erreur lors de la réinitialisation' });
     }
 };
 

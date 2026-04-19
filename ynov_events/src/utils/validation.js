@@ -33,9 +33,17 @@ const changePasswordSchema = z.object({
     path: ["confirmPassword"],
 });
 
+// Schema for Admin Resetting User Password
+const passwordResetSchema = z.object({
+    userId: z.number(),
+    role: z.enum(['admin', 'staff']),
+    newPassword: z.string().min(6, 'Le mot de passe doit faire au moins 6 caractères')
+});
+
 module.exports = {
     loginSchema,
     registrationSchema,
     userCreateSchema,
-    changePasswordSchema
+    changePasswordSchema,
+    passwordResetSchema
 };

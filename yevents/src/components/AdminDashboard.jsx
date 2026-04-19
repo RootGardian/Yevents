@@ -39,6 +39,10 @@ const AdminDashboard = ({ user, token }) => {
     support_email: ''
   });
   const [settingsLoading, setSettingsLoading] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetTarget, setResetTarget] = useState(null); // { id, role, email }
+  const [temporaryPassword, setTemporaryPassword] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -211,6 +215,37 @@ const AdminDashboard = ({ user, token }) => {
       fetchData();
     } catch (err) {
       alert("Erreur renvoi");
+    }
+  };
+
+  const handleOpenResetModal = (userToReset, role) => {
+    setResetTarget({ ...userToReset, role });
+    setTemporaryPassword('');
+    setShowResetModal(true);
+  };
+
+  const confirmResetPassword = async (e) => {
+    e.preventDefault();
+    if (!temporaryPassword || temporaryPassword.length < 6) {
+      alert("Le mot de passe doit faire au moins 6 caractères.");
+      return;
+    }
+
+    setIsResetting(true);
+    try {
+      await api.post('/admin/reset-password', {
+        userId: resetTarget.id,
+        role: resetTarget.role,
+        newPassword: temporaryPassword
+      }, { headers: { Authorization: `Bearer ${token}` } });
+      
+      alert(`Le mot de passe de ${resetTarget.email} a été réinitialisé. L'utilisateur devra le changer à sa prochaine connexion.`);
+      setShowResetModal(false);
+      setResetTarget(null);
+    } catch (err) {
+      alert(err.response?.data?.message || "Erreur lors de la réinitialisation");
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -395,7 +430,21 @@ const AdminDashboard = ({ user, token }) => {
               </thead>
               <tbody>
                 {staffList.map(s => (
-                  <tr key={s.id} className="border-t border-slate-800"><td className="px-6 py-4 font-bold text-white">{s.name}</td><td className="px-6 py-4 text-right"><button onClick={() => handleDeleteStaff(s.id)} className="text-red-500">Supprimer</button></td></tr>
+                  <tr key={s.id} className="border-t border-slate-800">
+                    <td className="px-6 py-4 font-bold text-white">{s.name}</td>
+                    <td className="px-6 py-4 text-right flex justify-end gap-3">
+                      <button 
+                        onClick={() => handleOpenResetModal(s, 'staff')} 
+                        title="Réinitialiser le mot de passe"
+                        className="text-amber-500 hover:bg-amber-500/10 p-2 rounded-lg transition-colors"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDeleteStaff(s.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -421,7 +470,25 @@ const AdminDashboard = ({ user, token }) => {
               </thead>
               <tbody>
                 {adminsList.map(adm => (
-                  <tr key={adm.id} className="border-t border-slate-800"><td className="px-6 py-4 text-white font-bold">{adm.email}</td><td className="px-6 py-4 text-right">{!adm.isSuperAdmin && <button onClick={() => handleDeleteAdmin(adm.id)} className="text-red-500">Supprimer</button>}</td></tr>
+                  <tr key={adm.id} className="border-t border-slate-800">
+                    <td className="px-6 py-4 text-white font-bold">{adm.email}</td>
+                    <td className="px-6 py-4 text-right flex justify-end gap-3">
+                      {!adm.isSuperAdmin && (
+                        <>
+                          <button 
+                            onClick={() => handleOpenResetModal(adm, 'admin')} 
+                            title="Réinitialiser le mot de passe"
+                            className="text-amber-500 hover:bg-amber-500/10 p-2 rounded-lg transition-colors"
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleDeleteAdmin(adm.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -546,6 +613,67 @@ const AdminDashboard = ({ user, token }) => {
               <button
                 type="button"
                 onClick={() => { setShowAuthModal(false); setAdminPassword(''); }}
+                className="w-full py-3 text-slate-500 text-xs font-bold hover:text-slate-300 transition-colors"
+              >
+                Annuler
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-start mb-6">
+              <div className="p-3 bg-amber-500/10 rounded-2xl">
+                <Key className="w-8 h-8 text-amber-500" />
+              </div>
+              <button
+                onClick={() => { setShowResetModal(false); setResetTarget(null); }}
+                className="p-2 hover:bg-slate-800 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+
+            <h3 className="text-2xl font-black text-white mb-2 uppercase italic">Réinitialiser le mot de passe</h3>
+            <p className="text-slate-400 text-sm mb-6">
+              Saisissez un nouveau mot de passe temporaire pour <span className="text-white font-bold">{resetTarget?.email || resetTarget?.name}</span>.
+              L'utilisateur devra obligatoirement le changer lors de sa prochaine connexion.
+            </p>
+
+            <form onSubmit={confirmResetPassword} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Nouveau Mot de Passe Temporaire</label>
+                <input
+                  type="text"
+                  autoFocus
+                  className="w-full bg-slate-800 border-none rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-amber-500 transition-all placeholder:text-slate-600"
+                  placeholder="Min. 6 caractères"
+                  value={temporaryPassword}
+                  onChange={(e) => setTemporaryPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isResetting}
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isResetting ? (
+                  <RefreshCw className="w-6 h-6 animate-spin mx-auto" />
+                ) : (
+                  'Confirmer la réinitialisation'
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setShowResetModal(false); setResetTarget(null); }}
                 className="w-full py-3 text-slate-500 text-xs font-bold hover:text-slate-300 transition-colors"
               >
                 Annuler
