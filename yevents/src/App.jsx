@@ -39,14 +39,14 @@ const Layout = ({ children, user, onLogout, settings }) => {
             <div className="flex items-center gap-6 sm:gap-10">
               <Link
                 to="/checkin"
-                className={`text-[11px] font-black uppercase tracking-[0.25em] transition-all duration-300 ${location.pathname === '/checkin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
+                className={`text-xs font-black uppercase tracking-[0.25em] transition-all duration-300 ${location.pathname === '/checkin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
               >
                 Check-in
               </Link>
               {(!user || user.role === 'admin' || user.isSuperAdmin) && (
                 <Link
                   to="/admin"
-                  className={`text-[11px] font-black uppercase tracking-[0.25em] transition-all duration-300 ${location.pathname === '/admin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
+                  className={`text-xs font-black uppercase tracking-[0.25em] transition-all duration-300 ${location.pathname === '/admin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
                 >
                   Admin
                 </Link>
@@ -56,15 +56,15 @@ const Layout = ({ children, user, onLogout, settings }) => {
             {/* Right - Profile Actions */}
             <div className="flex items-center gap-4">
               {!user ? (
-                <Link to="/admin" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-ynov transition-colors flex items-center gap-2">
+                <Link to="/admin" className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-ynov transition-colors flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4" />
                   Connexion
                 </Link>
               ) : (
                 <>
                   <div className="hidden sm:flex flex-col items-end mr-2">
-                    <span className="text-[10px] font-black tracking-[0.1em] text-white uppercase italic">{user.nom}</span>
-                    <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">{user.role}</span>
+                    <span className="text-xs font-black tracking-[0.1em] text-white uppercase italic">{user.nom}</span>
+                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">{user.role}</span>
                   </div>
                   <div
                     onClick={onLogout}
@@ -95,27 +95,27 @@ const Layout = ({ children, user, onLogout, settings }) => {
               href={event_location_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-500 text-xs hover:text-ynov transition-colors cursor-pointer"
+              className="text-slate-500 text-sm hover:text-ynov transition-colors cursor-pointer"
             >
               {event_location}
             </a>
           </div>
           <div className="space-y-4">
-            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">L'Événement</h4>
-            <ul className="space-y-2 text-slate-500 text-xs">
+            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-xs">L'Événement</h4>
+            <ul className="space-y-2 text-slate-500 text-sm">
               <li className="font-bold">{event_name}</li>
               <li>Propulsé par Ynov Campus</li>
               <li className="pt-2">
                 <Link to="/faq" className="hover:text-ynov transition-colors font-bold tracking-tight">FAQ / Aide</Link>
               </li>
               <li className="pt-1">
-                <a href={`mailto:${support_email}`} className="hover:text-ynov transition-colors font-bold tracking-tight text-[10px] opacity-70">Support : {support_email}</a>
+                <a href={`mailto:${support_email}`} className="hover:text-ynov transition-colors font-bold tracking-tight text-xs opacity-70">Support : {support_email}</a>
               </li>
             </ul>
           </div>
           <div className="space-y-4 text-right">
-            <p className="text-[10px] font-bold text-slate-400 uppercase">© {currentYear} YNOV MOROCCO</p>
-            <div className="flex justify-end gap-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <p className="text-xs font-bold text-slate-400 uppercase">© {currentYear} YNOV MOROCCO</p>
+            <div className="flex justify-end gap-4 text-xs font-bold uppercase tracking-widest text-slate-500">
               <Link to="/cgu" className="hover:text-ynov transition-colors">CGU</Link>
               <Link to="/confidentialite" className="hover:text-ynov transition-colors">Confidentialité</Link>
             </div>
@@ -149,9 +149,9 @@ const Login = ({ onLogin }) => {
 
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center gap-6">
-      <Link 
-        to="/" 
-        className="group flex items-center gap-2 text-slate-500 hover:text-ynov transition-all duration-300 text-[10px] font-black uppercase tracking-[0.2em] bg-slate-900/50 px-4 py-2 rounded-full border border-white/5 hover:border-ynov/20 shadow-xl"
+      <Link
+        to="/"
+        className="group flex items-center gap-2 text-slate-500 hover:text-ynov transition-all duration-300 text-xs font-black uppercase tracking-[0.2em] bg-slate-900/50 px-4 py-2 rounded-full border border-white/5 hover:border-ynov/20 shadow-xl"
       >
         <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
         Retour à l'accueil
@@ -160,13 +160,13 @@ const Login = ({ onLogin }) => {
         <div className="text-center">
           <ShieldCheck className="w-12 h-12 text-ynov mx-auto mb-4" />
           <h2 className="text-2xl font-black uppercase italic">Accès Restreint</h2>
-          <p className="text-slate-400 text-xs uppercase tracking-widest">Admin & Staff Uniquement</p>
+          <p className="text-slate-400 text-sm uppercase tracking-widest">Admin & Staff Uniquement</p>
         </div>
         <div className="space-y-4">
           <input type="email" placeholder="Email" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov" value={email} onChange={e => setEmail(e.target.value)} required />
           <input type="password" placeholder="Mot de passe" className="w-full bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov" value={password} onChange={e => setPassword(e.target.value)} required />
         </div>
-        {error && <p className="text-red-500 text-xs font-bold text-center">{error}</p>}
+        {error && <p className="text-red-500 text-sm font-bold text-center">{error}</p>}
         <button disabled={loading} className="w-full bg-ynov py-3 rounded-xl font-bold hover:bg-ynov/90 disabled:opacity-50 transition-all uppercase tracking-widest">
           {loading ? 'Connexion...' : 'Se connecter'}
         </button>
