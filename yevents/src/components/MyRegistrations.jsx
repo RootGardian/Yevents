@@ -79,6 +79,7 @@ const MyRegistrations = ({ onBack }) => {
         }
     };
 
+    return (
         <div className="max-w-4xl mx-auto py-4 md:py-8 px-2 sm:px-4">
             {/* Top Navigation Header - Always Visible */}
             <div className="mb-6 md:mb-8 flex items-center justify-between gap-4">
