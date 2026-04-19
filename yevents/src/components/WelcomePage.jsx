@@ -37,7 +37,7 @@ const WelcomePage = ({ settings }) => {
             <p className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight">
               {event_date_text.toUpperCase()}
             </p>
-            <p className="text-xs font-black italic tracking-tighter mt-1 opacity-60 uppercase">
+            <p className="text-xs font-black italic tracking-tighter mt-1 text-slate-900 dark:text-white uppercase">
               {event_hours}
             </p>
           </div>
