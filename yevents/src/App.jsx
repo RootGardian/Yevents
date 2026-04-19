@@ -109,7 +109,7 @@ const Layout = ({ children, user, onLogout, settings }) => {
                 <Link to="/faq" className="hover:text-ynov transition-colors font-bold tracking-tight">FAQ / Aide</Link>
               </li>
               <li className="pt-1">
-                <a href={`mailto:${support_email}`} className="hover:text-ynov transition-colors font-bold tracking-tight text-xs opacity-70">Support : {support_email}</a>
+                <a href={`mailto:${support_email}`} className="hover:text-ynov transition-colors font-bold tracking-tight text-sm">Support : {support_email}</a>
               </li>
             </ul>
           </div>
