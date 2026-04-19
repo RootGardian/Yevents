@@ -225,7 +225,7 @@ function App() {
           <Route path="/cgu" element={<TermsOfUse />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="/mes-inscriptions" element={<MyRegistrations />} />
+          <Route path="/mes-inscriptions" element={<MyRegistrations onBack={() => window.location.hash = '#/'} />} />
           <Route path="/correction" element={<RegistrationCorrection onBack={() => window.location.hash = '#/'} />} />
 
           <Route

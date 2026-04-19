@@ -175,13 +175,17 @@ const RegistrationCorrection = ({ onBack }) => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="mb-8 flex items-center gap-4">
-        <button onClick={onBack} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:bg-slate-50 transition-colors">
-          <ArrowLeft className="w-5 h-5 text-slate-500" />
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <button 
+          onClick={onBack} 
+          className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 transition-all shadow-sm group"
+        >
+          <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-ynov transition-colors" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">Accueil</span>
         </button>
-        <div className="flex-1">
-          <h2 className="text-2xl font-black uppercase italic tracking-tight">Correction d'inscription</h2>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Modifiez vos informations erronées</p>
+        <div className="flex-1 text-right sm:text-left">
+          <h2 className="text-xl md:text-2xl font-black uppercase italic tracking-tight">Correction</h2>
+          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest hidden sm:block">Modifiez vos informations erronées</p>
         </div>
         {(step === 'verify' || step === 'edit') && (
           <button 
