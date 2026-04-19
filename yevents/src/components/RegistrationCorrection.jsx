@@ -219,7 +219,7 @@ const RegistrationCorrection = ({ onBack }) => {
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       type="email"
-                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-sm"
+                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-base"
                       placeholder="monaddresse@yevents.ma"
                       value={lookupData.email}
                       onChange={(e) => setLookupData({ ...lookupData, email: e.target.value })}
@@ -235,7 +235,7 @@ const RegistrationCorrection = ({ onBack }) => {
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       type="tel"
-                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-sm"
+                      className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov text-base"
                       placeholder="+212612345678"
                       value={lookupData.telephone}
                       onChange={(e) => setLookupData({ ...lookupData, telephone: e.target.value })}
@@ -326,17 +326,17 @@ const RegistrationCorrection = ({ onBack }) => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom</label>
-                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} />
+                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-base" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom</label>
-                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} />
+                  <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-base" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 text-red-400 font-bold">Nouvelle adresse e-mail *</label>
-                <input required type="email" className="w-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all text-sm font-bold" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                <input required type="email" className="w-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all text-base font-bold" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
               </div>
 
               <div className="space-y-2">
@@ -356,13 +356,13 @@ const RegistrationCorrection = ({ onBack }) => {
                       <ChevronDown className="w-3 h-3" />
                     </div>
                   </div>
-                  <input required type="tel" className="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
+                  <input required type="tel" className="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-4 px-5 focus:ring-2 focus:ring-ynov transition-all text-base" value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })} />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Entreprise / Université</label>
-                <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-sm" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
+                <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-ynov text-base" value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })} />
               </div>
 
               <div className="bg-green-500/5 dark:bg-green-500/10 p-4 rounded-xl border border-green-500/20 text-center">

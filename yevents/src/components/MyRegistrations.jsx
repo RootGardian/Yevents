@@ -184,7 +184,7 @@ const MyRegistrations = ({ onBack }) => {
                                 <input
                                     required
                                     type="email"
-                                    className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov transition-all text-sm"
+                                    className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov transition-all text-base"
                                     placeholder="exemple@yevents.ma"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -279,24 +279,24 @@ const EditForm = ({ participant, onUpdate, loading, error }) => {
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prénom</label>
-                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.prenom} onChange={e => setFormData({...formData, prenom: e.target.value})} />
+                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.prenom} onChange={e => setFormData({...formData, prenom: e.target.value})} />
                 </div>
                 <div className="space-y-1">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nom</label>
-                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
+                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
                 </div>
             </div>
             <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">E-mail</label>
-                <input required type="email" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+                <input required type="email" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
             </div>
             <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Téléphone</label>
-                <input required type="tel" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.telephone} onChange={e => setFormData({...formData, telephone: e.target.value})} />
+                <input required type="tel" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.telephone} onChange={e => setFormData({...formData, telephone: e.target.value})} />
             </div>
             <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Entreprise</label>
-                <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.entreprise} onChange={e => setFormData({...formData, entreprise: e.target.value})} />
+                <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.entreprise} onChange={e => setFormData({...formData, entreprise: e.target.value})} />
             </div>
             {error && <p className="text-red-500 text-[10px] font-black text-center uppercase tracking-widest">{error}</p>}
             <button disabled={loading} className="w-full bg-ynov text-white font-black py-4 rounded-xl shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 mt-4">
