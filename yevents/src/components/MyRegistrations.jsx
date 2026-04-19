@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, ShieldCheck, Loader2, ArrowRight, RefreshCw, CheckCircle, AlertCircle, Download, Edit3, Save, X } from 'lucide-react';
+import { Mail, ShieldCheck, Loader2, ArrowRight, ArrowLeft, RefreshCw, CheckCircle, AlertCircle, Download, Edit3, Save, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 import BadgePreview from './BadgePreview';
