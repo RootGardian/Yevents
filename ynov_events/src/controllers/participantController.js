@@ -237,12 +237,17 @@ exports.lookup = async (req, res) => {
 exports.updateParticipant = async (req, res) => {
     try {
         const validatedData = registrationSchema.parse(req.body);
-        const { currentEmail, correctionToken } = req.body;
         const { nom, prenom, email, telephone, entreprise, categorie_badge } = validatedData;
         
-        // 1. Verify Identifier Token
+        // 1. Get Token (Check Header first, then Body fallback)
+        const correctionToken = req.headers['x-correction-token'] || req.body.correctionToken;
+
         if (!correctionToken) {
-            return res.status(401).json({ message: 'Session de modification invalide ou absente.' });
+            console.error('[UPDATE] Auth failed: Jeton absent des headers et du body.');
+            return res.status(401).json({ 
+                message: 'Session de modification invalide ou absente.',
+                debug: 'Missing correctionToken'
+            });
         }
 
         let verifiedToken;
