@@ -238,6 +238,11 @@ const RegistrationCorrection = ({ onBack }) => {
               </button>
             </form>
           </motion.div>
+        ) : step === 'verify' ? (
+          <motion.div
+            key="verify"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-xl space-y-8"
           >
             <div className="text-center space-y-4">
@@ -362,7 +367,7 @@ const RegistrationCorrection = ({ onBack }) => {
               </button>
             </form>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </div>
   );
