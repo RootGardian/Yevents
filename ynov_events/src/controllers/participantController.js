@@ -235,11 +235,11 @@ exports.lookup = async (req, res) => {
 exports.updateParticipant = async (req, res) => {
     try {
         const validatedData = registrationSchema.parse(req.body);
-        const { email, otpCode } = req.body;
-        const { nom, prenom, telephone, entreprise, categorie_badge } = validatedData;
+        const { currentEmail, otpCode } = req.body;
+        const { nom, prenom, email, telephone, entreprise, categorie_badge } = validatedData;
         
-        // 1. Verify OTP first
-        const otpRecord = await prisma.otp.findUnique({ where: { email } });
+        // 1. Verify OTP first (on the email where it was sent)
+        const otpRecord = await prisma.otp.findUnique({ where: { email: currentEmail } });
         if (!otpRecord || otpRecord.code !== otpCode) {
             return res.status(401).json({ message: 'Code de vérification invalide. Veuillez recommencer.' });
         }
@@ -247,10 +247,18 @@ exports.updateParticipant = async (req, res) => {
             return res.status(401).json({ message: 'Code expiré.' });
         }
 
-        // 2. Fetch participant by the email verified by OTP
-        const participant = await prisma.participant.findUnique({ where: { email } });
+        // 2. Fetch participant by the CURRENT email verified by OTP
+        const participant = await prisma.participant.findUnique({ where: { email: currentEmail } });
         if (!participant) {
             return res.status(404).json({ message: 'Participant non trouvé.' });
+        }
+
+        // Check if new email is already taken by someone else
+        if (email !== currentEmail) {
+            const existing = await prisma.participant.findUnique({ where: { email } });
+            if (existing) {
+                return res.status(400).json({ message: 'La nouvelle adresse e-mail est déjà utilisée par un autre badge.' });
+            }
         }
 
         // 3. Update the record
@@ -259,6 +267,7 @@ exports.updateParticipant = async (req, res) => {
             data: {
                 nom,
                 prenom,
+                email, // New email from validatedData
                 telephone,
                 entreprise,
                 categorieBadge: categorie_badge,
@@ -268,7 +277,7 @@ exports.updateParticipant = async (req, res) => {
         });
 
         // Delete OTP after success
-        await prisma.otp.delete({ where: { email } });
+        await prisma.otp.delete({ where: { email: currentEmail } });
 
         try {
             await sendConfirmationEmail(updated);
