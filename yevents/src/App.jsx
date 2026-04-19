@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { Calendar, ShieldCheck, Github, Instagram, Linkedin, Scan, BarChart3, LogOut, User } from 'lucide-react';
+import { Calendar, ShieldCheck, Github, Instagram, Linkedin, Scan, BarChart3, LogOut, User, ArrowLeft } from 'lucide-react';
 import RegistrationForm from './components/RegistrationForm';
 import AdminDashboard from './components/AdminDashboard';
 import CheckinDashboard from './components/CheckinDashboard';
@@ -148,7 +148,14 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-[50vh] flex items-center justify-center">
+    <div className="min-h-[50vh] flex flex-col items-center justify-center gap-6">
+      <Link 
+        to="/" 
+        className="group flex items-center gap-2 text-slate-500 hover:text-ynov transition-all duration-300 text-[10px] font-black uppercase tracking-[0.2em] bg-slate-900/50 px-4 py-2 rounded-full border border-white/5 hover:border-ynov/20 shadow-xl"
+      >
+        <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
+        Retour à l'accueil
+      </Link>
       <form onSubmit={handleSubmit} className="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-w-md space-y-6">
         <div className="text-center">
           <ShieldCheck className="w-12 h-12 text-ynov mx-auto mb-4" />
