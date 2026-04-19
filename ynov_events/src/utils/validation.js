@@ -14,7 +14,7 @@ const registrationSchema = z.object({
     telephone: z.string().min(10, 'Numéro de téléphone invalide').max(20),
     entreprise: z.string().optional().nullable(),
     categorie_badge: z.string().min(1, 'Catégorie requise')
-});
+}).passthrough();
 
 // Schema for Staff/Admin creation
 const userCreateSchema = z.object({

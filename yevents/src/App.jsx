@@ -220,13 +220,13 @@ function App() {
       <ScrollToTop />
       <Layout user={user} onLogout={handleLogout} settings={settings}>
         <Routes>
-          <Route path="/" element={<WelcomePage />} />
-          <Route path="/inscription" element={<RegistrationForm />} />
+          <Route path="/" element={<WelcomePage settings={settings} />} />
+          <Route path="/inscription" element={<RegistrationForm settings={settings} />} />
           <Route path="/cgu" element={<TermsOfUse />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="/mes-inscriptions" element={<MyRegistrations onBack={() => window.location.hash = '#/'} />} />
-          <Route path="/correction" element={<RegistrationCorrection onBack={() => window.location.hash = '#/'} />} />
+          <Route path="/mes-inscriptions" element={<MyRegistrations settings={settings} onBack={() => window.location.hash = '#/'} />} />
+          <Route path="/correction" element={<RegistrationCorrection settings={settings} onBack={() => window.location.hash = '#/'} />} />
 
           <Route
             path="/admin"

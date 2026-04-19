@@ -3,32 +3,7 @@ import { Calendar, MapPin, Users, ArrowRight, CheckCircle, Loader2 } from 'lucid
 import { Link } from 'react-router-dom';
 import api from '../api';
 
-const WelcomePage = () => {
-  const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await api.get('/settings');
-        setSettings(res.data);
-      } catch (err) {
-        console.error("Error fetching settings:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSettings();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-ynov animate-spin opacity-20" />
-      </div>
-    );
-  }
-
+const WelcomePage = ({ settings }) => {
   const {
     event_name = 'Ynov Talk 2026',
     event_date_text = 'SAMEDI 2 MAI 2026',
