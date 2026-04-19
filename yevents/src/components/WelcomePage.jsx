@@ -32,32 +32,32 @@ const WelcomePage = ({ settings }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <Calendar className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-black uppercase text-sm tracking-widest mb-2 text-slate-900 dark:text-white">Date & Horaires</h3>
+          <h3 className="font-black uppercase italic text-sm tracking-tighter mb-2 text-slate-900 dark:text-white">Date & Horaires</h3>
           <div className="text-slate-500 dark:text-slate-400 font-mono">
             <p className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight">
               {event_date_text.toUpperCase()}
             </p>
-            <p className="text-xs font-bold tracking-widest mt-1 opacity-60 uppercase">
+            <p className="text-xs font-black italic tracking-tighter mt-1 opacity-60 uppercase">
               {event_hours}
             </p>
           </div>
         </div>
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <MapPin className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-black uppercase text-sm tracking-widest mb-2 text-slate-900 dark:text-white">Lieu</h3>
+          <h3 className="font-black uppercase italic text-sm tracking-tighter mb-2 text-slate-900 dark:text-white">Lieu</h3>
           <a
             href={event_location_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-slate-500 dark:text-slate-400 text-sm font-bold hover:text-ynov transition-colors underline underline-offset-4 decoration-slate-200 dark:decoration-slate-800"
+            className="text-slate-500 dark:text-slate-400 text-sm font-black italic tracking-tighter hover:text-ynov transition-colors underline underline-offset-4 decoration-slate-200 dark:decoration-slate-800"
           >
             {event_location}
           </a>
         </div>
         <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl hover:border-ynov/50 transition-all group shadow-sm dark:shadow-none hover:shadow-xl hover:shadow-ynov/5">
           <Users className="w-8 h-8 text-ynov mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-black uppercase text-sm tracking-widest mb-2 text-slate-900 dark:text-white">Public Cible</h3>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase">{event_public_target}</p>
+          <h3 className="font-black uppercase italic text-sm tracking-tighter mb-2 text-slate-900 dark:text-white">Public Cible</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-black italic tracking-tighter uppercase">{event_public_target}</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ const WelcomePage = ({ settings }) => {
         </div>
 
         <div className="pt-6 border-t border-slate-200/50 dark:border-slate-800/50 w-full max-w-md mx-auto">
-          <Link to="/mes-inscriptions" className="flex items-center justify-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-slate-500 hover:text-ynov transition-colors group">
+          <Link to="/mes-inscriptions" className="flex items-center justify-center gap-2 text-sm font-black uppercase italic tracking-tighter text-slate-500 hover:text-ynov transition-colors group">
             <CheckCircle className="w-4 h-4 text-ynov" />
             <span className="underline underline-offset-8 decoration-slate-200 dark:decoration-slate-800/50 group-hover:decoration-ynov">Gérer mon inscription ou récupérer mon badge</span>
           </Link>

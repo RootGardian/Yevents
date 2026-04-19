@@ -39,14 +39,14 @@ const Layout = ({ children, user, onLogout, settings }) => {
             <div className="flex items-center gap-6 sm:gap-10">
               <Link
                 to="/checkin"
-                className={`text-xs font-black uppercase tracking-[0.25em] transition-all duration-300 ${location.pathname === '/checkin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
+                className={`text-xs font-black uppercase italic tracking-tighter transition-all duration-300 ${location.pathname === '/checkin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
               >
                 Check-in
               </Link>
               {(!user || user.role === 'admin' || user.isSuperAdmin) && (
                 <Link
                   to="/admin"
-                  className={`text-xs font-black uppercase tracking-[0.25em] transition-all duration-300 ${location.pathname === '/admin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
+                  className={`text-xs font-black uppercase italic tracking-tighter transition-all duration-300 ${location.pathname === '/admin' ? 'text-ynov' : 'text-slate-400 hover:text-white'}`}
                 >
                   Admin
                 </Link>
@@ -56,7 +56,7 @@ const Layout = ({ children, user, onLogout, settings }) => {
             {/* Right - Profile Actions */}
             <div className="flex items-center gap-4">
               {!user ? (
-                <Link to="/admin" className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-ynov transition-colors flex items-center gap-2">
+                <Link to="/admin" className="text-xs font-black uppercase italic tracking-tighter text-slate-500 hover:text-ynov transition-colors flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4" />
                   Connexion
                 </Link>
@@ -149,9 +149,9 @@ const Login = ({ onLogin }) => {
 
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center gap-6">
-      <Link
-        to="/"
-        className="group flex items-center gap-2 text-slate-500 hover:text-ynov transition-all duration-300 text-xs font-black uppercase tracking-[0.2em] bg-slate-900/50 px-4 py-2 rounded-full border border-white/5 hover:border-ynov/20 shadow-xl"
+      <Link 
+        to="/" 
+        className="group flex items-center gap-2 text-slate-500 hover:text-ynov transition-all duration-300 text-xs font-black uppercase italic tracking-tighter bg-slate-900/50 px-4 py-2 rounded-full border border-white/5 hover:border-ynov/20 shadow-xl"
       >
         <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
         Retour à l'accueil
