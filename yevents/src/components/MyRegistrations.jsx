@@ -65,9 +65,10 @@ const MyRegistrations = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await api.post('/register/update', {
-                ...updatedData,
-                correctionToken: token // Utilisation du jeton obtenu lors de la connexion
+            const res = await api.post('/register/update', updatedData, {
+                headers: {
+                    'x-correction-token': token
+                }
             });
             setParticipant(res.data.participant);
             setShowEdit(false);

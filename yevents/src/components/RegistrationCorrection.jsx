@@ -126,10 +126,12 @@ const RegistrationCorrection = ({ onBack }) => {
     try {
       const submissionData = {
         ...formData,
-        correctionToken, // Using the JWT session token
         telephone: `${formData.indicatif}${formData.telephone}`
       };
-      await api.post('/register/update', submissionData);
+      
+      await api.post('/register/update', submissionData, {
+        headers: { 'x-correction-token': correctionToken }
+      });
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.message || "Code invalide ou erreur de mise à jour.");
