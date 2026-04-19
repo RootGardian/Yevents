@@ -83,8 +83,8 @@ const MyRegistrations = ({ onBack }) => {
         <div className="max-w-4xl mx-auto py-4 md:py-8 px-2 sm:px-4">
             {/* Top Navigation Header - Always Visible */}
             <div className="mb-6 md:mb-8 flex items-center justify-between gap-4">
-                <button 
-                    onClick={onBack} 
+                <button
+                    onClick={onBack}
                     className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 transition-all shadow-sm group"
                 >
                     <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-ynov transition-colors" />
@@ -98,7 +98,7 @@ const MyRegistrations = ({ onBack }) => {
 
             <AnimatePresence mode="wait">
                 {step === 'verified' && participant ? (
-                    <motion.div 
+                    <motion.div
                         key="verified"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -111,13 +111,13 @@ const MyRegistrations = ({ onBack }) => {
                                     <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
                                         <h3 className="text-xl font-black uppercase italic tracking-tight">Votre Badge</h3>
                                         <div className="flex w-full sm:w-auto gap-2">
-                                            <button 
+                                            <button
                                                 onClick={handleDownload}
                                                 className="flex-1 sm:flex-none p-3 bg-slate-100 dark:bg-slate-800 rounded-xl hover:text-ynov transition-colors flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest"
                                             >
                                                 <Download className="w-4 h-4" /> <span className="hidden xs:inline">Badge</span> PDF
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => setShowEdit(!showEdit)}
                                                 className={`flex-1 sm:flex-none p-3 rounded-xl transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest border-2 ${showEdit ? 'bg-ynov border-ynov text-white ring-4 ring-ynov/20' : 'bg-red-600 border-red-600 text-white shadow-xl shadow-red-600/40 hover:scale-105 active:scale-95'}`}
                                             >
@@ -125,9 +125,9 @@ const MyRegistrations = ({ onBack }) => {
                                             </button>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="bg-slate-50 dark:bg-slate-950/50 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
-                                        <BadgePreview 
+                                        <BadgePreview
                                             formData={{
                                                 nom: participant.nom,
                                                 prenom: participant.prenom,
@@ -136,7 +136,7 @@ const MyRegistrations = ({ onBack }) => {
                                                 categorie_badge: participant.categorieBadge,
                                                 telephone: participant.telephone,
                                                 qrCodeToken: participant.qrCodeToken
-                                            }} 
+                                            }}
                                         />
                                     </div>
                                 </div>
@@ -145,7 +145,7 @@ const MyRegistrations = ({ onBack }) => {
                             {/* Edit Form Column */}
                             <AnimatePresence>
                                 {showEdit && (
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.9 }}
@@ -154,7 +154,7 @@ const MyRegistrations = ({ onBack }) => {
                                         <div className="flex items-center justify-between mb-8">
                                             <h3 className="text-xl font-black uppercase italic">Modifier</h3>
                                             <button onClick={() => setShowEdit(false)} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-400 hover:text-red-500 transition-colors">
-                                                <X className="w-4 h-4"/>
+                                                <X className="w-4 h-4" />
                                             </button>
                                         </div>
                                         <EditForm participant={participant} onUpdate={handleUpdateParticipant} loading={loading} error={error} />
@@ -164,7 +164,7 @@ const MyRegistrations = ({ onBack }) => {
                         </div>
                     </motion.div>
                 ) : step === 'email' ? (
-                    <motion.div 
+                    <motion.div
                         key="email"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -185,7 +185,7 @@ const MyRegistrations = ({ onBack }) => {
                                     required
                                     type="email"
                                     className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-ynov transition-all text-base"
-                                    placeholder="exemple@yevents.ma"
+                                    placeholder="monmail@yevents.ma"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -200,7 +200,7 @@ const MyRegistrations = ({ onBack }) => {
                         </form>
                     </motion.div>
                 ) : (
-                    <motion.div 
+                    <motion.div
                         key="otp"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -211,7 +211,7 @@ const MyRegistrations = ({ onBack }) => {
                                 <ShieldCheck className="w-8 h-8" />
                             </div>
                             <h2 className="text-2xl font-black uppercase italic">Vérification</h2>
-                            <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">Le code a été envoyé à : <br/><strong className="text-slate-900 dark:text-white underline">{email}</strong></p>
+                            <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">Le code a été envoyé à : <br /><strong className="text-slate-900 dark:text-white underline">{email}</strong></p>
                         </div>
 
                         <form onSubmit={handleVerifyOTP} className="space-y-6">
@@ -239,10 +239,10 @@ const MyRegistrations = ({ onBack }) => {
 
                             <div className="text-center">
                                 {timer > 0 ? (
-                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Renvoyer dans {Math.floor(timer/60)}:{(timer%60).toString().padStart(2, '0')}</p>
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Renvoyer dans {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</p>
                                 ) : (
-                                    <button 
-                                        type="button" 
+                                    <button
+                                        type="button"
                                         onClick={handleRequestOTP}
                                         className="text-ynov hover:underline text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto"
                                     >
@@ -279,28 +279,28 @@ const EditForm = ({ participant, onUpdate, loading, error }) => {
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prénom</label>
-                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.prenom} onChange={e => setFormData({...formData, prenom: e.target.value})} />
+                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.prenom} onChange={e => setFormData({ ...formData, prenom: e.target.value })} />
                 </div>
                 <div className="space-y-1">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nom</label>
-                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
+                    <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.nom} onChange={e => setFormData({ ...formData, nom: e.target.value })} />
                 </div>
             </div>
             <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">E-mail</label>
-                <input required type="email" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+                <input required type="email" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
             </div>
             <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Téléphone</label>
-                <input required type="tel" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.telephone} onChange={e => setFormData({...formData, telephone: e.target.value})} />
+                <input required type="tel" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.telephone} onChange={e => setFormData({ ...formData, telephone: e.target.value })} />
             </div>
             <div className="space-y-1">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Entreprise</label>
-                <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-base" value={formData.entreprise} onChange={e => setFormData({...formData, entreprise: e.target.value})} />
+                <input required type="text" className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-3 px-4 text-sm" value={formData.entreprise} onChange={e => setFormData({ ...formData, entreprise: e.target.value })} />
             </div>
             {error && <p className="text-red-500 text-[10px] font-black text-center uppercase tracking-widest">{error}</p>}
             <button disabled={loading} className="w-full bg-ynov text-white font-black py-4 rounded-xl shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 mt-4">
-                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-4 h-4"/> ENREGISTRER</>}
+                {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Save className="w-4 h-4" /> ENREGISTRER</>}
             </button>
         </form>
     );

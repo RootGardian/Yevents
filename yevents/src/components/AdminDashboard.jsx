@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Users, CheckCircle2, QrCode, Download, RefreshCw, BarChart3, Search, LogOut, Scan, AlertTriangle, Mail, Key, MousePointerClick, X, ShieldCheck, History, Eye, MapPin, UserPlus, Trash2
+  Users, CheckCircle2, QrCode, Download, RefreshCw, BarChart3, Search, LogOut, Scan, AlertTriangle, Mail, Key, MousePointerClick, X, ShieldCheck, History, Eye, MapPin, UserPlus, Trash2, Menu, ChevronRight, Settings
 } from 'lucide-react';
 import api from '../api';
 import QRScanner from './QRScanner';
@@ -43,6 +43,10 @@ const AdminDashboard = ({ user, token, onLogout }) => {
   const [resetTarget, setResetTarget] = useState(null); // { id, role, email }
   const [temporaryPassword, setTemporaryPassword] = useState('');
   const [isResetting, setIsResetting] = useState(false);
+  const [showCredentialsModal, setShowCredentialsModal] = useState(false);
+  const [credForm, setCredForm] = useState({ recipientEmail: '', loginEmail: '', tempPassword: '' });
+  const [isSendingCreds, setIsSendingCreds] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -246,6 +250,22 @@ const AdminDashboard = ({ user, token, onLogout }) => {
       setIsResetting(false);
     }
   };
+  const handleSendCredentials = async (e) => {
+    e.preventDefault();
+    setIsSendingCreds(true);
+    try {
+      const res = await api.post('/admin/send-team-credentials', credForm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(res.data.message);
+      setShowCredentialsModal(false);
+      setCredForm({ recipientEmail: '', loginEmail: '', tempPassword: '' });
+    } catch (err) {
+      alert(err.response?.data?.message || "Erreur lors de l'envoi");
+    } finally {
+      setIsSendingCreds(false);
+    }
+  };
 
   const filteredParticipants = participants.filter(p =>
     p.nom.toLowerCase().includes(search.toLowerCase()) ||
@@ -260,7 +280,9 @@ const AdminDashboard = ({ user, token, onLogout }) => {
           <h1 className="text-2xl sm:text-4xl font-black mb-1 italic uppercase underline decoration-ynov decoration-4 underline-offset-8">Dashboard Admin</h1>
           <p className="text-xs sm:text-sm text-slate-400">Bienvenue, <span className="text-white font-bold">{user.nom}</span> | Yevents Management System</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        
+        {/* Desktop Header Actions */}
+        <div className="hidden md:flex flex-wrap gap-2">
           <button onClick={() => setView('stats')} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'stats' ? 'bg-ynov border-ynov text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Stats</button>
           {user.isSuperAdmin && (
             <button onClick={() => setView('settings')} className={`px-4 py-2 rounded-xl font-bold transition-all border ${view === 'settings' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}>Configuration</button>
@@ -270,6 +292,14 @@ const AdminDashboard = ({ user, token, onLogout }) => {
           )}
           {user.isSuperAdmin && (
             <button onClick={fetchAdmins} className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${view === 'admins' ? 'bg-red-600 border-red-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}> Admins</button>
+          )}
+          {user.isSuperAdmin && (
+            <button 
+              onClick={() => setShowCredentialsModal(true)} 
+              className="flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border bg-emerald-600 border-emerald-500 text-white shadow-lg hover:bg-emerald-700"
+            >
+              Envoyer Accès
+            </button>
           )}
           <button onClick={fetchAuditLogs} className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${view === 'audit' ? 'bg-amber-600 border-amber-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700'}`}> Logs</button>
           <button onClick={handleExport} className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl font-bold hover:bg-slate-700">CSV</button>
@@ -284,7 +314,138 @@ const AdminDashboard = ({ user, token, onLogout }) => {
             </button>
           )}
         </div>
+
+        {/* Mobile Header Menu Button */}
+        <div className="flex md:hidden w-full sm:w-auto">
+          <button 
+            onClick={() => setShowMobileMenu(true)}
+            className="w-full flex items-center justify-between px-6 py-4 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl active:scale-95 transition-all"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-ynov/10 rounded-lg">
+                <Menu className="w-5 h-5 text-ynov" />
+              </div>
+              <span className="font-bold text-white uppercase tracking-widest text-sm">Actions & Vues</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-500" />
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu Backdrop & Drawer */}
+      {showMobileMenu && (
+        <div className="fixed inset-0 z-[200] md:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-300" 
+            onClick={() => setShowMobileMenu(false)}
+          ></div>
+          
+          {/* Menu Container (Coming from bottom) */}
+          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] bg-slate-900 border-t border-slate-800 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex flex-col animate-in slide-in-from-bottom duration-500">
+            {/* Handle Bar */}
+            <div className="flex justify-center p-4">
+              <div className="w-12 h-1.5 bg-slate-800 rounded-full"></div>
+            </div>
+
+            <div className="px-6 pb-4 flex justify-between items-center">
+              <h3 className="font-black text-white uppercase italic text-xl tracking-tighter">Menu Dashboard</h3>
+              <button 
+                onClick={() => setShowMobileMenu(false)}
+                className="p-2 bg-slate-800 rounded-full"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto p-4 space-y-2 pb-10">
+              {[
+                { 
+                  label: 'Statistiques & Inscrits', 
+                  icon: BarChart3, 
+                  action: () => { setView('stats'); setShowMobileMenu(false); }, 
+                  active: view === 'stats',
+                  color: 'text-blue-400',
+                  bg: 'bg-blue-400/10'
+                },
+                { 
+                  label: 'Paramètres Événement', 
+                  icon: Settings, 
+                  action: () => { setView('settings'); setShowMobileMenu(false); }, 
+                  active: view === 'settings',
+                  color: 'text-indigo-400',
+                  bg: 'bg-indigo-400/10',
+                  superAdmin: true
+                },
+                { 
+                  label: 'Gestion du Staff', 
+                  icon: Users, 
+                  action: () => { fetchStaff(); setShowMobileMenu(false); }, 
+                  active: view === 'staff',
+                  color: 'text-blue-500',
+                  bg: 'bg-blue-500/10',
+                  superAdmin: true
+                },
+                { 
+                  label: 'Administrateurs', 
+                  icon: ShieldCheck, 
+                  action: () => { fetchAdmins(); setShowMobileMenu(false); }, 
+                  active: view === 'admins',
+                  color: 'text-red-500',
+                  bg: 'bg-red-500/10',
+                  superAdmin: true
+                },
+                { 
+                  label: 'Envoyer des Accès', 
+                  icon: UserPlus, 
+                  action: () => { setShowCredentialsModal(true); setShowMobileMenu(false); }, 
+                  color: 'text-emerald-500',
+                  bg: 'bg-emerald-500/10',
+                  superAdmin: true
+                },
+                { 
+                  label: 'Journal d\'audit (Logs)', 
+                  icon: History, 
+                  action: () => { fetchAuditLogs(); setShowMobileMenu(false); }, 
+                  active: view === 'audit',
+                  color: 'text-amber-500',
+                  bg: 'bg-amber-500/10'
+                },
+                { 
+                  label: 'Exporter les données (CSV)', 
+                  icon: Download, 
+                  action: () => { handleExport(); setShowMobileMenu(false); }, 
+                  color: 'text-slate-400',
+                  bg: 'bg-slate-400/10'
+                },
+                { 
+                  label: 'Déclencher Rappels J-2', 
+                  icon: Mail, 
+                  action: () => { handleTriggerReminders(); setShowMobileMenu(false); }, 
+                  color: 'text-ynov',
+                  bg: 'bg-ynov/10',
+                  superAdmin: true
+                }
+              ].filter(item => !item.superAdmin || user.isSuperAdmin).map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={item.action}
+                  className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all border ${item.active ? 'bg-slate-800 border-slate-700' : 'bg-slate-800/20 border-transparent hover:bg-slate-800/40'}`}
+                >
+                  <div className={`p-3 rounded-xl ${item.bg}`}>
+                    <item.icon className={`w-5 h-5 ${item.color}`} />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className={`font-bold ${item.active ? 'text-white' : 'text-slate-300'}`}>{item.label}</div>
+                    {item.superAdmin && <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">Restriction Admin</div>}
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-600" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {view === 'stats' && (
         <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -672,6 +833,89 @@ const AdminDashboard = ({ user, token, onLogout }) => {
               <button
                 type="button"
                 onClick={() => { setShowResetModal(false); setResetTarget(null); }}
+                className="w-full py-3 text-slate-500 text-xs font-bold hover:text-slate-300 transition-colors"
+              >
+                Annuler
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Send Team Credentials Modal */}
+      {showCredentialsModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-[2.5rem] max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-start mb-6">
+              <div className="p-3 bg-emerald-500/10 rounded-2xl">
+                <ShieldCheck className="w-8 h-8 text-emerald-500" />
+              </div>
+              <button
+                onClick={() => { setShowCredentialsModal(false); setCredForm({ recipientEmail: '', loginEmail: '', tempPassword: '' }); }}
+                className="p-2 hover:bg-slate-800 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+
+            <h3 className="text-2xl font-black text-white mb-2 uppercase italic">Envoyer des Identifiants</h3>
+            <p className="text-slate-400 text-sm mb-6">
+              Envoyez les accès à un membre de votre équipe. Un email stylisé avec les identifiants lui sera envoyé directement.
+            </p>
+
+            <form onSubmit={handleSendCredentials} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Email Destinataire (Où envoyer le mail)</label>
+                <input
+                  type="email"
+                  className="w-full bg-slate-800 border-none rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-emerald-500 transition-all placeholder:text-slate-600"
+                  placeholder="destinataire@exemple.com"
+                  value={credForm.recipientEmail}
+                  onChange={(e) => setCredForm({ ...credForm, recipientEmail: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Identifiant de connexion (Le mail du compte)</label>
+                <input
+                  type="email"
+                  className="w-full bg-slate-800 border-none rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-emerald-500 transition-all placeholder:text-slate-600"
+                  placeholder="login@yevents.ma"
+                  value={credForm.loginEmail}
+                  onChange={(e) => setCredForm({ ...credForm, loginEmail: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Mot de Passe Temporaire</label>
+                <input
+                  type="text"
+                  className="w-full bg-slate-800 border-none rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-emerald-500 transition-all placeholder:text-slate-600"
+                  placeholder="Min. 6 caractères"
+                  value={credForm.tempPassword}
+                  onChange={(e) => setCredForm({ ...credForm, tempPassword: e.target.value })}
+                  required
+                  minLength={6}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSendingCreds}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSendingCreds ? (
+                  <RefreshCw className="w-6 h-6 animate-spin mx-auto" />
+                ) : (
+                  'Envoyer les identifiants'
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setShowCredentialsModal(false); setCredForm({ recipientEmail: '', loginEmail: '', tempPassword: '' }); }}
                 className="w-full py-3 text-slate-500 text-xs font-bold hover:text-slate-300 transition-colors"
               >
                 Annuler

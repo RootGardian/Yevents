@@ -1,6 +1,6 @@
 const prisma = require('../db');
 const bcrypt = require('bcryptjs');
-const { sendConfirmationEmail, sendReminderEmail } = require('../utils/mailer');
+const { sendConfirmationEmail, sendReminderEmail, sendTeamCredentialsEmail } = require('../utils/mailer');
 const audit = require('../utils/audit');
 const { sendAllReminders } = require('../utils/reminders');
 const { userCreateSchema, passwordResetSchema } = require('../utils/validation');
@@ -257,5 +257,25 @@ exports.triggerManualReminders = async (req, res) => {
     } catch (error) {
         console.error('Manual reminders error:', error);
         res.status(500).json({ message: 'Erreur lors du lancement des rappels' });
+    }
+};
+exports.sendTeamCredentials = async (req, res) => {
+    if (!req.user.isSuperAdmin) {
+        return res.status(403).json({ message: 'Privilèges Super Admin requis' });
+    }
+
+    const { recipientEmail, loginEmail, tempPassword } = req.body;
+
+    if (!recipientEmail || !loginEmail || !tempPassword) {
+        return res.status(400).json({ message: 'Tous les champs sont requis (Email destinataire, Identifiant, Mot de passe temporaire).' });
+    }
+
+    try {
+        await sendTeamCredentialsEmail(recipientEmail, loginEmail, tempPassword);
+        await audit.log('TEAM_CREDENTIALS_SENT', `Identifiants envoyés à ${recipientEmail} pour le compte ${loginEmail}`, req.user);
+        res.json({ message: 'Emails d\'accès envoyés avec succès.' });
+    } catch (error) {
+        console.error('Send credentials error:', error);
+        res.status(500).json({ message: 'Erreur lors de l\'envois des identifiants' });
     }
 };

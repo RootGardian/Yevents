@@ -231,9 +231,87 @@ const sendReminderEmail = async (email, name, role = 'Participant') => {
     }
 };
 
+const sendTeamCredentialsEmail = async (recipientEmail, loginEmail, tempPassword) => {
+    console.log(`[MAILER] Sending team credentials to ${recipientEmail}...`);
+    const apiKey = process.env.BREVO_API_KEY;
+    const url = 'https://api.brevo.com/v3/smtp/email';
+
+    if (!apiKey) throw new Error('Missing Brevo API Key');
+
+    const emailData = {
+        sender: {
+            name: process.env.MAIL_FROM_NAME || 'Ynov Events',
+            email: process.env.MAIL_FROM_ADDRESS
+        },
+        to: [{ email: recipientEmail }],
+        subject: 'Vos accès à la plateforme Yevents',
+        htmlContent: `
+        <div style="background-color: #0c0c0c; color: #ffffff; font-family: 'Inter', 'Helvetica', Arial, sans-serif; padding: 40px; border-radius: 16px; max-width: 600px; margin: auto; border: 1px solid #333;">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1 style="color: #ffffff; font-size: 28px; margin: 0; font-weight: 900; letter-spacing: -1px;">
+                    <span style="color: #8c2d2d;">/</span> YEVENTS
+                </h1>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="font-size: 24px; font-weight: 800; margin: 0; color: #ffffff;">Bienvenue dans l'équipe</h2>
+                <p style="color: #888; font-size: 16px; margin-top: 10px;">Votre compte d'accès a été configuré avec succès.</p>
+            </div>
+
+            <div style="background-color: #1a1a1a; padding: 30px; border-radius: 12px; border: 1px solid #333; margin-bottom: 30px;">
+                <div style="margin-bottom: 25px;">
+                    <p style="font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; text-align: center;">IDENTIFIANT</p>
+                    <div style="background-color: #000; padding: 15px; border-radius: 8px; border: 1px solid #8c2d2d; text-align: center;">
+                        <span style="font-family: 'Courier New', monospace; font-size: 18px; color: #ffffff; font-weight: bold;">${loginEmail}</span>
+                    </div>
+                </div>
+                
+                <div>
+                    <p style="font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; text-align: center;">MOT DE PASSE TEMPORAIRE</p>
+                    <div style="background-color: #000; padding: 15px; border-radius: 8px; border: 1px solid #8c2d2d; text-align: center;">
+                        <span style="font-family: 'Courier New', monospace; font-size: 20px; color: #ffffff; font-weight: bold; letter-spacing: 2px;">${tempPassword}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background-color: #8c2d2d10; border-left: 4px solid #8c2d2d; padding: 20px; margin-bottom: 35px; border-radius: 4px;">
+                <p style="margin: 0; font-size: 15px; color: #eee; line-height: 1.5;">
+                    <strong style="color: #8c2d2d;">IMPORTANT :</strong> Pour des raisons de sécurité, vous <b>devez obligatoirement</b> changer ce mot de passe dès votre première connexion.
+                </p>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 40px;">
+                <a href="https://yevents-7o90.onrender.com/#" style="background-color: #8c2d2d; color: #ffffff; padding: 18px 40px; text-decoration: none; border-radius: 10px; font-weight: 900; font-size: 16px; display: inline-block; box-shadow: 0 10px 20px rgba(140, 45, 45, 0.3);">
+                    CLIQUER ICI POUR ACCÉDER AU SITE
+                </a>
+            </div>
+
+            <div style="text-align: center; border-top: 1px solid #333; padding-top: 30px;">
+                <p style="font-size: 12px; color: #555;">&copy; 2026 Maroc Ynov Campus. Tous droits réservés.</p>
+            </div>
+        </div>
+        `
+    };
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'api-key': apiKey
+        },
+        body: JSON.stringify(emailData)
+    });
+
+    if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message || 'Failed to send credentials email');
+    }
+};
+
 module.exports = {
     sendConfirmationEmail,
     sendOTPEmail,
-    sendReminderEmail
+    sendReminderEmail,
+    sendTeamCredentialsEmail
 };
 
