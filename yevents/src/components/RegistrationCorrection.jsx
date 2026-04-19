@@ -140,6 +140,13 @@ const RegistrationCorrection = ({ onBack }) => {
     }
   };
 
+  const handleQuit = () => {
+    setCorrectionToken(null);
+    setOtpCode('');
+    setStep('lookup');
+    setError(null);
+  };
+
   if (success) {
     return (
       <motion.div
@@ -172,10 +179,18 @@ const RegistrationCorrection = ({ onBack }) => {
         <button onClick={onBack} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:bg-slate-50 transition-colors">
           <ArrowLeft className="w-5 h-5 text-slate-500" />
         </button>
-        <div>
+        <div className="flex-1">
           <h2 className="text-2xl font-black uppercase italic tracking-tight">Correction d'inscription</h2>
           <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Modifiez vos informations erronées</p>
         </div>
+        {(step === 'verify' || step === 'edit') && (
+          <button 
+            onClick={handleQuit}
+            className="text-[10px] font-black text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-all uppercase tracking-widest"
+          >
+            Quitter
+          </button>
+        )}
       </div>
 
       <AnimatePresence mode="wait">
