@@ -24,6 +24,7 @@ const RegistrationCorrection = ({ onBack }) => {
     entreprise: '',
     categorie_badge: 'PARTICIPANT'
   });
+  const [initialEmail, setInitialEmail] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
@@ -79,6 +80,7 @@ const RegistrationCorrection = ({ onBack }) => {
         entreprise: participant.entreprise || '',
         categorie_badge: participant.categorieBadge || 'PARTICIPANT'
       });
+      setInitialEmail(participant.email);
       setStep('edit');
     } catch (err) {
       setError(err.response?.data?.message || "Aucune inscription trouvée. Vérifiez vos informations.");
@@ -91,7 +93,7 @@ const RegistrationCorrection = ({ onBack }) => {
     setOtpLoading(true);
     setError(null);
     try {
-      await api.post('/otp/request', { email: formData.email });
+      await api.post('/otp/request', { email: initialEmail });
       setOtpSent(true);
       alert("Un code de vérification a été envoyé à votre e-mail.");
     } catch (err) {
@@ -108,7 +110,7 @@ const RegistrationCorrection = ({ onBack }) => {
     try {
       const submissionData = {
         ...formData,
-        email: formData.email, // Backend uses this to find the participant
+        currentEmail: initialEmail, // Identifying the user by the email that received the OTP
         otpCode,
         telephone: `${formData.indicatif}${formData.telephone}`
       };

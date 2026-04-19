@@ -91,7 +91,7 @@ const MyRegistrations = () => {
                                     </button>
                                     <button 
                                         onClick={() => setShowEdit(!showEdit)}
-                                        className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${showEdit ? 'bg-ynov text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}
+                                        className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${showEdit ? 'bg-ynov text-white' : 'bg-red-600 text-white shadow-lg shadow-red-500/20'}`}
                                     >
                                         <Edit3 className="w-4 h-4" /> {showEdit ? 'Fermer' : 'Modifier'}
                                     </button>
