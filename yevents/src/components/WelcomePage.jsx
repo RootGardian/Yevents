@@ -7,7 +7,7 @@ const WelcomePage = ({ settings }) => {
   const {
     event_name = 'Ynov Talk 2026',
     event_date_text = 'SAMEDI 2 MAI 2026',
-    event_hours = '09:00 - 18:00',
+    event_hours = '14:00 - 18:00',
     event_location = 'Casablanca Ynov campus',
     event_location_link = '#',
     event_public_target = 'PROFESSIONELS & ÉTUDIANTS YNOV'
