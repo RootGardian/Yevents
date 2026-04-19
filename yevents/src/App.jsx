@@ -66,7 +66,7 @@ const Layout = ({ children, user, onLogout, settings }) => {
                     <span className="text-[10px] font-black tracking-[0.1em] text-white uppercase italic">{user.nom}</span>
                     <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">{user.role}</span>
                   </div>
-                  <div 
+                  <div
                     onClick={onLogout}
                     className="p-2 bg-slate-800/50 hover:bg-red-500/10 border border-white/5 hover:border-red-500/20 rounded-xl cursor-pointer transition-all group"
                     title="Déconnexion"
@@ -91,9 +91,9 @@ const Layout = ({ children, user, onLogout, settings }) => {
               <div className="w-6 h-6 bg-ynov rounded flex items-center justify-center"><Calendar className="text-white w-3 h-3" /></div>
               <span className="font-black tracking-tighter dark:text-white uppercase">{event_name}</span>
             </div>
-            <a 
-              href={event_location_link} 
-              target="_blank" 
+            <a
+              href={event_location_link}
+              target="_blank"
               rel="noopener noreferrer"
               className="text-slate-500 text-xs hover:text-ynov transition-colors cursor-pointer"
             >
@@ -116,8 +116,8 @@ const Layout = ({ children, user, onLogout, settings }) => {
           <div className="space-y-4 text-right">
             <p className="text-[10px] font-bold text-slate-400 uppercase">© {currentYear} YNOV MOROCCO</p>
             <div className="flex justify-end gap-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-               <Link to="/cgu" className="hover:text-ynov transition-colors">CGU</Link>
-               <Link to="/confidentialite" className="hover:text-ynov transition-colors">Confidentialité</Link>
+              <Link to="/cgu" className="hover:text-ynov transition-colors">CGU</Link>
+              <Link to="/confidentialite" className="hover:text-ynov transition-colors">Confidentialité</Link>
             </div>
           </div>
         </div>
@@ -235,7 +235,7 @@ function App() {
                 user.requiresPasswordChange ? (
                   <ForceChangePassword token={token} onPasswordChanged={handlePasswordChanged} />
                 ) : (
-                  user.role === 'admin' ? <AdminDashboard user={user} token={token} /> : <Navigate to="/checkin" />
+                  user.role === 'admin' ? <AdminDashboard user={user} token={token} onLogout={handleLogout} /> : <Navigate to="/checkin" />
                 )
               ) : <Login onLogin={handleLogin} />
             }

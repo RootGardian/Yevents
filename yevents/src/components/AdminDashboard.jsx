@@ -9,7 +9,7 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, AreaChart, Area, XAx
 
 const COLORS = ['#8c2d2d', '#4299e1', '#ed8936', '#ecc94b'];
 
-const AdminDashboard = ({ user, token }) => {
+const AdminDashboard = ({ user, token, onLogout }) => {
   const [stats, setStats] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [search, setSearch] = useState('');
@@ -76,18 +76,16 @@ const AdminDashboard = ({ user, token }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const headers = { Authorization: `Bearer ${token}` };
       const [statsRes, listRes] = await Promise.all([
-        api.get('/admin/stats', { headers }),
-        api.get('/admin/participants', { headers })
+        api.get('/admin/stats'),
+        api.get('/admin/participants')
       ]);
       setStats(statsRes.data);
       setParticipants(listRes.data);
     } catch (err) {
       console.error(err);
       if (err.response?.status === 401) {
-        localStorage.removeItem('admin_token');
-        window.location.reload();
+        onLogout();
       }
     } finally {
       setLoading(false);
@@ -96,7 +94,7 @@ const AdminDashboard = ({ user, token }) => {
 
   const fetchAuditLogs = async () => {
     try {
-      const res = await api.get('/admin/audit-logs', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await api.get('/admin/audit-logs');
       setAuditLogs(res.data);
       setView('audit');
     } catch (err) {
@@ -106,7 +104,7 @@ const AdminDashboard = ({ user, token }) => {
 
   const fetchStaff = async () => {
     try {
-      const res = await api.get('/admin/staff', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await api.get('/admin/staff');
       setStaffList(res.data);
       setView('staff');
     } catch (err) {
@@ -116,7 +114,7 @@ const AdminDashboard = ({ user, token }) => {
 
   const fetchAdmins = async () => {
     try {
-      const res = await api.get('/admin/admins', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await api.get('/admin/admins');
       setAdminsList(res.data);
       setView('admins');
     } catch (err) {
