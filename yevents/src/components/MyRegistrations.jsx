@@ -63,7 +63,11 @@ const MyRegistrations = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await api.post('/register/update', updatedData);
+            const res = await api.post('/register/update', {
+                ...updatedData,
+                currentEmail: email, // L'email avec lequel on s'est connecté via OTP
+                otpCode: code        // Le code valide encore présent en base
+            });
             setParticipant(res.data.participant);
             setShowEdit(false);
         } catch (err) {
