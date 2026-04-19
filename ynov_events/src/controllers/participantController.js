@@ -1,6 +1,8 @@
 const prisma = require('../db');
 const { sendConfirmationEmail } = require('../utils/mailer');
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { registrationSchema } = require('../utils/validation');
 
 exports.register = async (req, res) => {
@@ -235,33 +237,37 @@ exports.lookup = async (req, res) => {
 exports.updateParticipant = async (req, res) => {
     try {
         const validatedData = registrationSchema.parse(req.body);
-        const { currentEmail, otpCode } = req.body;
+        const { currentEmail, correctionToken } = req.body;
         const { nom, prenom, email, telephone, entreprise, categorie_badge } = validatedData;
         
-        if (!currentEmail || !otpCode) {
-            return res.status(400).json({ message: 'Identification requise (Email + Code OTP manquant).' });
+        // 1. Verify Identifier Token
+        if (!correctionToken) {
+            return res.status(401).json({ message: 'Session de modification invalide ou absente.' });
         }
 
-        // 1. Verify OTP first (on the email where it was sent)
-        const otpRecord = await prisma.otp.findUnique({ where: { email: currentEmail } });
-        if (!otpRecord || otpRecord.code !== otpCode) {
-            return res.status(401).json({ message: 'Code de vérification invalide. Veuillez recommencer.' });
-        }
-        if (new Date() > otpRecord.expiresAt) {
-            return res.status(401).json({ message: 'Code expiré.' });
+        let verifiedToken;
+        try {
+            verifiedToken = jwt.verify(correctionToken, process.env.JWT_SECRET);
+            if (verifiedToken.type !== 'participant_correction') {
+                throw new Error('Type de jeton invalide');
+            }
+        } catch (err) {
+            return res.status(401).json({ message: 'Votre session a expiré. Veuillez redemander un code.' });
         }
 
-        // 2. Fetch participant by the CURRENT email verified by OTP
-        const participant = await prisma.participant.findUnique({ where: { email: currentEmail } });
+        const tokenEmail = verifiedToken.email;
+
+        // 2. Fetch participant
+        const participant = await prisma.participant.findUnique({ where: { email: tokenEmail } });
         if (!participant) {
             return res.status(404).json({ message: 'Participant non trouvé.' });
         }
 
-        // Check if new email is already taken by someone else
-        if (email !== currentEmail) {
+        // Check if new email is already taken
+        if (email !== tokenEmail) {
             const existing = await prisma.participant.findUnique({ where: { email } });
             if (existing) {
-                return res.status(400).json({ message: 'La nouvelle adresse e-mail est déjà utilisée par un autre badge.' });
+                return res.status(400).json({ message: 'La nouvelle adresse e-mail est déjà utilisée.' });
             }
         }
 
@@ -275,13 +281,11 @@ exports.updateParticipant = async (req, res) => {
                 telephone,
                 entreprise,
                 categorieBadge: categorie_badge,
-                registrationStatus: 'pending',
-                emailSent: false
+                registrationStatus: 'confirmed'
             }
         });
 
-        // Delete OTP after success
-        await prisma.otp.delete({ where: { email: currentEmail } });
+        // No need to delete OTP here, it was deleted in verifyOTP
 
         try {
             await sendConfirmationEmail(updated);
@@ -355,8 +359,16 @@ exports.verifyOTP = async (req, res) => {
         }
 
         const participant = await prisma.participant.findUnique({ where: { email } });
-        // OTP is NOT deleted here anymore, it will be deleted by updateParticipant or expiration.
-        // This allows the code to be used for the final save transaction.
+        
+        // Generate a 15 min token for this modification session
+        const correctionToken = jwt.sign(
+            { type: 'participant_correction', email: participant.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
+        );
+
+        // Success: Clean up OTP now that we have a JWT
+        await prisma.otp.delete({ where: { email } });
 
         // Filter sensitive data
         const safeParticipant = {
@@ -368,7 +380,7 @@ exports.verifyOTP = async (req, res) => {
             categorieBadge: participant.categorieBadge
         };
 
-        res.json({ participant: safeParticipant });
+        res.json({ participant: safeParticipant, token: correctionToken });
     } catch (error) {
         console.error('[OTP VERIFY] Error:', error);
         res.status(500).json({ message: 'Erreur lors de la vérification.' });
